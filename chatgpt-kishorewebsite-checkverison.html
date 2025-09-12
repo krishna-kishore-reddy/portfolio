@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Portfolio - DevOps Engineer</title>
+
+    <!-- Meta -->
+    <meta name="description" content="Krishna Kishore Reddy — Senior DevOps Engineer specializing in Kubernetes, OpenShift, CI/CD, and cloud automation." />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0f3460" />
+
+    <!-- Favicon (inline SVG with gear + initials) -->
+    <link rel="icon" href='data:image/svg+xml;utf8,
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+        <defs>
+          <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="%23ff6b6b"/>
+            <stop offset="100%" stop-color="%234ecdc4"/>
+          </linearGradient>
+        </defs>
+        <rect width="64" height="64" rx="12" fill="%230a0a0a"/>
+        <g transform="translate(32 32)">
+          <g fill="none" stroke="url(%23g)" stroke-width="4">
+            <circle r="14"/>
+            <path d="M0-24 l4 0 M0 24 l-4 0 M24 0 l0 4 M-24 0 l0 -4 M17 -17 l3 3 M-17 17 l-3 -3 M-17 -17 l-3 3 M17 17 l3 -3"/>
+          </g>
+        </g>
+        <text x="50%" y="54%" font-family="Arial, Helvetica, sans-serif" font-size="16" text-anchor="middle" fill="url(%23g)" font-weight="700">KR</text>
+      </svg>' />
+
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background:#0a0a0a; color:#fff; overflow-x:hidden; cursor:none;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transition: all 0.3s ease;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            background: linear-gradient(-45deg, #0a0a0a, #1a1a2e, #16213e, #0f3460);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            animation: slideUp 1s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes textGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.8;
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 0.8; }
+        }
+
+        /* Company Logos Section */
+        .company-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 40px 0;
+            animation: fadeIn 1s ease-out 0.7s both;
+            flex-wrap: wrap;
+        }
+
+        .company-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+            opacity: 0.8;
+        }
+
+        .company-logo:hover {
+            transform: translateY(-5px) scale(1.05);
+            opacity: 1;
+        }
+
+        .logo-image {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-image::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+
+        .company-logo:hover .logo-image::before {
+            animation: shine 0.6s ease-in-out;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); opacity: 0; }
+        }
+
+        .company-logo:hover .logo-image {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .logo-image img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            transition: all 0.3s ease;
+        }
+
+        .salesforce-logo {
+            background: rgba(255, 255, 255, 0.95) !important;
+        }
+
+        .trintech-logo {
+            background: rgba(255, 255, 255, 0.95) !important;
+        }
+
+        .techmahindra-logo {
+            background: rgba(255, 255, 255, 0.95) !important;
+        }
+
+        .company-name {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .company-logo:hover .company-name {
+            color: #4ecdc4;
+            transform: scale(1.05);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .cta-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Sections */
+        .section {
+            padding: 100px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section h2 {
+            font-size: 3rem;
+            margin-bottom: 50px;
+            text-align: center;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Work Grid */
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .work-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .work-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .work-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #4ecdc4;
+        }
+
+        .work-item p {
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Skills Section */
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .skill-item {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .skill-item:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Company Popup Styles */
+        .company-logo {
+            position: relative; /* Needed for absolute child positioning */
+        }
+      
+        .company-popup {
+            position: absolute;
+            top: 0;
+            right: calc(100% + 20px); /* move to left of the logo */
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(80px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 350px;
+            width: 100lvw;
+            max-height: 70vh;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            word-wrap: break-word;
+        }
+
+        .company-popup::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: -16px;
+            border: 8px solid transparent;
+            border-left-color: rgba(0, 0, 0, 0.95);
+        }
+
+
+        .company-logo:hover .company-popup {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+        }
+
+        .popup-content {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+        }
+
+        .popup-duration {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .popup-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .popup-skill {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .skill-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            animation: spin 10s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            opacity: 0.9;
+        }
+
+        .about-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            animation: morphing 8s ease-in-out infinite;
+        }
+
+        @keyframes morphing {
+            0%, 100% { border-radius: 20px; }
+            25% { border-radius: 50% 20px 50% 20px; }
+            50% { border-radius: 20px 50% 20px 50%; }
+            75% { border-radius: 50px; }
+        }
+
+        /* Contact Section */
+        .contact-form {
+            max-width: 600px;
+            margin: 50px auto 0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .social-links a {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: scale(1.2) rotate(15deg);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+        }
+        .my-small-lottie {
+        width: 150px;
+        height: 150px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .section { padding: 50px 20px; }
+            .nav-container { padding: 0 20px; }
+            .about-content { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* ...[your existing CSS unchanged up to .cta-button]... */
+        .cursor{position:fixed;width:20px;height:20px;background:linear-gradient(45deg,#ff6b6b,#4ecdc4);border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:difference;transition:transform .1s ease}
+        .cursor-follower{position:fixed;width:8px;height:8px;background:rgba(255,255,255,.8);border-radius:50%;pointer-events:none;z-index:9998;transition:all .3s ease}
+        .bg-animation{position:fixed;top:0;left:0;width:100%;height:100vh;z-index:-1;background:linear-gradient(-45deg,#0a0a0a,#1a1a2e,#16213e,#0f3460);background-size:400% 400%;animation:gradientBG 15s ease infinite}
+        @keyframes gradientBG{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        .particles{position:fixed;top:0;left:0;width:100%;height:100vh;pointer-events:none;z-index:-1}
+        .particle{position:absolute;background:rgba(255,255,255,.1);border-radius:50%;animation:float 6s ease-in-out infinite}
+        @keyframes float{0%,100%{transform:translateY(0) rotate(0);opacity:0}50%{transform:translateY(-100px) rotate(180deg);opacity:1}}
+        nav{position:fixed;top:0;width:100%;padding:20px 50px;background:rgba(0,0,0,.1);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.1);z-index:100;transition:all .3s ease}
+        .nav-container{display:flex;justify-content:space-between;align-items:center}
+        .logo{font-size:24px;font-weight:bold;background:linear-gradient(45deg,#ff6b6b,#4ecdc4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:pulse 2s ease-in-out infinite}
+        @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+        .nav-links{display:flex;gap:30px}
+        .nav-links a{color:#fff;text-decoration:none;font-weight:500;position:relative;transition:all .3s ease}
+        .nav-links a::after{content:'';position:absolute;bottom:-5px;left:0;width:0;height:2px;background:linear-gradient(45deg,#ff6b6b,#4ecdc4);transition:width .3s ease}
+        .nav-links a:hover::after{width:100%}
+        .hero{height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative}
+        .hero-content{max-width:800px;animation:slideUp 1s ease-out}
+        @keyframes slideUp{from{transform:translateY(100px);opacity:0}to{transform:translateY(0);opacity:1}}
+        .hero h1{font-size:4rem;margin-bottom:20px;background:linear-gradient(45deg,#ff6b6b,#4ecdc4,#45b7d1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:textGlow 3s ease-in-out infinite}
+        @keyframes textGlow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.2)}}
+        .hero p{font-size:1.2rem;margin-bottom:30px;opacity:.8;animation:fadeIn 1s ease-out .5s both}
+        @keyframes fadeIn{from{opacity:0}to{opacity:.8}}
+        .company-logos{display:flex;justify-content:center;align-items:center;gap:40px;margin:40px 0;animation:fadeIn 1s ease-out .7s both;flex-wrap:wrap}
+        .company-logo{display:flex;flex-direction:column;align-items:center;transition:all .3s ease;opacity:.8;position:relative}
+        .company-logo:hover{transform:translateY(-5px) scale(1.05);opacity:1}
+        .logo-image{width:80px;height:80px;background:rgba(255,255,255,.1);border-radius:15px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);transition:all .3s ease;position:relative;overflow:hidden}
+        .logo-image::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent,rgba(255,255,255,.1),transparent);transform:rotate(45deg);transition:all .6s ease;opacity:0}
+        .company-logo:hover .logo-image::before{animation:shine .6s ease-in-out}
+        @keyframes shine{0%{transform:translateX(-100%) translateY(-100%) rotate(45deg);opacity:0}50%{opacity:1}100%{transform:translateX(100%) translateY(100%) rotate(45deg);opacity:0}}
+        .company-logo:hover .logo-image{background:rgba(255,255,255,.2);box-shadow:0 10px 30px rgba(0,0,0,.3);border-color:rgba(255,255,255,.3)}
+        .logo-image img{width:50px;height:50px;object-fit:contain;transition:all .3s ease}
+        .salesforce-logo,.trintech-logo,.techmahindra-logo{background:rgba(255,255,255,.95)!important}
+        .company-name{font-size:.9rem;color:rgba(255,255,255,.8);font-weight:500;text-align:center;transition:all .3s ease}
+        .company-logo:hover .company-name{color:#4ecdc4;transform:scale(1.05)}
+        .cta-button{display:inline-block;padding:15px 30px;background:linear-gradient(45deg,#ff6b6b,#4ecdc4);color:#fff;text-decoration:none;border-radius:50px;font-weight:bold;transition:all .3s ease;animation:bounce 2s ease-in-out infinite}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .cta-button:hover{transform:scale(1.1);box-shadow:0 10px 30px rgba(255,107,107,.3)}
+        .cta-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+        .section{padding:100px 50px;max-width:1200px;margin:0 auto}
+        .section h2{font-size:3rem;margin-bottom:50px;text-align:center;background:linear-gradient(45deg,#ff6b6b,#4ecdc4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .work-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;margin-top:50px}
+        .work-item{display:block;background:rgba(255,255,255,.05);border-radius:20px;padding:30px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);transition:all .3s ease;cursor:pointer;color:inherit;text-decoration:none}
+        .work-item:hover{transform:translateY(-10px);box-shadow:0 20px 40px rgba(0,0,0,.3);background:rgba(255,255,255,.1)}
+        .work-item h3{font-size:1.5rem;margin-bottom:15px;color:#4ecdc4}
+        .work-item p{opacity:.8;line-height:1.6}
+        .skills-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:30px;margin-top:50px}
+        .skill-item{text-align:center;padding:30px;background:rgba(255,255,255,.05);border-radius:15px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);transition:all .3s ease}
+        .skill-item:hover{transform:scale(1.05);background:rgba(255,255,255,.1)}
+        .company-popup{position:absolute;top:0;right:calc(100% + 20px);background:rgba(0,0,0,.95);backdrop-filter:blur(80px);border:1px solid rgba(255,255,255,.2);border-radius:15px;padding:20px;max-width:350px;width:100lvw;max-height:70vh;overflow-y:auto;opacity:0;visibility:hidden;transition:all .3s ease;z-index:1000;box-shadow:0 20px 40px rgba(0,0,0,.3);word-wrap:break-word}
+        .company-popup::before{content:'';position:absolute;top:20px;right:-16px;border:8px solid transparent;border-left-color:rgba(0,0,0,.95)}
+        .company-logo:hover .company-popup{opacity:1;visibility:visible}
+        .popup-title{font-size:1.1rem;font-weight:bold;color:#4ecdc4;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:8px}
+        .popup-content{font-size:.9rem;color:rgba(255,255,255,.9);line-height:1.5}
+        .popup-duration{font-size:.8rem;color:rgba(255,255,255,.6);margin-top:8px;font-style:italic}
+        .popup-skills{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+        .popup-skill{background:linear-gradient(45deg,#ff6b6b,#4ecdc4);color:#fff;padding:3px 8px;border-radius:12px;font-size:.7rem;font-weight:500}
+        .skill-icon{width:60px;height:60px;background:linear-gradient(45deg,#ff6b6b,#4ecdc4);border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:24px;animation:spin 10s linear infinite}
+        @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+        .about-content{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center;margin-top:50px}
+        .about-text{font-size:1.1rem;line-height:1.7;opacity:.9}
+        .about-image{width:100%;height:400px;background:linear-gradient(45deg,#ff6b6b,#4ecdc4);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;animation:morphing 8s ease-in-out infinite}
+        @keyframes morphing{0%,100%{border-radius:20px}25%{border-radius:50% 20px 50% 20px}50%{border-radius:20px 50% 20px 50%}75%{border-radius:50px}}
+        .contact-form{max-width:600px;margin:50px auto 0}
+        .form-group{margin-bottom:25px}
+        .form-group input,.form-group textarea{width:100%;padding:15px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;font-size:16px;backdrop-filter:blur(10px);transition:all .3s ease}
+        .form-group input:focus,.form-group textarea:focus{outline:none;border-color:#4ecdc4;box-shadow:0 0 20px rgba(78,205,196,.3)}
+        .form-group input::placeholder,.form-group textarea::placeholder{color:rgba(255,255,255,.5)}
+        footer{text-align:center;padding:50px;background:rgba(0,0,0,.5);border-top:1px solid rgba(255,255,255,.1)}
+        .social-links{display:flex;justify-content:center;gap:20px;margin-bottom:20px}
+        .social-links a{width:50px;height:50px;background:linear-gradient(45deg,#ff6b6b,#4ecdc4);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;transition:all .3s ease}
+        .social-links a:hover{transform:scale(1.2) rotate(15deg);box-shadow:0 10px 25px rgba(255,107,107,.3)}
+        .my-small-lottie{width:150px;height:150px}
+        @media (max-width: 768px){
+            .hero h1{font-size:2.5rem}
+            .section{padding:50px 20px}
+            .nav-container{padding:0 20px}
+            .about-content{grid-template-columns:1fr}
+            .nav-links{display:none}
+        }
+        .fade-in{opacity:0;transform:translateY(30px);transition:all .6s ease}
+        .fade-in.visible{opacity:1;transform:translateY(0)}
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce){
+            .bg-animation,.cta-button,.skill-icon{animation:none}
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+
+    <!-- Floating Particles -->
+    <div class="particles"></div>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+    <script src="https://unpkg.com/gsap@3/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@barba/core"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <!-- Navigation -->
+    <nav aria-label="Primary">
+        <div class="nav-container">
+            <div class="logo" aria-label="Site logo">Portfolio</div>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#work">Work</a>
+                <a href="#skills">Skills</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Krishna Kishore Reddy</h1>
+            <p>Senior DevOps Engineer with 6+ years of experience in designing scalable infrastructure, Kubernetes, Docker, and cloud automation solutions.</p>
+
+            <!-- Company Logos -->
+            <div class="company-logos">
+                <div class="company-logo">
+                    <div class="logo-image salesforce-logo">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg" alt="Salesforce Logo">
+                    </div>
+                    <span class="company-name">Salesforce</span>
+                    <div class="company-popup">
+                        <div class="popup-title">Senior DevOps Engineer at Salesforce</div>
+                        <div class="popup-content">
+                            • Designed and built the OpenShift Cluster from scratch, reducing deployment time from one week to 45 minutes using Ansible, Azure Pipelines, and Shell Scripts.<br>
+                            • Developed an internal Certificate Manager to automate certificate rotation for OpenShift ingress and routes.<br>
+                            • Migrated Windows DNS to Linux with DDNS, reducing manual work and cutting deployment time dramatically.<br>
+                            • Built a Python API-based app to auto-create Grafana alerts when new Prometheus datasources are added.<br>
+                            • Deployed LLM workloads on OpenShift for internal applications.
+                        </div>
+                        <div class="popup-duration">2023 - Present</div>
+                        <div class="popup-skills">
+                            <span class="popup-skill">Kubernetes</span><span class="popup-skill">Azure</span><span class="popup-skill">OpenShift</span>
+                            <span class="popup-skill">Ansible</span><span class="popup-skill">Python</span><span class="popup-skill">Grafana</span>
+                            <span class="popup-skill">Prometheus</span><span class="popup-skill">Docker</span><span class="popup-skill">Azure Pipelines</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="company-logo">
+                    <div class="logo-image trintech-logo">
+                        <img src="https://www.accountancyage.com/wp-content/uploads/2019/06/Trintech-Logo-RGB-colors.png" alt="Trintech Logo">
+                    </div>
+                    <span class="company-name">Trintech</span>
+                    <div class="company-popup">
+                        <div class="popup-title">Senior DevOps Engineer at Trintech</div>
+                        <div class="popup-content">
+                            • Implemented HA Kubernetes/OpenShift patterns and secure CI/CD pipelines.<br>
+                            • Automated platform ops and reduced deployment lead time significantly.
+                        </div>
+                        <div class="popup-duration">2021 - 2023</div>
+                        <div class="popup-skills">
+                            <span class="popup-skill">Kustomize</span><span class="popup-skill">Argo CD</span><span class="popup-skill">GitOps</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="company-logo">
+                    <div class="logo-image techmahindra-logo">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Tech_Mahindra_New_Logo.svg" alt="Tech Mahindra Logo">
+                    </div>
+                    <span class="company-name">Tech Mahindra</span>
+                    <div class="company-popup">
+                        <div class="popup-title">DevOps Engineer at Tech Mahindra</div>
+                        <div class="popup-content">
+                            • Worked on container-based infra and monitoring stacks; drove infra cost optimizations.
+                        </div>
+                        <div class="popup-duration">2019 - 2021</div>
+                        <div class="popup-skills">
+                            <span class="popup-skill">Linux</span><span class="popup-skill">Shell</span><span class="popup-skill">Monitoring</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Row -->
+            <div class="cta-row" role="group" aria-label="Primary actions">
+                <a href="#work" class="cta-button">View My Work</a>
+
+                <!-- Download Resume (same animation + gradient) -->
+                <!-- IMPORTANT: Ensure your web server serves /tmp/resume.pdf. See note below. -->
+                <a class="cta-button" href="/tmp/resume.pdf" download title="Download résumé PDF">
+                    Download Résumé
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Work Section -->
+    <section id="work" class="section fade-in">
+        <h2>Things I've Done</h2>
+        <div class="work-grid">
+            <a class="work-item" href="work.html#openshift">
+                <h3>OpenShift Cluster Infrastructure</h3>
+                <p>Designed and built OpenShift Cluster from scratch, cutting deployment from one week to 45 minutes via automation.</p>
+            </a>
+            <a class="work-item" href="work.html#cert-manager">
+                <h3>Certificate Manager</h3>
+                <p>Internal PKI & rotation for OpenShift ingress/routes; eliminated external cert costs.</p>
+            </a>
+            <a class="work-item" href="work.html#dns">
+                <h3>DNS Migration & Automation</h3>
+                <p>Windows → Linux DDNS with scripted automation; deployments in minutes.</p>
+            </a>
+            <a class="work-item" href="work.html#task-api">
+                <h3>Task Management API</h3>
+                <p>Python API for Azure DevOps task automation and tracking.</p>
+            </a>
+            <a class="work-item" href="work.html#containers">
+                <h3>Container Infrastructure</h3>
+                <p>Cost down ~30% by right-sizing containers on Kubernetes.</p>
+            </a>
+            <a class="work-item" href="work.html#cicd">
+                <h3>CI/CD Automation</h3>
+                <p>Tableau deployments from 3h → 30m with robust pipelines.</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="section fade-in">
+        <h2>My Skills</h2>
+        <div class="skills-container">
+            <div class="skill-item"><div class="skill-icon">☸️</div><h3>Kubernetes</h3><p>Container orchestration, scaling, and management</p></div>
+            <div class="skill-item"><div class="skill-icon">🐳</div><h3>Docker</h3><p>Containerization and microservices architecture</p></div>
+            <div class="skill-item"><div class="skill-icon">☁️</div><h3>Cloud Platforms</h3><p>AWS, Azure, OpenShift deployment and management</p></div>
+            <div class="skill-item"><div class="skill-icon">🔧</div><h3>Infrastructure as Code</h3><p>Terraform, Ansible automation and configuration</p></div>
+            <div class="skill-item"><div class="skill-icon">📊</div><h3>Monitoring</h3><p>Prometheus, Grafana, OpenTelemetry observability</p></div>
+            <div class="skill-item"><div class="skill-icon">🔄</div><h3>CI/CD</h3><p>Azure Pipelines, GitHub Actions automation</p></div>
+            <div class="skill-item"><div class="skill-icon">🐧</div><h3>Linux</h3><p>System administration and shell scripting</p></div>
+            <div class="skill-item"><div class="skill-icon">🐍</div><h3>Python</h3><p>API development and automation scripting</p></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section fade-in">
+        <h2>Get to Know Me</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p>I'm a highly skilled Senior DevOps Engineer with over 6 years of experience in designing, implementing, and managing scalable and reliable infrastructure. Currently working at Trintech India Pvt Ltd, I specialize in Kubernetes, Docker, Azure DevOps, and cloud automation solutions.</p>
+                <br>
+                <p>My expertise includes building OpenShift clusters, developing internal PKI solutions, automating CI/CD pipelines, and optimizing infrastructure costs. I'm passionate about mentoring teams, driving innovation, and implementing cutting-edge DevOps practices that transform business operations.</p>
+                <br>
+                <p><strong>Education:</strong> Computer Science and Engineering (First Grade) — K.S.R.M College of Engineering, Kadapa</p>
+                <p><strong>Contact:</strong> +91 9493612730 | krishnakishore@inarm.in | Bengaluru, India</p>
+            </div>
+            <div class="about-image">⚙️ DevOps Expert ☸️</div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section fade-in">
+        <h2>Let's Work Together</h2>
+        <div class="contact-form">
+            <div class="form-group"><input type="text" placeholder="Your Name" required aria-label="Your Name"></div>
+            <div class="form-group"><input type="email" placeholder="Your Email" required aria-label="Your Email"></div>
+            <div class="form-group"><textarea rows="5" placeholder="Your Message" required aria-label="Your Message"></textarea></div>
+            <div class="form-group">
+                <a href="#" class="cta-button" style="display:block;text-align:center;">Send Message</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="social-links" aria-label="Social links">
+            <a href="mailto:krishnakishore@inarm.in" title="Email">📧</a>
+            <a href="https://www.linkedin.com/in/krishna-kishore--reddy" title="LinkedIn">💼</a>
+            <a href="tel:+919493612730" title="Call">☎️</a>
+            <a href="https://www.inarm.in" title="Website">🌐</a>
+        </div>
+        <p>&copy; 2025 Krishna Kishore Reddy. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorFollower = document.querySelector('.cursor-follower');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            setTimeout(() => {
+                cursorFollower.style.left = e.clientX + 'px';
+                cursorFollower.style.top = e.clientY + 'px';
+            }, 100);
+        });
+
+        // Floating Particles
+        function createParticles() {
+            const particles = document.querySelector('.particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                const sz = Math.random() * 4 + 2;
+                particle.style.width = sz + 'px';
+                particle.style.height = sz + 'px';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particles.appendChild(particle);
+            }
+        }
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Scroll Animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Interactive Work Items hover tilt
+        document.querySelectorAll('.work-item').forEach(item => {
+            item.addEventListener('mouseenter', () => { item.style.transform = 'translateY(-10px) rotateX(10deg)'; });
+            item.addEventListener('mouseleave', () => { item.style.transform = 'translateY(0) rotateX(0deg)'; });
+        });
+
+        // Dynamic Navigation Background
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(0,0,0,.9)';
+                nav.style.backdropFilter = 'blur(20px)';
+            } else {
+                nav.style.background = 'rgba(0,0,0,.1)';
+                nav.style.backdropFilter = 'blur(10px)';
+            }
+        });
+
+        // Initialize
+        window.addEventListener('load', () => { createParticles(); });
+
+        // Parallax Effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.bg-animation');
+            parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+
+        // Hover Effects for CTA Buttons
+        document.querySelectorAll('.cta-button').forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                button.style.boxShadow = '0 15px 35px rgba(255,107,107,.4)';
+                button.style.transform = 'scale(1.05) translateY(-2px)';
+            });
+            button.addEventListener('mouseleave', () => {
+                button.style.boxShadow = '0 10px 30px rgba(255,107,107,.3)';
+                button.style.transform = 'scale(1) translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
