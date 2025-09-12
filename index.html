@@ -907,16 +907,35 @@
     <!-- Contact Section -->
     <section id="contact" class="section fade-in">
         <h2>Let's Work Together</h2>
-        <div class="contact-form">
-            <div class="form-group"><input type="text" placeholder="Your Name" required aria-label="Your Name"></div>
-            <div class="form-group"><input type="email" placeholder="Your Email" required aria-label="Your Email"></div>
-            <div class="form-group"><textarea rows="5" placeholder="Your Message" required aria-label="Your Message"></textarea></div>
+        <form class="contact-form" id="contact-form" action="https://formspree.io/f/mrgnklak" method="POST">
             <div class="form-group">
-                <a href="#" class="cta-button" style="display:block;text-align:center;">Send Message</a>
+                <input type="text" name="name" placeholder="Your Name" required>
             </div>
-        </div>
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Your Email" required>
+            </div>
+            <div class="form-group">
+                <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="cta-button" style="display: block; text-align: center;">Send Message</button>
+            </div>
+            <div id="contact-status" style="margin-top:15px; text-align:center;"></div>
+        </form>
+        <script>
+            // Optional: Show status message after submission
+            document.getElementById('contact-form').addEventListener('submit', function(e) {
+                var status = document.getElementById('contact-status');
+                status.innerHTML = "Sending...";
+                // Let the form submit to Formspree, then show a message
+                this.addEventListener('submit', function() {
+                    setTimeout(function() {
+                        status.innerHTML = "Thank you! Your message has been sent.";
+                    }, 1000);
+                });
+            });
+        </script>
     </section>
-
     <!-- Footer -->
     <footer>
         <div class="social-links" aria-label="Social links">
@@ -1017,5 +1036,6 @@
     </script>
 </body>
 </html>
+
 
 
