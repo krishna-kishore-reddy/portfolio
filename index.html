@@ -139,6 +139,7 @@
             font-size: 24px;
             font-weight: bold;
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: pulse 2s ease-in-out infinite;
@@ -192,6 +193,83 @@
             animation: slideUp 1s ease-out;
         }
 
+        /* Hero Layout + Avatar */
+        .hero-content .hero-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 36px;
+            align-items: center;
+            justify-items: center;
+        }
+
+        .hero-avatar {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            isolation: isolate;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,.5));
+            transform-style: preserve-3d;
+        }
+
+        .hero-avatar .ring {
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #ff6b6b, #4ecdc4, #45b7d1, #ff6b6b);
+            animation: spin 8s linear infinite;
+            filter: blur(1px) brightness(1.1);
+            z-index: 0;
+        }
+
+        .hero-avatar .photo {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            z-index: 1;
+            border: 2px solid rgba(255,255,255,.1);
+            background: rgba(255,255,255,.04);
+        }
+
+        .hero-avatar .photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transform: translateZ(1px);
+        }
+
+        .avatar-fallback {
+            position: absolute;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.12), rgba(255,255,255,.02) 60%), linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: #0a0a0a;
+            font-weight: 900;
+            font-size: 64px;
+            letter-spacing: 2px;
+        }
+
+        .hero-avatar .glare {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(120px 120px at 30% 20%, rgba(255,255,255,.28), transparent 55%);
+            mix-blend-mode: screen;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .hero-copy {
+            text-align: left;
+        }
+
         @keyframes slideUp {
             from { transform: translateY(100px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
@@ -201,6 +279,7 @@
             font-size: 4rem;
             margin-bottom: 20px;
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: textGlow 3s ease-in-out infinite;
@@ -358,6 +437,7 @@
             margin-bottom: 50px;
             text-align: center;
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -385,6 +465,20 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             background: rgba(255, 255, 255, 0.1);
         }
+
+        .work-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            pointer-events: none;
+            background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,.08), transparent 80%);
+            opacity: 0;
+            transition: opacity .3s ease, transform .5s ease;
+            transform: translateX(-30%);
+        }
+
+        .work-item:hover::after { opacity: 1; transform: translateX(0%); }
 
         .work-item h3 {
             font-size: 1.5rem;
@@ -630,6 +724,8 @@
             .nav-container { padding: 0 20px; }
             .about-content { grid-template-columns: 1fr; }
             .nav-links { display: none; }
+            .hero-content .hero-layout { grid-template-columns: 1fr; gap: 20px; }
+            .hero-copy { text-align: center; }
         }
 
         /* Scroll Animations */
@@ -642,6 +738,16 @@
         .fade-in.visible {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        /* Spotlight overlay */
+        .spotlight {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(240px 240px at var(--x, 50%) var(--y, 50%), rgba(255,255,255,.08), transparent 60%);
+            mix-blend-mode: soft-light;
         }
         /* ...[your existing CSS unchanged up to .cta-button]... */
         .cursor{position:fixed;width:20px;height:20px;background:linear-gradient(45deg,#ff6b6b,#4ecdc4);border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:difference;transition:transform .1s ease}
@@ -741,6 +847,7 @@
 
     <!-- Floating Particles -->
     <div class="particles"></div>
+    <div class="spotlight" aria-hidden="true"></div>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
@@ -755,6 +862,7 @@
             <div class="nav-links">
                 <a href="#home">Home</a>
                 <a href="#work">Work</a>
+                <a href="#experience">Experience</a>
                 <a href="#skills">Skills</a>
                 <a href="#about">About</a>
                 <a href="#contact">Contact</a>
@@ -765,26 +873,56 @@
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-content">
-            <h1>Krishna Kishore Reddy</h1>
-            <p>Senior DevOps Engineer with 6+ years of experience in designing scalable infrastructure, Kubernetes, Docker, and cloud automation solutions.</p>
+            <div class="hero-layout">
+                <aside class="hero-avatar" aria-label="Profile photo">
+                    <div class="ring" aria-hidden="true"></div>
+                    <div class="photo">
+                        <img src="profile.jpg" alt="Portrait of Krishna Kishore Reddy" loading="eager" decoding="async" onerror="this.style.display='none'; this.closest('.photo').querySelector('.avatar-fallback').style.display='flex';" />
+                        <div class="avatar-fallback" aria-hidden="true">KR</div>
+                    </div>
+                    <div class="glare" aria-hidden="true"></div>
+                </aside>
+                <div class="hero-copy">
+                    <h1>Krishna Kishore Reddy</h1>
+                    <p>Senior DevOps Engineer with 6+ years of experience in designing scalable infrastructure, Kubernetes, Docker, and cloud automation solutions.</p>
+                </div>
+            </div>
 
             <!-- Company Logos -->
             <div class="company-logos">
                 <div class="company-logo">
+                    <div class="logo-image trintech-logo">
+                        <img src="https://www.accountancyage.com/wp-content/uploads/2019/06/Trintech-Logo-RGB-colors.png" alt="Trintech Logo" loading="lazy" decoding="async">
+                    </div>
+                    <span class="company-name">Trintech</span>
+                    <div class="company-popup">
+                        <div class="popup-title">Senior DevOps Engineer at Trintech</div>
+                        <div class="popup-content">
+                            • Implemented HA Kubernetes/OpenShift patterns and secure CI/CD pipelines.<br>
+                            • Automated platform ops and reduced deployment lead time significantly.
+                        </div>
+                        <div class="popup-duration">2023 - Present</div>
+                        <div class="popup-skills">
+                            <span class="popup-skill">Kustomize</span><span class="popup-skill">Argo CD</span><span class="popup-skill">GitOps</span>
+                            <span class="popup-skill">Azure</span><span class="popup-skill">OpenShift</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="company-logo">
                     <div class="logo-image salesforce-logo">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg" alt="Salesforce Logo">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg" alt="Salesforce Logo" loading="lazy" decoding="async">
                     </div>
                     <span class="company-name">Salesforce</span>
                     <div class="company-popup">
-                        <div class="popup-title">Senior DevOps Engineer at Salesforce</div>
+                        <div class="popup-title">DevOps Engineer at Salesforce</div>
                         <div class="popup-content">
-                            • Designed and built the OpenShift Cluster from scratch, reducing deployment time from one week to 45 minutes using Ansible, Azure Pipelines, and Shell Scripts.<br>
-                            • Developed an internal Certificate Manager to automate certificate rotation for OpenShift ingress and routes.<br>
-                            • Migrated Windows DNS to Linux with DDNS, reducing manual work and cutting deployment time dramatically.<br>
-                            • Built a Python API-based app to auto-create Grafana alerts when new Prometheus datasources are added.<br>
-                            • Deployed LLM workloads on OpenShift for internal applications.
+                            • Designed and built OpenShift clusters and automation that cut deployments from one week to 45 minutes.<br>
+                            • Built internal certificate rotation for OpenShift ingress and routes.<br>
+                            • Migrated Windows DNS to Linux with DDNS; scripted deployments in minutes.<br>
+                            • Automated Grafana alert creation for new Prometheus datasources.
                         </div>
-                        <div class="popup-duration">2023 - Present</div>
+                        <div class="popup-duration">2021 - 2023</div>
                         <div class="popup-skills">
                             <span class="popup-skill">Kubernetes</span><span class="popup-skill">Azure</span><span class="popup-skill">OpenShift</span>
                             <span class="popup-skill">Ansible</span><span class="popup-skill">Python</span><span class="popup-skill">Grafana</span>
@@ -794,26 +932,8 @@
                 </div>
 
                 <div class="company-logo">
-                    <div class="logo-image trintech-logo">
-                        <img src="https://www.accountancyage.com/wp-content/uploads/2019/06/Trintech-Logo-RGB-colors.png" alt="Trintech Logo">
-                    </div>
-                    <span class="company-name">Trintech</span>
-                    <div class="company-popup">
-                        <div class="popup-title">Senior DevOps Engineer at Trintech</div>
-                        <div class="popup-content">
-                            • Implemented HA Kubernetes/OpenShift patterns and secure CI/CD pipelines.<br>
-                            • Automated platform ops and reduced deployment lead time significantly.
-                        </div>
-                        <div class="popup-duration">2021 - 2023</div>
-                        <div class="popup-skills">
-                            <span class="popup-skill">Kustomize</span><span class="popup-skill">Argo CD</span><span class="popup-skill">GitOps</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="company-logo">
                     <div class="logo-image techmahindra-logo">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Tech_Mahindra_New_Logo.svg" alt="Tech Mahindra Logo">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Tech_Mahindra_New_Logo.svg" alt="Tech Mahindra Logo" loading="lazy" decoding="async">
                     </div>
                     <span class="company-name">Tech Mahindra</span>
                     <div class="company-popup">
@@ -842,6 +962,52 @@
         </div>
     </section>
 
+    <!-- Experience Timeline -->
+    <section id="experience" class="section fade-in">
+        <h2>Experience</h2>
+        <div style="max-width:900px;margin:0 auto;position:relative;">
+            <div style="position:absolute;left:24px;top:0;bottom:0;width:2px;background:linear-gradient(#4ecdc4,#ff6b6b);opacity:.4"></div>
+            <div class="timeline-item" style="display:grid;grid-template-columns:64px 1fr;gap:20px;align-items:start;margin-bottom:28px;">
+                <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(45deg,#ff6b6b,#4ecdc4);display:flex;align-items:center;justify-content:center;font-weight:800;">T</div>
+                <div>
+                    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                        <strong>Senior DevOps Engineer — Trintech</strong>
+                        <span style="opacity:.7">2023 — Present</span>
+                    </div>
+                    <p style="opacity:.9;margin-top:6px;">HA OpenShift patterns, GitOps, and platform automation. Reduced lead time with robust pipelines and infra-as-code.</p>
+                    <div class="popup-skills" style="margin-top:8px;">
+                        <span class="popup-skill">OpenShift</span><span class="popup-skill">GitOps</span><span class="popup-skill">Argo CD</span>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-item" style="display:grid;grid-template-columns:64px 1fr;gap:20px;align-items:start;margin-bottom:28px;">
+                <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(45deg,#4ecdc4,#45b7d1);display:flex;align-items:center;justify-content:center;font-weight:800;">S</div>
+                <div>
+                    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                        <strong>DevOps Engineer — Salesforce</strong>
+                        <span style="opacity:.7">2021 — 2023</span>
+                    </div>
+                    <p style="opacity:.9;margin-top:6px;">Built OpenShift clusters, internal PKI, and monitoring automation; accelerated deployments dramatically.</p>
+                    <div class="popup-skills" style="margin-top:8px;">
+                        <span class="popup-skill">Kubernetes</span><span class="popup-skill">Ansible</span><span class="popup-skill">Prometheus/Grafana</span>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-item" style="display:grid;grid-template-columns:64px 1fr;gap:20px;align-items:start;">
+                <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(45deg,#45b7d1,#ff6b6b);display:flex;align-items:center;justify-content:center;font-weight:800;">TM</div>
+                <div>
+                    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                        <strong>DevOps Engineer — Tech Mahindra</strong>
+                        <span style="opacity:.7">2019 — 2021</span>
+                    </div>
+                    <p style="opacity:.9;margin-top:6px;">Containers, monitoring stacks, and infra cost optimizations for production workloads.</p>
+                    <div class="popup-skills" style="margin-top:8px;">
+                        <span class="popup-skill">Linux</span><span class="popup-skill">Shell</span><span class="popup-skill">Monitoring</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     <!-- Work Section -->
     <section id="work" class="section fade-in">
         <h2>Things I've Done</h2>
@@ -958,6 +1124,11 @@
                 cursorFollower.style.left = e.clientX + 'px';
                 cursorFollower.style.top = e.clientY + 'px';
             }, 100);
+            const spot = document.querySelector('.spotlight');
+            if (spot) {
+                spot.style.setProperty('--x', e.clientX + 'px');
+                spot.style.setProperty('--y', e.clientY + 'px');
+            }
         });
 
         // Floating Particles
@@ -1015,6 +1186,30 @@
         // Initialize
         window.addEventListener('load', () => { createParticles(); });
 
+        // Avatar tilt interaction (subtle 3D)
+        const avatar = document.querySelector('.hero-avatar');
+        if (avatar) {
+            const constrain = 20;
+            avatar.addEventListener('mousemove', (e) => {
+                const rect = avatar.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const rotY = ((x / rect.width) - 0.5) * constrain;
+                const rotX = -((y / rect.height) - 0.5) * constrain;
+                avatar.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+            });
+            avatar.addEventListener('mouseleave', () => {
+                avatar.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            });
+        }
+
+        // GSAP intro animations if available
+        if (window.gsap) {
+            gsap.set('.hero-avatar, .hero-copy', { opacity: 0, y: 20 });
+            gsap.to('.hero-avatar', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out', delay: 0.1 });
+            gsap.to('.hero-copy', { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out', delay: 0.2 });
+        }
+
         // Parallax Effect
         window.addEventListener('scroll', () => {
             const scrolled = window.pageYOffset;
@@ -1022,15 +1217,20 @@
             parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
         });
 
-        // Hover Effects for CTA Buttons
+        // Magnetic hover for CTA Buttons
         document.querySelectorAll('.cta-button').forEach(button => {
-            button.addEventListener('mouseenter', () => {
+            const strength = 12;
+            button.style.willChange = 'transform';
+            button.addEventListener('mousemove', (e) => {
+                const r = button.getBoundingClientRect();
+                const x = e.clientX - (r.left + r.width/2);
+                const y = e.clientY - (r.top + r.height/2);
+                button.style.transform = `translate(${x/strength}px, ${y/strength}px) scale(1.05)`;
                 button.style.boxShadow = '0 15px 35px rgba(255,107,107,.4)';
-                button.style.transform = 'scale(1.05) translateY(-2px)';
             });
             button.addEventListener('mouseleave', () => {
+                button.style.transform = 'translate(0,0) scale(1)';
                 button.style.boxShadow = '0 10px 30px rgba(255,107,107,.3)';
-                button.style.transform = 'scale(1) translateY(0)';
             });
         });
     </script>

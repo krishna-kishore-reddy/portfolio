@@ -9,22 +9,23 @@
   <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' x2='1' y1='0' y2='1'><stop offset='0%' stop-color='%23ff6b6b'/><stop offset='100%' stop-color='%234ecdc4'/></linearGradient></defs><rect width='64' height='64' rx='12' fill='%230a0a0a'/><g transform='translate(32 32)'><g fill='none' stroke='url(%23g)' stroke-width='4'><circle r='14'/><path d='M0-24 l4 0 M0 24 l-4 0 M24 0 l0 4 M-24 0 l0 -4 M17 -17 l3 3 M-17 17 l-3 -3 M-17 -17 l-3 3 M17 17 l3 -3'/></g></g><text x='50%' y='54%' font-family='Arial' font-size='16' text-anchor='middle' fill='url(%23g)' font-weight='700'>KR</text></svg>"/>
 
   <style>
-    :root { --grad: linear-gradient(45deg,#ff6b6b,#4ecdc4); }
+    :root { --grad: linear-gradient(45deg,#ff6b6b,#4ecdc4,#45b7d1); }
     body { margin:0; font-family: Inter, system-ui, Arial, sans-serif; background:#0a0a0a; color:#fff; }
     header { position:sticky; top:0; background:rgba(0,0,0,.7); backdrop-filter:blur(12px); padding:16px 24px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,.1); z-index:10; }
-    .brand { background:var(--grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:800; letter-spacing:.5px; }
-    .btn { display:inline-block; padding:12px 20px; border-radius:999px; text-decoration:none; color:#fff; background:var(--grad); font-weight:700; transition:.3s transform, .3s box-shadow; }
+    .brand { background:var(--grad); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:800; letter-spacing:.5px; }
+    .btn { display:inline-block; padding:12px 20px; border-radius:999px; text-decoration:none; color:#fff; background:var(--grad); font-weight:700; transition:.3s transform, .3s box-shadow; will-change: transform; }
     .btn:hover { transform:translateY(-2px) scale(1.03); box-shadow:0 10px 24px rgba(255,107,107,.28); }
     main { max-width:1100px; margin:0 auto; padding:32px 24px 80px; }
-    h1 { font-size:2.4rem; margin:12px 0 24px; background:var(--grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    section { padding:32px 0; border-bottom:1px solid rgba(255,255,255,.08); }
-    section:last-of-type { border:none; }
-    h2 { font-size:1.6rem; margin:0 0 10px; color:#4ecdc4; }
+    h1 { font-size:2.4rem; margin:12px 0 24px; background:var(--grad); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    section { padding:28px 24px; margin:18px 0 26px; border:1px solid rgba(255,255,255,.08); border-radius:16px; background:rgba(255,255,255,.04); backdrop-filter:blur(10px); transform:translateY(16px); opacity:0; transition:opacity .6s ease, transform .6s ease; }
+    section.visible { opacity:1; transform:translateY(0); }
+    h2 { font-size:1.6rem; margin:0 0 10px; background:var(--grad); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
     .meta { opacity:.7; font-size:.95rem; margin-bottom:12px; }
     p { line-height:1.7; opacity:.92; }
     ul { line-height:1.8; opacity:.92; padding-left:20px; }
     .tags { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
-    .tag { background:var(--grad); color:#fff; font-size:.78rem; padding:4px 10px; border-radius:999px; }
+    .tag { background:var(--grad); color:#0a0a0a; font-weight:800; letter-spacing:.2px; font-size:.78rem; padding:4px 10px; border-radius:999px; box-shadow:0 4px 14px rgba(78,205,196,.15); }
+    @media (max-width: 768px){ section { padding:22px 16px; } h1{ font-size:2rem; } }
   </style>
 </head>
 <body>
@@ -108,6 +109,28 @@
       </div>
     </section>
   </main>
+  <script>
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+    },{threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+    document.querySelectorAll('section').forEach(s=>io.observe(s));
+
+    const btn = document.querySelector('.btn');
+    if (btn) {
+      const strength = 10;
+      btn.addEventListener('mousemove', (ev)=>{
+        const r = btn.getBoundingClientRect();
+        const x = ev.clientX - (r.left + r.width/2);
+        const y = ev.clientY - (r.top + r.height/2);
+        btn.style.transform = `translate(${x/strength}px, ${y/strength}px) scale(1.03)`;
+        btn.style.boxShadow = '0 12px 28px rgba(255,107,107,.28)';
+      });
+      btn.addEventListener('mouseleave', ()=>{
+        btn.style.transform = 'translate(0,0) scale(1)';
+        btn.style.boxShadow = '0 10px 24px rgba(255,107,107,.28)';
+      });
+    }
+  </script>
 </body>
 </html>
 
