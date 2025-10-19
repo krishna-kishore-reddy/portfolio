@@ -467,11 +467,12 @@
                     </div>
                 </div>
             </div>
-            <form class="contact-form">
-                <input type="text" placeholder="Your Name" required>
-                <input type="email" placeholder="Your Email" required>
-                <textarea placeholder="Your Message" required></textarea>
+            <form class="contact-form" id="contact-form" action="https://formspree.io/f/mrgnklak" method="POST">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
                 <button type="submit" class="btn-primary">Send Message</button>
+                <div id="contact-status" style="margin-top:15px; text-align:center;"></div>
             </form>
         </div>
     </section>
@@ -488,6 +489,18 @@
     </footer>
 
     <script>
+        // Contact form submission handler
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            var status = document.getElementById('contact-status');
+            status.innerHTML = "Sending...";
+            status.style.color = "var(--primary-orange)";
+            // Let the form submit to Formspree, then show a message
+            setTimeout(function() {
+                status.innerHTML = "Thank you! Your message has been sent.";
+                status.style.color = "#4ecdc4";
+            }, 1000);
+        });
+
         // Smooth scroll for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
