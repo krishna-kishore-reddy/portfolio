@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A practical guide to OpenTelemetry Collector architecture, Elasticsearch and Kibana, Kubernetes Operator deployments, VM agents and an interactive configuration generator.">
+<meta name="theme-color" content="#080d18">
+<title>OpenTelemetry Collector: Production Guide & Generator | Krishna Kishore Reddy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{--bg:#080d18;--panel:#101827;--panel2:#142238;--text:#edf3ff;--muted:#9aa9bf;--line:rgba(180,200,230,.15);--cyan:#67e8f9;--blue:#7c9cff;--green:#8de5b2;--red:#ff9caa;--max:1160px}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:85px;background-color:var(--bg);background-image:radial-gradient(ellipse at 75% 0%,rgba(48,91,160,.19),transparent 38%)}body{margin:0;background:transparent;color:var(--text);font:15px/1.75 Manrope,system-ui,sans-serif}
+a{color:var(--cyan);text-decoration:none}.wrap{width:min(var(--max),calc(100% - 36px));margin:auto}
+header{position:sticky;top:0;z-index:10;background:rgba(8,13,24,.9);backdrop-filter:blur(15px);border-bottom:1px solid var(--line)}
+nav{height:66px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:800;color:var(--text)}.brand span{color:var(--cyan)}.navlinks{display:flex;gap:22px;font-size:12px;color:var(--muted)}
+.hero{padding:76px 0 52px;border-bottom:1px solid var(--line)}.eyebrow,.mono{font:11px 'DM Mono',monospace;letter-spacing:1.3px;text-transform:uppercase;color:var(--cyan)}
+h1{font-size:clamp(36px,5vw,62px);line-height:1.12;letter-spacing:-2.8px;margin:18px 0}.hero p{max-width:800px;color:var(--muted);font-size:17px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}.pill,.tag{border:1px solid var(--line);border-radius:30px;padding:5px 10px;font:10px 'DM Mono',monospace;color:#c6d4e8}
+main{padding-bottom:80px}.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:46px;padding-top:42px}.toc{position:sticky;top:90px;align-self:start;border:1px solid var(--line);border-radius:14px;background:rgba(16,24,39,.7);padding:18px}.toc b{display:block;margin-bottom:10px}.toc a{display:block;color:var(--muted);font-size:12px;padding:5px 8px;border-left:2px solid transparent;border-radius:0 5px 5px 0;transition:color .15s,background .15s,border-color .15s}.toc a:hover,.toc a.active{color:var(--cyan);background:rgba(103,232,249,.08);border-left-color:var(--cyan)}.toc a:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+article h2{font-size:27px;letter-spacing:-1px;margin:48px 0 12px}article h3{font-size:18px;margin:25px 0 8px}article p,article li{color:#bac7d9}article strong{color:var(--text)}article ul{padding-left:22px}
+.callout{border-left:3px solid var(--cyan);background:rgba(103,232,249,.06);padding:15px 18px;border-radius:0 10px 10px 0;color:#c8d6e8;margin:20px 0}.must-read{border:1px solid rgba(103,232,249,.38);border-left:4px solid var(--cyan);background:linear-gradient(100deg,rgba(103,232,249,.12),rgba(103,232,249,.035));box-shadow:0 8px 26px rgba(0,0,0,.14)}.must-read strong:first-child{color:var(--cyan)}
+.diagram{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:20px 0}.step{border:1px solid var(--line);background:var(--panel);padding:14px;border-radius:11px;text-align:center}.step b{display:block;color:var(--cyan);font-size:13px}.step small{color:var(--muted);font-size:11px}
+pre{white-space:pre;overflow:auto;background:#070c14;border:1px solid var(--line);border-radius:12px;padding:17px;color:#c8e6ee;font:12px/1.7 'DM Mono',monospace}code{font-family:'DM Mono',monospace;color:#aeeaf2}
+.generator{margin-top:58px;border:1px solid rgba(103,232,249,.28);border-radius:18px;overflow:hidden;background:linear-gradient(145deg,rgba(17,29,47,.84),rgba(10,17,29,.84));box-shadow:0 25px 80px rgba(0,0,0,.2)}
+.gen-head{padding:25px;border-bottom:1px solid var(--line)}.gen-head h2{margin:6px 0;font-size:29px}.gen-head p{margin:0;color:var(--muted)}
+.gen-body{padding:22px;display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.15fr);gap:22px}
+.panel{background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:13px;padding:17px;min-width:0}.panel h3{margin:0 0 14px;font-size:15px}
+.field{margin:13px 0}.field label,.field-label{display:block;font-size:12px;color:#cbd8e9;margin-bottom:6px;font-weight:700}
+select,input[type=text]{width:100%;background:#091321;color:var(--text);border:1px solid #30415a;border-radius:8px;padding:10px;font:12px 'DM Mono',monospace;outline:none}
+select:focus,input:focus{border-color:var(--cyan)}.hint{font-size:10px;color:var(--muted);display:block;margin-top:5px}
+.checkgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.check{display:flex;gap:8px;align-items:flex-start;font-size:11px;color:#c1cee0;background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:8px;padding:8px}.check input{accent-color:#67e8f9;margin-top:3px}
+.group{border-top:1px solid var(--line);padding-top:12px;margin-top:14px}.group:first-of-type{border-top:0;padding-top:0}.group-title{font:10px 'DM Mono',monospace;color:var(--cyan);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.btn{border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--text);padding:10px 13px;font-weight:700;font-size:11px;cursor:pointer}.btn.primary{background:var(--cyan);color:#06111a;border-color:var(--cyan)}.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tab{background:transparent;color:var(--muted);border:1px solid var(--line);padding:7px 10px;border-radius:7px;cursor:pointer;font-size:11px}.tab.active{color:var(--cyan);border-color:var(--cyan)}
+.output{min-height:420px;max-height:650px;margin:0;font-size:11px}.status{font-size:11px;color:var(--muted);margin-top:10px}.warning{color:#ffd58a}.error{color:var(--red)}.success{color:var(--green)}
+footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:11px}
+#cmdRain{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.5;pointer-events:none}
+.hero,main,footer{position:relative;z-index:1}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.toc{position:static;display:grid;grid-template-columns:repeat(2,1fr)}.diagram{grid-template-columns:repeat(2,1fr)}.gen-body{grid-template-columns:1fr}}
+@media(max-width:560px){.navlinks{gap:10px;font-size:10px}.hero{padding:52px 0 35px}.checkgrid{grid-template-columns:1fr 1fr}.gen-body{padding:12px}.panel{padding:13px}.toc{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){#cmdRain{display:none}html{scroll-behavior:auto}}
+.seg{display:flex;gap:7px;flex-wrap:wrap}.seg button{background:transparent;border:1px solid var(--line);color:#c1cee0;border-radius:9px;padding:8px 12px;font:700 11px Manrope,sans-serif;cursor:pointer;text-align:left}
+.seg button.on{border-color:var(--cyan);color:var(--cyan);background:rgba(103,232,249,.08)}.seg button small{display:block;font-weight:400;color:var(--muted);font-size:10px;margin-top:2px}
+.seg button.chip{font:11px 'DM Mono',monospace;border-radius:20px;padding:5px 10px}.chip:before{content:"+ "}.chip:hover{border-color:var(--cyan);color:var(--cyan)}
+.modes{display:grid;gap:7px;margin:10px 0}.modes button{width:100%}.modes button small{line-height:1.5}
+.card{border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:10px;background:rgba(255,255,255,.03);padding:11px 14px 4px;margin:10px 0}
+.chead{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.chead b{font:500 12px 'DM Mono',monospace}.badge{font:9px 'DM Mono',monospace;border:1px solid var(--line);border-radius:12px;padding:2px 7px;color:var(--muted)}
+.chead .rm{margin-left:auto;background:none;border:0;color:var(--muted);font-size:18px;cursor:pointer;line-height:1}.chead .rm:hover{color:var(--red)}
+.cinfo{font:10.5px/1.6 'DM Mono',monospace;color:var(--green);margin:6px 0 2px}
+.field label.sw{display:flex;align-items:center;gap:9px;font-weight:600;margin:0}
+.sw input{appearance:none;-webkit-appearance:none;flex:none;width:30px;height:17px;border-radius:9px;background:#30415a;position:relative;cursor:pointer;margin:0}.sw input:checked{background:var(--cyan)}
+.sw input:before{content:"";position:absolute;left:2px;top:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:left .15s}.sw input:checked:before{left:15px}
+textarea{width:100%;min-height:70px;background:#091321;color:var(--text);border:1px solid #30415a;border-radius:8px;padding:10px;font:12px 'DM Mono',monospace;outline:none}
+.msgs{margin-top:12px;font-size:11px;line-height:1.55}.msgs div{margin:4px 0}.empty{color:var(--muted);font-size:11px;margin:4px 0}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.note{color:var(--muted)}
+.desc{color:var(--muted);font-size:11.5px;line-height:1.55;margin:6px 0 4px}
+</style>
+</head>
+<body>
+<canvas id="cmdRain" aria-hidden="true"></canvas>
+<header><div class="wrap"><nav><a class="brand" href="../index.html">KKR<span>.</span> / ENGINEERING NOTES</a><div class="navlinks"><a href="../index.html">Portfolio</a><a href="#guide">Guide</a><a href="#generator">Generator</a></div></nav></div></header>
+<div class="wrap hero">
+ <div class="eyebrow">OBSERVABILITY · HANDS-ON GUIDE · INTERACTIVE TOOL</div>
+ <h1>OpenTelemetry Collector:<br><span style="color:var(--cyan)">from telemetry to insight.</span></h1>
+ <p>A practical introduction to collecting, processing and exporting logs, metrics and traces across Kubernetes clusters and virtual machines — with an interactive configuration generator.</p>
+ <div class="pills"><span class="pill">OTel Collector Contrib</span><span class="pill">Kubernetes Operator</span><span class="pill">Elasticsearch + Kibana</span><span class="pill">Linux VMs</span></div>
+</div>
+<main class="wrap" id="guide">
+<div class="layout">
+<aside class="toc" aria-label="Article sections"><b>IN THIS ARTICLE</b><a href="#why">Why a Collector?</a><a href="#architecture">Architecture</a><a href="#signals">Logs, metrics & traces</a><a href="#elastic">Elasticsearch & Kibana</a><a href="#comparison">Collector vs ELK / EFK</a><a href="#kubernetes">Kubernetes deployment</a><a href="#vm">VM deployment</a><a href="#verify">Deploy and verify</a><a href="#production">Production checklist</a><a href="#generator">Configuration generator</a></aside>
+<article>
+<section id="why"><div class="mono">01 / THE PROBLEM</div><h2>Why do we need the OpenTelemetry Collector?</h2>
+<p>Modern applications run across containers, Kubernetes, virtual machines, managed databases and cloud services. Each component can produce telemetry in a different format and often has a different integration method for each monitoring backend.</p>
+<p>Without a common collection layer, teams end up maintaining multiple agents, vendor-specific SDK integrations, custom forwarding scripts and duplicated configuration. A backend migration can then require changes across many applications.</p>
+<div class="callout"><strong>OpenTelemetry Collector is a vendor-neutral telemetry pipeline.</strong> It receives telemetry, optionally enriches or transforms it, and exports it to one or more observability backends. Applications can send OTLP to the Collector instead of being coupled directly to a particular vendor.</div>
+<ul><li>Centralize telemetry collection and routing.</li><li>Separate application instrumentation from backend destinations.</li><li>Apply batching, filtering, enrichment and sampling consistently.</li><li>Reduce direct application-to-vendor coupling.</li><li>Support multiple destinations and migration strategies.</li></ul></section>
+<section id="architecture"><div class="mono">02 / PIPELINE</div><h2>How the Collector works</h2>
+<p>A Collector pipeline is built from three main component types. Components must be enabled in the service pipelines to become active.</p>
+<div class="diagram"><div class="step"><b>RECEIVERS</b><small>Accept telemetry</small></div><div class="step"><b>PROCESSORS</b><small>Enrich / filter / batch</small></div><div class="step"><b>EXPORTERS</b><small>Send telemetry</small></div><div class="step"><b>BACKENDS</b><small>Store / query / alert</small></div></div>
+<p><strong>Receivers</strong> ingest data through protocols or sources such as OTLP, host metrics, files and Prometheus scrape endpoints. <strong>Processors</strong> modify or control data in flight. <strong>Exporters</strong> deliver the resulting telemetry to destinations.</p>
+<h3>Agent and gateway patterns</h3>
+<ul><li><strong>Agent:</strong> a Collector runs close to the workload, commonly as a Kubernetes DaemonSet or a VM service. It reads local files, host metrics and application telemetry.</li><li><strong>Gateway:</strong> a horizontally scalable Collector service receives telemetry from agents or applications, centralizes processing, and exports to backends.</li><li><strong>Hybrid:</strong> agents handle node-local collection while gateways handle shared processing, routing and backend credentials.</li></ul>
+<pre>Application / Host / Kubernetes
+             |
+             v
+       OTel Agent(s)
+             |
+             v
+       OTel Gateway
+        /    |     \
+       v     v      v
+   Elastic  Tempo  Datadog</pre></section>
+<section id="signals"><div class="mono">03 / TELEMETRY</div><h2>Logs, metrics and distributed traces</h2>
+<h3>Logs</h3><p>Timestamped records describing events. A filelog receiver can tail application log files; Kubernetes node agents can collect container log files. Parse and enrich records carefully, and avoid collecting secrets or unnecessary personal data.</p>
+<h3>Metrics</h3><p>Numeric measurements over time, such as request rate, error count, latency histograms, CPU and memory. Host metrics and Prometheus receivers are common sources. Metrics are useful for dashboards, alerting and capacity analysis.</p>
+<h3>Traces</h3><p>A trace follows a request across services. Spans capture individual operations and their parent-child relationships. OTLP is the common transport; trace context propagation in application code is essential for end-to-end traces.</p>
+<div class="callout must-read"><strong>Must read — pipeline basics:</strong> A Collector can handle all three signals, but each signal needs its own pipeline and compatible receiver/exporter components. Selecting a receiver does not automatically create a pipeline.</div></section>
+<section id="elastic"><div class="mono">04 / ELASTIC INTEGRATION</div><h2>Using OpenTelemetry with Elasticsearch and Kibana</h2>
+<p>Elasticsearch stores and indexes data; Kibana provides search, visualization and operational workflows. The Collector can send supported telemetry to Elasticsearch using the Elasticsearch exporter, or send OTLP to an OpenTelemetry-compatible intake path where appropriate.</p>
+<p>A typical architecture is:</p>
+<pre>Apps / Kubernetes / VMs
+          |
+          v
+   OpenTelemetry Collector
+          |
+          |  Elasticsearch exporter
+          v
+    Elasticsearch cluster
+          |
+          v
+        Kibana
+   Discover / Dashboards</pre>
+<p>For a production design, decide how logs, metrics and traces should be indexed, mapped, retained and secured. Verify the exporter and backend versions you deploy, and test the exact signal mapping before rolling it out widely. Kibana data views / data views or integrations may need to be configured before data appears in Discover.</p>
+<p>For the Collector-to-Elasticsearch connection, use TLS verification, a least-privilege credential, and a Kubernetes Secret or protected VM environment file. Do not commit API keys or passwords into Git.</p></section>
+<section id="comparison"><div class="mono">05 / CHOOSING AN INGESTION LAYER</div><h2>OpenTelemetry Collector vs ELK and EFK</h2>
+<div class="callout must-read"><strong>Must read — what the names mean:</strong> ELK is Elasticsearch, Logstash and Kibana. EFK is Elasticsearch, Fluentd (or Fluent Bit) and Kibana. The “C” in ECK means <strong>Cloud on Kubernetes</strong>; it is Elastic’s Kubernetes Operator, not the OpenTelemetry Collector. This section compares the Collector with the ELK/EFK ingestion agents.</div>
+<p><strong>OpenTelemetry Collector is backend-agnostic.</strong> It accepts telemetry through supported receivers, processes it in signal-specific pipelines, and exports it to compatible backends. You can send different signals to different destinations, or configure multiple exporters for a signal when fan-out is needed. The Collector is not limited to Elasticsearch.</p>
+<h3>Where the Collector can help</h3>
+<ul><li><strong>Decouple apps from vendors:</strong> instrument once with OpenTelemetry APIs/SDKs and OTLP, then change or add backends mainly in Collector configuration rather than rewriting application instrumentation.</li><li><strong>One pipeline for three signals:</strong> collect and process logs, metrics and traces with shared operational patterns, while keeping each signal’s pipeline and exporter compatibility explicit.</li><li><strong>Route and fan out:</strong> send supported telemetry to one or more compatible destinations, for example during a backend migration or parallel validation.</li><li><strong>Standardized processing:</strong> batch, enrich, filter, redact and sample telemetry before export, using common Collector components and configuration.</li><li><strong>Flexible deployment:</strong> run agents close to workloads as DaemonSets or VM services, gateways centrally, or combine both patterns.</li><li><strong>Broader ecosystem:</strong> use receivers, processors and exporters from the core or Contrib distributions; confirm each component and option is supported by the exact build and version you deploy.</li></ul>
+<p><strong>Important correction:</strong> Fluent Bit, Fluentd and Logstash are <em>not</em> inherently restricted to a single backend. They can be configured with multiple outputs/destinations (subject to plugins, pipeline design and supported data formats). Their ecosystems are commonly used for log collection and processing; OpenTelemetry Collector’s distinguishing advantage is its vendor-neutral, multi-signal telemetry model and standardized OTLP ecosystem—not an exclusive ability to send to multiple backends.</p>
+<p>These tools can also be combined. For example, an existing Fluent Bit or Logstash deployment can forward data to an OpenTelemetry Collector, or the Collector can send data to an Elasticsearch-based stack. Choose based on required sources, processing features, operational familiarity, resource limits and backend support; the Collector is not automatically a replacement for every ELK/EFK capability.</p></section>
+<section id="kubernetes"><div class="mono">06 / KUBERNETES</div><h2>Deploying with the OpenTelemetry Operator</h2>
+<p>Install the OpenTelemetry Operator and its required cert-manager dependency according to the Operator documentation for your Kubernetes distribution. The Operator introduces the <code>OpenTelemetryCollector</code> custom resource definition (CRD). You declare the Collector configuration and deployment strategy; the Operator reconciles the corresponding Kubernetes resources.</p>
+<div class="callout must-read"><strong>Must read — Kubernetes file logs:</strong> Run filelog as a node agent (usually a DaemonSet) and mount the host log directories the receiver reads. For Docker nodes, the generated manifest must mount both <code>/var/log/pods</code> and <code>/var/lib/docker/containers</code>, because pod log paths can resolve through symlinks into Docker’s container log directory.</div>
+<ul><li><strong>Deployment:</strong> suitable for a central gateway or a horizontally scalable stateless Collector service.</li><li><strong>DaemonSet:</strong> one Collector pod per eligible node; useful for node-local logs, host metrics and kubelet-related collection.</li><li><strong>StatefulSet:</strong> useful when stable pod identity or persistent storage is required by the chosen design. It is not automatically the best choice for every Collector.</li></ul>
+<p>Choose the strategy based on data locality, scaling, persistence and failure-domain requirements. Avoid collecting the same host or pod logs multiple times when combining agents and gateways.</p>
+<pre>apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: platform-collector
+  namespace: observability
+spec:
+  mode: deployment
+  image: otel/opentelemetry-collector-contrib:0.165.0
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+      batch: {}
+    exporters:
+      debug:
+        verbosity: basic
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, batch]
+          exporters: [debug]</pre>
+<p>This is an illustrative starter manifest, not a universal production configuration. CRD API versions, image tags and component availability depend on the Operator and Collector release you install.</p></section>
+<section id="vm"><div class="mono">07 / VIRTUAL MACHINES</div><h2>Deploying on Linux virtual machines</h2>
+<p>For VMs, install a compatible Collector Contrib distribution and run it as a systemd service. Keep the YAML configuration separate from the binary and service definition. Use a protected environment file for credentials, restrict file permissions, and grant the service account only the host access it needs.</p>
+<p>The generator below can produce a Collector config, a sample systemd unit and an installation helper. Review the package URL, architecture, checksum and service permissions for your OS before running an installation script in production.</p></section>
+<section id="verify"><div class="mono">DEPLOY AND VERIFY</div><h2>Apply it and check that data arrives</h2>
+<h3>Kubernetes</h3>
+<ul><li>Create the Secret with the command in the Secrets tab. Do not commit real values.</li><li>If ServiceAccount/RBAC generation is enabled, apply its YAML before the Collector CR: <code>kubectl apply -f service-account-rbac.yaml -f your-collector.yaml</code>. If disabled, the Operator creates its default ServiceAccount; Kubernetes API receivers and metadata enrichment need suitable permissions added separately.</li><li>Watch the pods and read their logs: <code>kubectl get pods -n observability</code> and <code>kubectl logs -n observability -l app.kubernetes.io/component=opentelemetry-collector --tail=50</code>.</li><li>While testing, add the debug exporter to one pipeline to see records in the log. Remove it afterwards.</li></ul>
+<h3>Virtual machines</h3>
+<ul><li>Run <code>bash install.sh</code>. Set <code>SHA256</code> first if you want the download verified, using the value from the release page.</li><li>Fill in <code>/etc/otelcol/otelcol.env</code> before the first start. Check with <code>systemctl status</code> and <code>journalctl -u otelcol-contrib -f</code>.</li></ul>
+<h3>Elasticsearch and Kibana</h3>
+<p>With the default routing, documents go to data streams named <code>logs-&lt;dataset&gt;-&lt;namespace&gt;</code>, and the same for metrics and traces. In Kibana, open Stack Management, then Index Management, then Data Streams, and confirm they exist and grow. Create a data view such as <code>logs-*</code> to search them in Discover. Retention and rollover belong to Elasticsearch (data stream lifecycle or ILM), so set them there.</p>
+<p>The API key needs permission to write to those data streams. Grant <code>create_doc</code> and <code>auto_configure</code> on <code>logs-*-*</code>, <code>metrics-*-*</code> and <code>traces-*-*</code>, and check Elastic's exporter documentation for the exact privileges your version needs.</p></section>
+<section id="production"><div class="mono">08 / PRODUCTION READINESS</div><h2>Production checklist</h2>
+<ul><li>Set memory limits and configure the memory_limiter processor early in each pipeline.</li><li>Use batch processing and size queues / retries for the expected traffic and backend availability.</li><li>Secure OTLP endpoints with TLS and authentication where traffic crosses trust boundaries.</li><li>Use Secrets or protected environment files; never hardcode credentials.</li><li>Apply Kubernetes resource requests / limits and appropriate RBAC.</li><li>Monitor Collector health, refused / dropped data, queue saturation and exporter failures.</li><li>Plan for cardinality, sampling, retention, cost and personally identifiable information.</li><li>Pin and test Collector versions; verify component availability in the selected distribution.</li><li>Roll out gradually and validate end-to-end delivery for each signal.</li></ul></section>
+</article>
+</div>
+
+<section id="generator" class="generator">
+ <div class="gen-head"><div class="mono">INTERACTIVE CONFIGURATION BUILDER</div><h2>Build your OpenTelemetry Collector</h2><p>Choose where it runs, then add the sources you need. Each source opens the settings that matter for it, such as parsing steps for filelog, and the YAML updates as you go.</p></div>
+ <div class="gen-body">
+  <div class="panel">
+   <h3>1 · Where will it run?</h3>
+   <div class="seg" id="tgt"></div>
+   <div id="k8s">
+    <div class="modes" id="modes"></div>
+    <div class="field"><label for="ns">Namespace</label><input id="ns" type="text" value="observability"></div>
+    <div class="field"><label for="cr">Collector name</label><input id="cr" type="text" value="platform"></div>
+    <div class="field" id="repf"><label for="rep">Replicas</label><input id="rep" type="text" value="2"></div>
+    <div class="field"><label for="sec">Kubernetes Secret name</label><input id="sec" type="text" value="otel-backend-auth"><span class="hint">Secret values are never typed here. The YAML only references them.</span></div>
+    <div class="field"><label for="lim">Memory limit</label><input id="lim" type="text" value="512Mi"><span class="hint">memory_limiter percentages are a share of this limit.</span></div>
+    <div class="field"><label for="cpu">CPU request</label><input id="cpu" type="text" value="200m"></div>
+    <div class="field"><label class="sw"><input type="checkbox" id="rbac">Generate a ServiceAccount and RBAC YAML</label><span class="hint">When enabled, the Collector uses the generated ServiceAccount. Required for Kubernetes API receivers and metadata enrichment.</span></div>
+   </div>
+   <div id="vm-settings"><div class="field"><label for="svc">systemd service name</label><input id="svc" type="text" value="otelcol-contrib"></div></div>
+   <div class="field"><label for="ver">Collector Contrib version</label><input id="ver" type="text" list="vers" value="0.165.0"><datalist id="vers"><option>0.165.0</option><option>0.164.0</option><option>0.163.2</option><option>0.160.0</option><option>0.152.0</option><option>0.146.0</option><option>0.142.0</option></datalist><span class="hint">v0.165.0 was the latest release on 7 Nov 2026. Pick one or type your own, and use a release you have tested. Component options change between releases.</span></div>
+   <div class="field"><label class="sw"><input type="checkbox" id="hc" checked>Health check endpoint on :13133</label><span class="hint">Use it for liveness and readiness probes, or a load balancer check.</span></div>
+   <h3 style="margin-top:22px">2 · Which signals?</h3>
+   <div class="seg" id="sigs"></div>
+   <h3 style="margin-top:22px">3 · Build the pipeline</h3>
+   <div class="field"><span class="field-label">Start from a preset (resets the pipeline)</span><div class="seg" id="presets"></div></div>
+   <div class="group"><div class="group-title">Sources (receivers)</div><div class="seg" id="pk-r"></div><div id="cd-r"></div></div>
+   <div class="group"><div class="group-title">Processing</div><div class="seg" id="pk-p"></div><div id="cd-p"></div></div>
+   <div class="group"><div class="group-title">Destinations (exporters)</div><div class="seg" id="pk-e"></div><div id="cd-e"></div></div>
+  </div>
+  <div class="panel">
+   <h3>Generated output</h3>
+   <div class="tabs" id="tabs"></div>
+   <pre class="output" id="output" aria-label="Generated configuration"></pre>
+   <div class="actions"><button class="btn primary" id="copy">Copy</button><button class="btn" id="download">Download file</button></div>
+   <div class="msgs" id="msgs" aria-live="polite"></div>
+   <p class="status">Generated in your browser. Nothing is uploaded. Review security settings and component support for your version before applying.</p>
+  </div>
+ </div>
+</section>
+</main>
+<footer><div class="wrap">© <span id="year"></span> Krishna Kishore Reddy · <a href="../index.html">Back to portfolio</a> · Built with HTML, CSS and JavaScript</div></footer>
+<script>
+const ALL=['logs','metrics','traces'],L=s=>String(s||'').split(',').map(x=>x.trim()).filter(Boolean),isO=x=>x&&typeof x==='object';
+const S={target:'k8s',mode:'daemonset',ns:'observability',cr:'platform',rep:2,sec:'otel-backend-auth',svc:'otelcol-contrib',ver:'0.165.0',sig:{logs:1,metrics:1,traces:1},comps:[],tab:null,hc:true,lim:'512Mi',cpu:'200m',rbac:false};
+const k8=()=>S.target==='k8s';
+/* ---- YAML writer ---- */
+const sc=s=>typeof s!=='string'?String(s):(/^[A-Za-z0-9_$\/.~][^#\n]*$/.test(s)&&!/(: |:$|\s$)/.test(s)&&!/^(true|false|null|yes|no|on|off|~|[-+]?[\d.]+)$/i.test(s))?s:JSON.stringify(s);
+const emp=x=>Array.isArray(x)?!x.length:!Object.keys(x).length;
+function Y(v,i=0){const p='  '.repeat(i);
+ if(Array.isArray(v))return v.map(x=>isO(x)?p+'- '+Y(x,i+1).slice((i+1)*2):p+'- '+sc(x)).join('\n');
+ return Object.entries(v).map(([k,x])=>isO(x)?(emp(x)?p+k+': '+(Array.isArray(x)?'[]':'{}'):p+k+':\n'+Y(x,i+1)):p+k+': '+sc(x)).join('\n')}
+/* ---- field helpers ---- */
+const T=(k,l,d,h,show)=>({k,l,t:'text',d,h,show}),B=(k,l,d,h,show)=>({k,l,t:'bool',d,h,show}),Q=(k,l,o,d,h,show)=>({k,l,t:'sel',o,d,h,show}),K=(k,l,d,h,show)=>({k,l,t:'sec',d,h,show}),A=(k,l,d,h,show)=>({k,l,t:'area',d,h,show});
+/* ---- filelog operator chain ---- */
+const fOps=v=>{const o=[];if(v.noempty)o.push({type:'filter',expr:'body == ""'});
+ if(v.fmt.startsWith('container'))o.push({type:'container'});
+ if(v.fmt.endsWith('json'))o.push({type:'json_parser',timestamp:{parse_from:'attributes.'+v.tsf,layout:v.tsl},severity:{parse_from:'attributes.'+v.sevf}});
+ if(v.fmt==='regex')o.push({type:'regex_parser',regex:v.rx,timestamp:{parse_from:'attributes.time',layout:v.rtsl},severity:{parse_from:'attributes.sev'}},{type:'move',from:'attributes.msg',to:'body'});
+ if(v.svc)o.push({type:'add',field:'resource["service.name"]',value:v.svc});return o};
+/* ---- catalog ---- */
+const OG=(n,key,g,ep,h,ins,http)=>({n,g,core:1,f:[T('ep','Endpoint',ep,'Host:port for gRPC, a full URL for HTTP.'),B('ins','Plain text, no TLS',!!ins,'Only for local or lab traffic.'),...(h?[T('hn','Auth header name',h[0],'The header the backend reads the key from.'),K('hv','Header value comes from env var',h[1])]:[])],
+ gen:(v,x)=>{const c={endpoint:v.ep};if(v.ins)c.tls={insecure:true};if(h)c.headers={[v.hn]:(h[2]||'')+x.sec(v.hv)};return[[(http?'otlphttp/':'otlp/')+key,c,g]]}});
+const C={r:{
+ otlp:{n:'OTLP',g:ALL,core:1,f:[B('grpc','gRPC on :4317',true),B('http','HTTP on :4318',true),Q('bind','Listen address',['0.0.0.0','127.0.0.1'],()=>k8()?'0.0.0.0':'127.0.0.1','Use 127.0.0.1 when only local apps send data. Use 0.0.0.0 to accept data from other hosts and protect it with TLS and authentication.')],
+  gen:v=>{const p={};if(v.grpc)p.grpc={endpoint:v.bind+':4317'};if(v.http)p.http={endpoint:v.bind+':4318'};return{protocols:p}}},
+ filelog:{n:'filelog',g:['logs'],f:[
+  Q('src','Which logs?',['all container logs','selected namespaces','custom paths'],'all container logs','Container logs are read from /var/log/pods on every node, so run this as a DaemonSet.',()=>k8()),T('nsl','Namespaces (comma separated)','default',null,v=>k8()&&v.src==='selected namespaces'),T('inc','Files to read (comma separated)','/var/log/app/*.log','Globs are supported. In Kubernetes, paths outside /var/log/pods need their own volume.',v=>!k8()||v.src==='custom paths'),T('exc','Files to skip (comma separated)','','Globs to ignore, for example noisy debug logs.'),B('self','Skip the Collector\'s own logs',true,'Without this the Collector reads its own output and can feed on itself.',()=>k8()),Q('crt','Container runtime',['containerd or CRI-O','Docker'],'containerd or CRI-O','On Docker, the files in /var/log/pods are symlinks into /var/lib/docker/containers, so that folder is mounted into the pod. Without it the files cannot be opened and no logs arrive. containerd and CRI-O need no extra mount.',()=>k8()),
+  Q('start','Where to start in a new file',['end','beginning'],'end','beginning replays old logs on first start.'),
+  Q('fmt','How is each line structured?',()=>k8()?['container','container+json','json','regex','none']:['none','json','regex'],()=>k8()?'container':'none','container removes the CRI or Docker wrapper on each line and adds namespace, pod and container names. container+json also parses application logs that are JSON.'),
+  T('tsf','JSON field holding the timestamp','time',null,v=>v.fmt.endsWith('json')),T('sevf','JSON field holding the level','level',null,v=>v.fmt.endsWith('json')),
+  T('rx','Regex with named groups time, sev, msg','^(?P<time>\\d{4}-\\d{2}-\\d{2} [\\d:,]+) (?P<sev>\\w+) (?P<msg>.*)$',null,v=>v.fmt==='regex'),
+  T('tsl','Timestamp layout (strptime)','%Y-%m-%dT%H:%M:%S.%LZ',null,v=>v.fmt.endsWith('json')),T('rtsl','Timestamp layout (strptime)','%Y-%m-%d %H:%M:%S,%L',null,v=>v.fmt==='regex'),
+  B('multi','Stack traces span several lines',false),T('ms','A new record starts with this pattern','^\\d{4}-\\d{2}-\\d{2}',null,v=>v.multi),
+  B('noempty','Drop empty lines',true),B('paths','Add the file path to each record',true),T('svc','Set service.name (optional)',''),
+  B('ckpt','Remember read position across restarts',true,'Stores checkpoints on disk, so a restart does not re-read or skip logs.')],
+  i:v=>{const o=fOps(v).map(x=>x.type);return'Operator chain: '+(o.length?o.join(' → '):'none, raw lines')},
+  gen:(v,x)=>{const c={include:x.k&&v.src!=='custom paths'?(v.src==='selected namespaces'?L(v.nsl).map(n=>'/var/log/pods/'+n+'_*/*/*.log'):['/var/log/pods/*/*/*.log']):L(v.inc),start_at:v.start};const ex=L(v.exc);if(x.k&&v.self)ex.push('/var/log/pods/'+S.ns+'_'+S.cr+'-collector-*/*/*.log');if(ex.length)c.exclude=ex;if(v.paths)c.include_file_path=true;if(v.multi)c.multiline={line_start_pattern:v.ms};
+   if(v.ckpt){x.ext['file_storage/filelog']={directory:'/var/lib/otelcol/file_storage',create_directory:true};c.storage='file_storage/filelog';x.hp('otel-state','/var/lib/otelcol',1)}
+   if(x.k){x.hp('varlogpods','/var/log/pods');x.root=1;if(v.crt==='Docker')x.vol('docker-container-logs',{hostPath:{path:'/var/lib/docker/containers',type:'DirectoryOrCreate'}},'/var/lib/docker/containers')}
+   const o=fOps(v);if(o.length)c.operators=o;return c}},
+ hostmetrics:{n:'hostmetrics',g:['metrics'],f:[T('iv','Scrape interval','30s'),Q('prof','Scrapers',['basic','standard','full'],'standard','basic: cpu, memory, load. standard adds disk, filesystem, network. full adds paging and processes.')],
+  gen:(v,x)=>{const s={cpu:{},memory:{},load:{}};if(v.prof!=='basic')Object.assign(s,{disk:{},filesystem:{},network:{}});if(v.prof==='full')Object.assign(s,{paging:{},processes:{},process:{}});
+   const c={collection_interval:v.iv,scrapers:s};if(x.k){c.root_path='/hostfs';x.hp('hostfs','/',0,'/hostfs')}return c}},
+ prometheus:{n:'prometheus',g:['metrics'],f:[T('job','Job name','app'),T('iv','Scrape interval','30s'),Q('disc','Find targets by',()=>k8()?['static','kubernetes pods']:['static'],'static','kubernetes pods keeps pods with the prometheus.io/scrape annotation.'),T('tg','Targets (host:port, comma separated)','localhost:9100',null,v=>v.disc==='static')],
+  gen:(v,x)=>{const j={job_name:v.job,scrape_interval:v.iv};if(v.disc==='static')j.static_configs=[{targets:L(v.tg)}];else{x.rb('','pods,namespaces,nodes');j.kubernetes_sd_configs=[{role:'pod'}];j.relabel_configs=[{source_labels:['__meta_kubernetes_pod_annotation_prometheus_io_scrape'],action:'keep',regex:'true'}]}return{config:{scrape_configs:[j]}}}},
+ k8s_cluster:{n:'k8s_cluster',g:['metrics'],t:'k',f:[T('iv','Collection interval','30s')],i:()=>'Cluster-wide data. Run it in exactly one pod (Deployment, 1 replica).',
+  gen:(v,x)=>{x.rb('','events,namespaces,namespaces/status,nodes,nodes/spec,pods,pods/status,replicationcontrollers,replicationcontrollers/status,resourcequotas,services');x.rb('apps','daemonsets,deployments,replicasets,statefulsets');x.rb('batch','jobs,cronjobs');x.rb('autoscaling','horizontalpodautoscalers');return{auth_type:'serviceAccount',collection_interval:v.iv}}},
+ kubeletstats:{n:'kubeletstats',g:['metrics'],t:'k',f:[T('iv','Collection interval','30s'),B('skip','Skip kubelet TLS verification',true,'Common default. Use the kubelet CA in strict environments.')],i:()=>'Pod and container CPU/memory per node. Best in a DaemonSet.',
+  gen:(v,x)=>{x.node();x.rb('','nodes/stats,nodes/proxy','get');const c={collection_interval:v.iv,auth_type:'serviceAccount',endpoint:'https://${env:K8S_NODE_NAME}:10250'};if(v.skip)c.insecure_skip_verify=true;return c}},
+ k8sobjects:{n:'k8sobjects',g:['logs'],t:'k',f:[T('obj','Objects to collect (comma separated)','events'),Q('md','Mode',['watch','pull'],'watch','watch streams changes. pull lists on an interval.')],i:()=>'Collects Kubernetes objects such as events as logs. Run it in one pod.',
+  gen:(v,x)=>{x.rb('',v.obj);return{auth_type:'serviceAccount',objects:L(v.obj).map(n=>v.md==='pull'?{name:n,mode:'pull',interval:'15m'}:{name:n,mode:'watch'})}}},
+ journald:{n:'journald',g:['logs'],t:'v',f:[T('un','Only these units (comma separated, empty for all)',''),Q('pr','Minimum priority',['info','notice','warning','err'],'info')],i:()=>'Needs journalctl on the host and the service user in the systemd-journal group.',
+  gen:v=>{const c={directory:'/var/log/journal',priority:v.pr};if(v.un)c.units=L(v.un);return c}},
+ syslog:{n:'syslog',g:['logs'],f:[Q('pr','Transport',['tcp','udp'],'tcp'),T('port','Port','5140'),Q('fm','Format',['rfc5424','rfc3164'],'rfc5424')],gen:v=>({[v.pr]:{listen_address:'0.0.0.0:'+v.port},protocol:v.fm})},
+ nginx:{n:'nginx',g:['metrics'],f:[T('ep','stub_status URL','http://localhost/nginx_status'),T('iv','Interval','30s')],gen:v=>({endpoint:v.ep,collection_interval:v.iv})},
+ postgresql:{n:'postgresql',g:['metrics'],f:[T('ep','Host:port','localhost:5432'),T('us','Monitoring user','otel_monitor'),K('pw','Password env var','POSTGRES_PASSWORD'),B('ins','Plain text, no TLS',false)],
+  gen:(v,x)=>({endpoint:v.ep,transport:'tcp',username:v.us,password:x.sec(v.pw),tls:{insecure:!!v.ins},collection_interval:'60s'})},
+ redis:{n:'redis',g:['metrics'],f:[T('ep','Host:port','localhost:6379'),B('au','Requires a password',false),K('pw','Password env var','REDIS_PASSWORD',null,v=>v.au)],gen:(v,x)=>{const c={endpoint:v.ep,collection_interval:'30s'};if(v.au)c.password=x.sec(v.pw);return c}}},
+p:{
+ memory_limiter:{n:'memory_limiter',g:ALL,core:1,f:[T('lim','Limit (% of container memory)','75'),T('spk','Spike limit (%)','15')],i:()=>'Keep first in every pipeline. Set a memory limit on the container so the percentage means something.',gen:v=>({check_interval:'1s',limit_percentage:+v.lim,spike_limit_percentage:+v.spk})},
+ k8sattributes:{n:'k8sattributes',g:ALL,t:'k',f:[B('lab','Also copy the app.kubernetes.io/name label',false)],i:()=>'Adds namespace, pod, node and deployment names. Works best on node agents.',
+  gen:(v,x)=>{x.rb('','pods,namespaces,nodes');x.rb('apps','replicasets');const c={auth_type:'serviceAccount',passthrough:false};if(S.mode==='daemonset'){x.node();c.filter={node_from_env_var:'K8S_NODE_NAME'}}
+   c.extract={metadata:['k8s.namespace.name','k8s.pod.name','k8s.pod.uid','k8s.node.name','k8s.deployment.name']};if(v.lab)c.extract.labels=[{tag_name:'app',key:'app.kubernetes.io/name',from:'pod'}];
+   c.pod_association=[{sources:[{from:'resource_attribute',name:'k8s.pod.ip'}]},{sources:[{from:'connection'}]}];return c}},
+ resourcedetection:{n:'resourcedetection',g:ALL,f:[Q('cloud','Cloud detector',['none','ec2','eks','azure','aks','gcp','gke'],'none','Always runs env and system detectors.')],gen:v=>({detectors:['env','system',...(v.cloud==='none'?[]:[v.cloud])],timeout:'2s',override:false})},
+ resource:{n:'resource',g:ALL,f:[T('kv','Attributes to add (key=value, comma separated)','deployment.environment=prod')],gen:v=>({attributes:L(v.kv).filter(p=>p.includes('=')).map(p=>{const i=p.indexOf('=');return{key:p.slice(0,i),value:p.slice(i+1),action:'upsert'}})})},
+ attributes:{n:'attributes',g:ALL,f:[T('keys','Attribute keys (comma separated)','http.request.header.authorization, db.statement'),Q('act','Action',['delete','hash'],'delete','Use this to keep sensitive values out of the backend.')],gen:v=>({actions:L(v.keys).map(k=>({key:k,action:v.act}))})},
+ filter:{n:'filter',g:ALL,f:[Q('sev','Drop logs below severity',['off','INFO','WARN','ERROR'],'off'),B('hc','Drop health-check spans',true),T('path','Health-check path','/healthz',null,v=>v.hc)],
+  gen:v=>{const c={error_mode:'ignore'};if(v.sev!=='off')c.logs={log_record:['severity_number < SEVERITY_NUMBER_'+v.sev]};if(v.hc)c.traces={span:['attributes["http.target"] == "'+v.path+'"']};return c}},
+ transform:{n:'transform',g:ALL,f:[Q('cx','Applies to',['log','span','datapoint'],'log'),A('st','OTTL statements, one per line','set(attributes["deployment.environment"], "prod")')],
+  gen:v=>({error_mode:'ignore',[{log:'log_statements',span:'trace_statements',datapoint:'metric_statements'}[v.cx]]:[{context:v.cx,statements:v.st.split('\n').map(s=>s.trim()).filter(Boolean)}]})},
+ tail_sampling:{n:'tail_sampling',g:['traces'],f:[T('wait','Wait for a trace to finish','10s'),B('err','Keep every trace with an error',true),T('lat','Keep traces slower than (ms, 0 = off)','500'),T('pct','Keep this % of the rest','10')],i:()=>'Needs all spans of a trace in one pod. Run it in a gateway, not on every node.',
+  gen:v=>{const p=[];if(v.err)p.push({name:'errors',type:'status_code',status_code:{status_codes:['ERROR']}});if(+v.lat>0)p.push({name:'slow',type:'latency',latency:{threshold_ms:+v.lat}});p.push({name:'baseline',type:'probabilistic',probabilistic:{sampling_percentage:+v.pct}});return{decision_wait:v.wait,policies:p}}},
+ batch:{n:'batch',g:ALL,core:1,f:[T('sz','Batch size','8192'),T('to','Flush timeout','5s')],gen:v=>({send_batch_size:+v.sz,timeout:v.to})}},
+e:{
+ elasticsearch:{n:'Elasticsearch',g:ALL,f:[
+  B('eck','Cluster is managed by ECK',()=>k8(),'Fills in the service URL, the CA certificate and the elastic user password from the Secrets ECK creates.',()=>k8()),
+  T('es','Elasticsearch resource name','quickstart',null,v=>v.eck),T('esns','Elasticsearch namespace','elastic',null,v=>v.eck),
+  T('ep','Elasticsearch URL','https://elasticsearch.example.com:9200',null,v=>!v.eck),
+  Q('auth','Authentication',['api_key','basic'],'api_key','Prefer an API key with the least privilege that works.'),
+  K('key','API key env var','ELASTIC_API_KEY',null,v=>v.auth==='api_key'),T('user','Username','elastic',null,v=>!v.eck&&v.auth==='basic'),K('pw','Password env var','ELASTIC_PASSWORD',null,v=>!v.eck&&v.auth==='basic'),
+  B('skip','Skip TLS verification (lab only)',false,null,v=>!v.eck),
+  Q('map','Document mapping',['otel','ecs','none'],'otel','otel stores OpenTelemetry data natively and needs the OpenTelemetry index templates, which ship with recent Elasticsearch versions. ecs maps to Elastic Common Schema.'),
+  Q('rt','Where do documents go?',['data streams','one index per signal'],'data streams','data streams: names follow logs-<dataset>-<namespace>, and the same for metrics and traces. Retention and rollover are set in Elasticsearch (lifecycle or ILM), not in the Collector.'),
+  T('ds','Dataset (optional)','','Empty means generic. In otel mode ".otel" is added. Set as a resource attribute for every exporter in the same pipelines.',v=>v.rt==='data streams'),T('dns','Namespace (optional)','','Empty means default. Use it to split environments, for example prod.',v=>v.rt==='data streams'),
+  T('li','Logs index or data stream','logs-app-prod',null,v=>v.rt!=='data streams'),T('mi','Metrics index or data stream','metrics-app-prod',null,v=>v.rt!=='data streams'),T('ti','Traces index or data stream','traces-app-prod',null,v=>v.rt!=='data streams'),
+  B('qe','Queue batches while Elasticsearch is slow',true,'Retries with backoff and buffers up to the queue size before data is dropped.'),T('qs','Queue size (batches)','1000',null,v=>v.qe),B('pq','Keep the queue on disk',false,'Survives restarts. Needs storage that persists: the DaemonSet hostPath, or a PVC on a StatefulSet.',v=>v.qe),T('re','Give up retrying after','300s','Data still failing after this is dropped.')],
+  i:v=>v.rt==='data streams'?'Writes to logs-'+(v.ds||'generic')+(v.map==='otel'?'.otel':'')+'-'+(v.dns||'default')+' (same pattern for metrics and traces).':'Writes to the fixed names below. Retention stays in Elasticsearch.',
+  gen:(v,x)=>{const c={mapping:{mode:v.map}};
+   if(v.eck){c.endpoints=['https://'+v.es+'-es-http.'+v.esns+'.svc:9200'];c.tls={ca_file:'/etc/es-ca/ca.crt'};x.vol('es-ca',{secret:{secretName:v.es+'-es-http-certs-public'}},'/etc/es-ca');
+    if(v.esns!==S.ns)x.w.push('The ECK CA Secret lives in "'+v.esns+'". Copy it into "'+S.ns+'" or run the Collector there.');
+    if(v.auth==='basic'){c.user='elastic';c.password='${env:ELASTIC_PASSWORD}';x.env.push({name:'ELASTIC_PASSWORD',valueFrom:{secretKeyRef:{name:v.es+'-es-elastic-user',key:'elastic'}}})}}
+   else{c.endpoints=[v.ep];if(v.skip)c.tls={insecure_skip_verify:true};if(v.auth==='basic'){c.user=v.user;c.password=x.sec(v.pw)}}
+   if(v.auth==='api_key')c.api_key=x.sec(v.key);if(v.rt==='data streams'){const a=[];if(v.ds)a.push({key:'data_stream.dataset',value:v.ds,action:'upsert'});if(v.dns)a.push({key:'data_stream.namespace',value:v.dns,action:'upsert'});if(a.length)x.pre.push({key:'resource/es_routing',cfg:{attributes:a}})}else{if(v.li)c.logs_index=v.li;if(v.mi)c.metrics_index=v.mi;if(v.ti)c.traces_index=v.ti}
+   c.retry_on_failure={enabled:true,initial_interval:'1s',max_interval:'30s',max_elapsed_time:v.re};
+   if(v.qe){c.sending_queue={enabled:true,queue_size:+v.qs||1000};if(v.pq){x.ext['file_storage/queue']={directory:'/var/lib/otelcol/queue',create_directory:true};c.sending_queue.storage='file_storage/queue';x.hp('otel-state','/var/lib/otelcol',1);x.root=1;if(x.k&&S.mode!=='daemonset')x.w.push('A disk queue on a '+S.mode+' uses a hostPath. Prefer a PVC (volumeClaimTemplates on a StatefulSet).')}}else c.sending_queue={enabled:false};
+   return[['elasticsearch',c,ALL]]}},
+ opensearch:{n:'OpenSearch',g:['logs','traces'],f:[T('ep','OpenSearch URL','https://opensearch.example.com:9200'),T('ds','Dataset','default')],gen:v=>[['opensearch',{http:{endpoint:v.ep},dataset:v.ds},['logs','traces']]]},
+ jaeger:OG('Jaeger (OTLP)','jaeger',['traces'],'jaeger-collector:4317',null,true),
+ tempo:OG('Grafana Tempo','tempo',['traces'],'tempo:4317',null,true),
+ loki:OG('Grafana Loki (OTLP/HTTP)','loki',['logs'],'http://loki:3100/otlp',null,false,true),
+ mimir:{n:'Mimir / Prometheus remote write',g:['metrics'],f:[T('ep','Push URL','http://mimir:9009/api/v1/push')],gen:v=>[['prometheusremotewrite',{endpoint:v.ep},['metrics']]]},
+ datadog:{n:'Datadog',g:ALL,f:[K('key','API key env var','DD_API_KEY'),Q('site','Site',['datadoghq.com','datadoghq.eu','us3.datadoghq.com','us5.datadoghq.com','ap1.datadoghq.com'],'datadoghq.com')],gen:(v,x)=>[['datadog',{api:{key:x.sec(v.key),site:v.site}},ALL]]},
+ newrelic:OG('New Relic','newrelic',ALL,'otlp.nr-data.net:4317',['api-key','NEW_RELIC_LICENSE_KEY']),
+ splunk:{n:'Splunk HEC',g:ALL,f:[T('ep','HEC URL','https://splunk.example.com:8088/services/collector'),K('tok','HEC token env var','SPLUNK_HEC_TOKEN'),T('ix','Index','main')],gen:(v,x)=>[['splunk_hec',{endpoint:v.ep,token:x.sec(v.tok),source:'otel',sourcetype:'otel',index:v.ix},ALL]]},
+ dynatrace:OG('Dynatrace','dynatrace',ALL,'https://<env-id>.live.dynatrace.com/api/v2/otlp',['Authorization','DT_API_TOKEN','Api-Token '],false,true),
+ honeycomb:OG('Honeycomb','honeycomb',ALL,'api.honeycomb.io:443',['x-honeycomb-team','HONEYCOMB_API_KEY']),
+ azure:{n:'Azure Monitor',g:ALL,f:[K('cs','Connection string env var','APPLICATIONINSIGHTS_CONNECTION_STRING')],gen:(v,x)=>[['azuremonitor',{connection_string:x.sec(v.cs)},ALL]]},
+ aws:{n:'AWS (CloudWatch, EMF, X-Ray)',g:ALL,f:[T('rg','Region','us-east-1'),T('grp','CloudWatch log group','/otel/logs'),T('ns','Metrics namespace','OTel/Metrics')],i:()=>'Credentials come from the IAM role (IRSA or instance profile), not from the config.',
+  gen:v=>[['awscloudwatchlogs',{log_group_name:v.grp,log_stream_name:'otel',region:v.rg},['logs']],['awsemf',{namespace:v.ns,region:v.rg},['metrics']],['awsxray',{region:v.rg},['traces']]]},
+ gcp:{n:'Google Cloud',g:ALL,f:[T('pj','Project ID','my-project')],gen:v=>[['googlecloud',{project:v.pj},ALL]]},
+ kafka:{n:'Kafka',g:ALL,f:[T('br','Brokers (comma separated)','kafka:9092')],gen:v=>[['kafka',{brokers:L(v.br),encoding:'otlp_proto'},ALL]]},
+ otlp:OG('OTLP gRPC (generic)','generic',ALL,'collector.example.com:4317'),
+ otlphttp:OG('OTLP/HTTP (generic)','generic',ALL,'https://collector.example.com:4318',null,false,true),
+ debug:{n:'debug (print to log)',g:ALL,core:1,f:[Q('vb','Verbosity',['basic','detailed'],'basic')],gen:v=>[['debug',{verbosity:v.vb},ALL]]}}};
+C.r.filelog.f.find(f=>f.k==='crt').d='Docker';
+const DESC={'r.otlp':'Receives telemetry that your apps push over OTLP. Point each app\'s OTLP exporter at this Collector.','r.filelog':'Tails log files and turns each line into a log record. The operator chain runs on every line, in order.','r.hostmetrics':'Reads CPU, memory, disk and network figures from the machine the Collector runs on.','r.prometheus':'Scrapes Prometheus-format /metrics endpoints, the way a Prometheus server would.','r.k8s_cluster':'Reports cluster state: pod phases, deployment replicas, node conditions.','r.kubeletstats':'Reads pod and container CPU and memory usage from each node\'s kubelet.','r.k8sobjects':'Pulls or watches Kubernetes objects, for example Events, and emits them as logs.','r.journald':'Reads the systemd journal.','r.syslog':'Listens for syslog messages from network devices and older apps.','r.nginx':'Reads connection and request counters from the nginx stub_status page.','r.postgresql':'Reads database statistics from PostgreSQL.','r.redis':'Reads server statistics from Redis.',
+'p.memory_limiter':'Refuses new data when memory gets high, so the Collector is not killed for running out of memory.','p.k8sattributes':'Looks up the pod that sent each record and adds namespace, pod, node and deployment names.','p.resourcedetection':'Adds facts about the host and cloud, such as host name and region.','p.resource':'Adds fixed attributes to every record, for example the environment.','p.attributes':'Deletes or hashes attributes. Use it to keep secrets and personal data out of the backend.','p.filter':'Drops records you do not need, which cuts storage cost.','p.transform':'Edits records with OTTL statements, the Collector\'s expression language.','p.tail_sampling':'Decides which traces to keep after they finish, so errors and slow traces are always kept.','p.batch':'Groups records into larger requests, which backends handle better.',
+'e.elasticsearch':'Writes logs, metrics and traces into Elasticsearch, where Kibana reads them.','e.opensearch':'Writes logs and traces into OpenSearch.','e.jaeger':'Sends traces to Jaeger over OTLP.','e.tempo':'Sends traces to Grafana Tempo over OTLP.','e.loki':'Sends logs to Grafana Loki through its OTLP endpoint.','e.mimir':'Sends metrics to Mimir or Prometheus using remote write.','e.datadog':'Sends all three signals to Datadog.','e.newrelic':'Sends all three signals to New Relic over OTLP.','e.splunk':'Sends data to Splunk through the HTTP Event Collector.','e.dynatrace':'Sends all three signals to Dynatrace over OTLP/HTTP.','e.honeycomb':'Sends all three signals to Honeycomb over OTLP.','e.azure':'Sends all three signals to Azure Monitor (Application Insights).','e.aws':'Sends logs to CloudWatch Logs, metrics to CloudWatch (EMF) and traces to X-Ray.','e.gcp':'Sends all three signals to Google Cloud.','e.kafka':'Publishes telemetry to Kafka topics for later processing.','e.otlp':'Forwards everything over OTLP/gRPC to another Collector or a backend.','e.otlphttp':'Forwards everything over OTLP/HTTP to another Collector or a backend.','e.debug':'Prints telemetry to the Collector log. Use it for testing, not in production.'};
+const HX={'r.hostmetrics.iv':'How often to read the host. 30s to 60s is typical.','r.prometheus.job':'Label added to every scraped series.','r.prometheus.iv':'How often to scrape.','r.prometheus.tg':'For example localhost:9100 for node_exporter.','r.k8s_cluster.iv':'How often to read cluster state.','r.kubeletstats.iv':'How often to read the kubelet.','r.k8sobjects.obj':'Plural resource names, for example events or pods.','r.journald.un':'For example sshd.service. Empty reads every unit.','r.journald.pr':'Entries below this priority are skipped.','r.syslog.pr':'tcp is reliable. udp is lighter but can lose messages.','r.syslog.port':'The port your devices send to.','r.syslog.fm':'rfc5424 is the modern format. rfc3164 is the older BSD format.','r.nginx.ep':'Needs stub_status enabled in nginx.','r.nginx.iv':'How often to scrape.','r.postgresql.us':'Create a read-only user for monitoring, for example with the pg_monitor role.','r.postgresql.ep':'Where PostgreSQL listens.','r.postgresql.ins':'Leave off when PostgreSQL uses TLS.','r.redis.ep':'Where Redis listens.','r.redis.au':'Turn on if Redis uses requirepass or ACLs.',
+'r.filelog.svc':'Sets service.name on each record. Leave empty when k8sattributes or your parser provides it.','r.filelog.paths':'Adds log.file.path, which shows which file a line came from.','r.filelog.noempty':'Empty lines add cost and no information.','r.filelog.multi':'Joins the lines of a stack trace into one record.','r.filelog.ms':'Lines that do not match are appended to the previous record.','r.filelog.rx':'RE2 regex. The groups time, sev and msg are used by the steps after it.','r.filelog.tsf':'Name of the JSON key that holds the time.','r.filelog.sevf':'Name of the JSON key that holds the level.','r.filelog.tsl':'strptime layout of the time value.','r.filelog.rtsl':'strptime layout of the time group.','r.filelog.fmt':'How each line is parsed.',
+'p.memory_limiter.lim':'Soft limit. Above it the Collector starts refusing data.','p.memory_limiter.spk':'Headroom for sudden bursts. Must be lower than the limit.','p.batch.sz':'Records per request. 8192 is the default.','p.batch.to':'Longest wait before a partial batch is sent.','p.resource.kv':'For example deployment.environment=prod, team=platform.','p.filter.sev':'Drops log records below this level.','p.filter.hc':'Health checks create many spans with little value.','p.filter.path':'The http.target value to drop.','p.transform.cx':'Which kind of record the statements run on.','p.transform.st':'See the OTTL documentation for functions. Errors are ignored, not fatal.','p.tail_sampling.wait':'How long to wait for the rest of a trace. Longer uses more memory.','p.tail_sampling.err':'Policy: keep every trace that has an error span.','p.tail_sampling.lat':'Policy: keep slow traces. 0 turns it off.','p.tail_sampling.pct':'Policy: keep this share of everything else.',
+'e.opensearch.ep':'Where OpenSearch listens.','e.opensearch.ds':'Part of the index name: ss4o_logs-<dataset>-<namespace>.','e.mimir.ep':'Mimir push URL or a Prometheus remote-write receiver.','e.splunk.ep':'The HEC URL, usually ending in /services/collector.','e.splunk.ix':'The Splunk index. It must accept the signals you send.','e.datadog.site':'Match the region your Datadog account uses.','e.aws.rg':'Region for CloudWatch and X-Ray.','e.aws.grp':'CloudWatch log group. Create it first or allow logs:CreateLogGroup.','e.aws.ns':'CloudWatch namespace for metrics.','e.gcp.pj':'Google Cloud project that receives the data.','e.kafka.br':'host:port of each broker.','e.debug.vb':'detailed prints every record.','e.elasticsearch.ep':'Include the scheme and port.','e.elasticsearch.user':'Prefer an API key where you can.','e.elasticsearch.skip':'Never use this in production.'};
+Object.entries(HX).forEach(([p,h])=>{const[k,t,f]=p.split('.'),o=(C[k][t]||{f:[]}).f.find(y=>y.k===f);if(o&&!o.h)o.h=h});
+const ORD=['memory_limiter','k8sattributes','resourcedetection','resource','resource/es_routing','attributes','filter','transform','tail_sampling','batch'];
+const MODES={deployment:['Deployment','Gateway. Identical stateless pods behind a Service. Good for receiving OTLP from apps, tail sampling and cluster-wide receivers.'],daemonset:['DaemonSet','Agent. One pod on every node. Good for container logs, kubeletstats and host metrics.'],statefulset:['StatefulSet','Stable pod names and storage. Good for persistent queues or Prometheus scraping with the Target Allocator.']};
+const PRE=[['K8s node agent to Elastic (ECK)','k8s','daemonset',['logs','metrics'],'r:filelog r:kubeletstats r:hostmetrics r:otlp p:memory_limiter p:k8sattributes p:resourcedetection p:batch e:elasticsearch'],
+ ['K8s gateway to Elastic (ECK)','k8s','deployment',ALL,'r:otlp p:memory_limiter p:tail_sampling p:batch e:elasticsearch'],
+ ['VM logs and host metrics to Elastic','vm','',['logs','metrics'],'r:filelog r:hostmetrics r:otlp p:memory_limiter p:resourcedetection p:batch e:elasticsearch']];
+const avail=(k,t)=>{const d=C[k][t];return!d.t||(d.t==='k')===k8()};
+const dflt=(k,t)=>{const v={};C[k][t].f.forEach(f=>v[f.k]=typeof f.d==='function'?f.d():f.d);return v};
+function add(k,t){if(!S.comps.some(c=>c.k===k&&c.t===t))S.comps.push({k,t,v:dflt(k,t)})}
+function fresh(){S.comps=[];add('p','memory_limiter');add('p','batch')}
+/* ---- build ---- */
+function build(){
+ const x={k:k8(),pre:[],env:[],vols:[],mounts:[],rbac:[],ext:{},names:[],w:[],root:0};
+ x.sec=n=>{if(!x.names.includes(n)){x.names.push(n);x.env.push({name:n,valueFrom:{secretKeyRef:{name:S.sec,key:n.toLowerCase()}}})}return'${env:'+n+'}'};
+ x.node=()=>{if(!x.env.some(e=>e.name==='K8S_NODE_NAME'))x.env.push({name:'K8S_NODE_NAME',valueFrom:{fieldRef:{fieldPath:'spec.nodeName'}}})};
+ x.vol=(n,spec,mp,ro=1)=>{if(!x.k||x.vols.some(v=>v.name===n))return;x.vols.push({name:n,...spec});x.mounts.push({name:n,mountPath:mp,...(ro?{readOnly:true}:{})})};
+ x.hp=(n,path,rw,mp)=>x.vol(n,{hostPath:rw?{path,type:'DirectoryOrCreate'}:{path}},mp||path,!rw);
+ x.rb=(g,r,vb='get,list,watch')=>x.rbac.push({apiGroups:[g],resources:L(r),verbs:L(vb)});
+ const R={},P={},E={},rs=[],es=[],ps=[],msgs=[],sigs=ALL.filter(s=>S.sig[s]);
+ S.comps.forEach(c=>{const d=C[c.k][c.t];if(c.k==='r'){R[c.t]=d.gen(c.v,x);rs.push({n:d.n,g:d.g,key:c.t})}
+  else if(c.k==='e')d.gen(c.v,x).forEach(([key,cfg,g])=>{E[key]=cfg;es.push({n:d.n,g,key})});else{P[c.t]=d.gen(c.v,x);ps.push({n:c.t,g:d.g,key:c.t})}});
+x.pre.forEach(p=>{P[p.key]=p.cfg;ps.push({n:p.key,g:ALL,key:p.key})});
+ ps.sort((a,b)=>ORD.indexOf(a.key)-ORD.indexOf(b.key));
+ if(S.hc)x.ext.health_check={endpoint:(x.k?'0.0.0.0':'127.0.0.1')+':13133'};
+ const svc={pipelines:{}};if(Object.keys(x.ext).length)svc.extensions=Object.keys(x.ext);
+ sigs.forEach(s=>{const r=rs.filter(a=>a.g.includes(s)).map(a=>a.key),e=es.filter(a=>a.g.includes(s)).map(a=>a.key);
+  if(!r.length)msgs.push(['error',s+': no source produces '+s+'. Add one under Sources.']);if(!e.length)msgs.push(['error',s+': no destination accepts '+s+'. Add one under Destinations.']);
+  if(r.length&&e.length)svc.pipelines[s]={receivers:r,...(ps.some(p=>p.g.includes(s))?{processors:ps.filter(p=>p.g.includes(s)).map(p=>p.key)}:{}),exporters:[...new Set(e)]}});
+ [...rs,...es].forEach(a=>{if(!a.g.some(s=>S.sig[s]))msgs.push(['warning',a.n+' only handles '+a.g.join(', ')+', which is switched off, so it is left out.'])});
+ const has=t=>S.comps.some(c=>c.t===t);
+ if(!has('memory_limiter'))msgs.push(['warning','Add memory_limiter so a traffic spike cannot take the Collector down.']);
+ if(!has('batch'))msgs.push(['warning','Add batch to cut request volume to the backend.']);
+ if(x.k){if(S.mode==='daemonset'&&(has('k8s_cluster')||has('k8sobjects')))msgs.push(['warning','k8s_cluster and k8sobjects would run on every node and duplicate data. Use a Deployment with 1 replica.']);
+  if(S.mode!=='daemonset'&&(has('k8s_cluster')||has('k8sobjects'))&&+S.rep>1)msgs.push(['warning','k8s_cluster and k8sobjects need exactly 1 replica.']);
+  if(S.mode!=='daemonset'&&(has('filelog')||has('kubeletstats')||has('hostmetrics')))msgs.push(['warning','Logs, kubelet and host metrics are per node. A DaemonSet is the usual choice.']);
+  if(S.mode==='daemonset'&&has('tail_sampling'))msgs.push(['warning','tail_sampling needs every span of a trace in one pod. Use a gateway Deployment.'])}
+ if(x.k&&x.rbac.length&&!S.rbac)msgs.push(['warning','Kubernetes API receivers or metadata enrichment need RBAC permissions. Enable ServiceAccount/RBAC generation or provide equivalent permissions separately.']);
+ if(has('tail_sampling')&&!S.sig.traces)msgs.push(['warning','tail_sampling only works with the traces signal.']);
+ if(!/^\d+\.\d+\.\d+$/.test(S.ver))msgs.push(['warning','Version should look like 0.165.0.']);
+ if(!sigs.length)msgs.push(['error','Switch on at least one signal.']);
+ const dn=/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
+ if(x.k){[['Namespace',S.ns],['Collector name',S.cr],['Secret name',S.sec]].forEach(([n,v])=>{if(!dn.test(v))msgs.push(['error',n+' must use lowercase letters, digits and dashes.'])});
+  if(!/^[1-9]\d*(Mi|Gi)$/.test(S.lim))msgs.push(['error','Memory limit should look like 512Mi or 2Gi.']);
+  if(S.mode!=='daemonset'&&!/^[1-9]\d*$/.test(String(S.rep)))msgs.push(['error','Replicas must be a whole number, 1 or more.']);
+  if(S.mode!=='daemonset'&&has('tail_sampling')&&+S.rep>1)msgs.push(['warning','With more than one replica, spans of one trace can reach different pods. Use 1 replica, or put a loadbalancing exporter tier in front.'])}
+ else if(!/^[A-Za-z0-9_.@-]+$/.test(S.svc))msgs.push(['error','Service name can use letters, digits and . _ @ - only.']);
+ x.w.forEach(m=>msgs.push(['warning',m]));
+ const cn=[...rs,...es,...ps].filter(a=>!(C.r[a.key]||C.p[a.key]||{}).core&&!['otlp','otlphttp','debug'].some(k=>a.key.startsWith(k))).map(a=>a.key);
+ if(cn.length)msgs.push(['note','Contrib-only components: '+[...new Set(cn)].join(', ')+'. Keep using the otelcol-contrib image or binary.']);
+ if(!msgs.some(m=>m[0]==='error'))msgs.unshift(['success','Every enabled signal has a source and a destination.']);
+ const cfg={receivers:R};if(ps.length)cfg.processors=P;cfg.exporters=E;if(svc.extensions)cfg.extensions=x.ext;cfg.service=svc;
+ const out=[],hdr='# Generated by the OpenTelemetry Collector builder · Collector Contrib '+S.ver+'\n';
+ if(x.k){const spec={mode:S.mode,image:'otel/opentelemetry-collector-contrib:'+S.ver};if(S.mode!=='daemonset')spec.replicas=+S.rep||1;
+  spec.resources={limits:{memory:S.lim},requests:{cpu:S.cpu,memory:S.lim}};if(x.root)spec.securityContext={runAsUser:0,runAsGroup:0};
+  const sa=S.cr+'-collector';if(S.rbac)spec.serviceAccount=sa;
+  if(x.env.length)spec.env=x.env;if(x.vols.length){spec.volumes=x.vols;spec.volumeMounts=x.mounts}spec.config=cfg;
+  out.push(['crd','Collector CRD',S.cr+'.yaml',hdr+Y({apiVersion:'opentelemetry.io/v1beta1',kind:'OpenTelemetryCollector',metadata:{name:S.cr,namespace:S.ns},spec})]);
+  const seen=new Set(),rules=x.rbac.filter(r=>{const j=JSON.stringify(r);return!seen.has(j)&&seen.add(j)});
+  if(S.rbac){const docs=[{apiVersion:'v1',kind:'ServiceAccount',metadata:{name:sa,namespace:S.ns}}];if(rules.length)docs.push({apiVersion:'rbac.authorization.k8s.io/v1',kind:'ClusterRole',metadata:{name:sa},rules},{apiVersion:'rbac.authorization.k8s.io/v1',kind:'ClusterRoleBinding',metadata:{name:sa},roleRef:{apiGroup:'rbac.authorization.k8s.io',kind:'ClusterRole',name:sa},subjects:[{kind:'ServiceAccount',name:sa,namespace:S.ns}]});out.push(['rbac','ServiceAccount + RBAC','service-account-rbac.yaml',hdr+docs.map(Y).join('\n---\n')])}
+  out.push(['sec','Secrets','create-secret.sh',x.names.length?'# Run once. Never commit real values to Git.\nkubectl create secret generic '+S.sec+' -n '+S.ns+' \\\n'+x.names.map(n=>"  --from-literal="+n.toLowerCase()+"='<paste-value>'").join(' \\\n')+'\n':'# No Secret needed for this configuration.\n'])}
+ else{const fl=has('filelog')||has('journald');
+  out.push(['cfg','config.yaml','config.yaml',hdr+Y(cfg)]);
+  out.push(['env','Env file','otelcol.env','# Permissions: chmod 600, owned by root. systemd reads it at start.\n'+(x.names.length?x.names.map(n=>n+'=REPLACE_ME').join('\n'):'# No secrets needed for this configuration.')+'\n']);
+  out.push(['unit','systemd unit',S.svc+'.service','[Unit]\nDescription=OpenTelemetry Collector (contrib)\nAfter=network-online.target\nWants=network-online.target\n\n[Service]\nUser=otelcol\nGroup=otelcol\nEnvironmentFile=/etc/otelcol/otelcol.env\nExecStart=/usr/local/bin/otelcol-contrib --config=/etc/otelcol/config.yaml\nRestart=always\nRestartSec=5\nLimitNOFILE=65536\nNoNewPrivileges=true\nProtectSystem=full\nProtectHome=true\nPrivateTmp=true\n'+(Object.keys(x.ext).some(k=>k.startsWith('file_storage'))?'StateDirectory=otelcol\n':'')+(fl?'SupplementaryGroups=adm systemd-journal\n':'')+'\n[Install]\nWantedBy=multi-user.target\n']);
+  out.push(['inst','Install script','install.sh','#!/usr/bin/env bash\nset -euo pipefail\nVER='+S.ver+'\nARCH=$(uname -m | sed \'s/x86_64/amd64/;s/aarch64/arm64/\')\nURL="https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v${VER}/otelcol-contrib_${VER}_linux_${ARCH}.tar.gz"\ncurl --proto \'=https\' --tlsv1.2 -fsSL -o /tmp/otelcol.tgz "$URL"\n# Optional but recommended: export SHA256 from the release checksums to verify the download.\n[ -z "${SHA256:-}" ] || echo "${SHA256}  /tmp/otelcol.tgz" | sha256sum -c -\ntar -xzf /tmp/otelcol.tgz -C /tmp otelcol-contrib\nsudo install -m 0755 /tmp/otelcol-contrib /usr/local/bin/otelcol-contrib\nid otelcol &>/dev/null || sudo useradd --system --no-create-home --shell /usr/sbin/nologin otelcol\nsudo install -d -m 0755 /etc/otelcol\nsudo install -m 0644 config.yaml /etc/otelcol/config.yaml\nsudo install -m 0600 otelcol.env /etc/otelcol/otelcol.env\nsudo install -m 0644 '+S.svc+'.service /etc/systemd/system/'+S.svc+'.service\nsudo bash -c \'set -a; . /etc/otelcol/otelcol.env; /usr/local/bin/otelcol-contrib validate --config=/etc/otelcol/config.yaml\'\nsudo systemctl daemon-reload\nsudo systemctl enable --now '+S.svc+'\n'])}
+ return{out,msgs}}
+/*DOM*/
+if(typeof document!=='undefined'){
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rain=document.getElementById('cmdRain'),rainCtx=rain.getContext('2d'),reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(!reduceMotion){const commands=['kubectl get pods','docker ps','git status','terraform plan','journalctl -u kubelet','systemctl status sshd','tail -f /var/log/syslog','helm list','kubectl logs -f pod','git diff'],colors=['#67e8f9','#7c9cff','#8de5b2','#c4a5ff','#f7c96b'];let width,height,drops=[];
+ function resizeRain(){const dpr=window.devicePixelRatio||1;width=window.innerWidth;height=window.innerHeight;rain.width=width*dpr;rain.height=height*dpr;rainCtx.setTransform(dpr,0,0,dpr,0,0);drops=Array.from({length:Math.max(14,Math.min(48,Math.floor(width/32)))},()=>({text:commands[Math.floor(Math.random()*commands.length)],x:Math.random()*width,y:Math.random()*height,speed:.5+Math.random()*1.3,color:colors[Math.floor(Math.random()*colors.length)],alpha:.35+Math.random()*.65}))}
+ function drawRain(){if(!document.hidden){rainCtx.clearRect(0,0,width,height);rainCtx.font='13px "DM Mono", monospace';for(const drop of drops){rainCtx.fillStyle=drop.color;rainCtx.globalAlpha=drop.alpha;rainCtx.fillText(drop.text,drop.x,drop.y);drop.y+=drop.speed;if(drop.y>height+20){drop.y=-20;drop.x=Math.random()*width}}rainCtx.globalAlpha=1}requestAnimationFrame(drawRain)}
+ resizeRain();window.addEventListener('resize',resizeRain);requestAnimationFrame(drawRain)}
+const tocLinks=[...document.querySelectorAll('.toc a')],tocSections=tocLinks.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+let tocFrame=0;
+function updateToc(){tocFrame=0;let current=tocSections[0];for(const section of tocSections){if(section.getBoundingClientRect().top<=125)current=section;else break}
+ if(window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-2)current=tocSections[tocSections.length-1];
+ tocLinks.forEach((a,i)=>{const active=tocSections[i]===current;a.classList.toggle('active',active);if(active)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current')})}
+function scheduleTocUpdate(){if(!tocFrame)tocFrame=requestAnimationFrame(updateToc)}
+window.addEventListener('scroll',scheduleTocUpdate,{passive:true});window.addEventListener('resize',scheduleTocUpdate);updateToc();
+let cur=[];
+function fld(f,v,i){if(f.show&&!f.show(v))return'';const id='f'+i+f.k,val=v[f.k],hh=f.h||(f.t==='sec'?'Only the variable name goes in the YAML. The value comes from the environment or Secret.':''),o=typeof f.o==='function'?f.o():f.o,a=`id="${id}" data-i="${i}" data-k="${f.k}"`;let h;
+ if(f.t==='sel')h=`<select ${a}>${o.map(y=>`<option${y===val?' selected':''}>${esc(y)}</option>`).join('')}</select>`;
+ else if(f.t==='bool')h=`<label class="sw"><input type="checkbox" ${a}${val?' checked':''}>${esc(f.l)}</label>`;
+ else if(f.t==='area')h=`<textarea ${a}>${esc(val)}</textarea>`;else h=`<input type="text" ${a} value="${esc(val)}">`;
+ return`<div class="field">${f.t==='bool'?'':`<label for="${id}">${esc(f.l)}${f.t==='sec'?' <span class="badge">env var name</span>':''}</label>`}${h}${hh?`<span class="hint">${esc(hh)}</span>`:''}</div>`}
+function cards(){['r','p','e'].forEach(k=>{const h=S.comps.map((c,i)=>({c,i})).filter(o=>o.c.k===k).map(({c,i})=>{const d=C[k][c.t];
+  return`<div class="card"><div class="chead"><b>${esc(d.n)}</b><span class="badge">${d.core||['otlp','otlphttp'].includes(c.t)?'core':'contrib'}</span><span class="badge">${d.g.join(' · ')}</span><button class="rm" data-rm="${i}" aria-label="Remove ${esc(d.n)}">×</button></div>${DESC[k+'.'+c.t]?'<p class="desc">'+esc(DESC[k+'.'+c.t])+'</p>':''}${d.i?`<div class="cinfo" data-info="${i}"></div>`:''}${d.f.map(f=>fld(f,c.v,i)).join('')}</div>`}).join('');
+  $('#cd-'+k).innerHTML=h||'<p class="empty">Nothing added yet. Pick one above.</p>'});
+ picks()}
+function picks(){['r','p','e'].forEach(k=>{$('#pk-'+k).innerHTML=Object.keys(C[k]).filter(t=>avail(k,t)&&C[k][t].g.some(s=>S.sig[s])&&!S.comps.some(c=>c.k===k&&c.t===t)).map(t=>`<button class="chip" data-add="${k}:${t}">${esc(C[k][t].n)}</button>`).join('')||'<span class="empty">Everything available is added.</span>'})}
+function top(){$('#tgt').innerHTML=[['k8s','Kubernetes','OpenTelemetryCollector CRD'],['vm','Linux VM','config, systemd, install script']].map(([t,n,s])=>`<button data-t="${t}" class="${S.target===t?'on':''}">${n}<small>${s}</small></button>`).join('');
+ $('#k8s').hidden=!k8();$('#vm-settings').hidden=k8();$('#repf').hidden=S.mode==='daemonset';$('#rbac').checked=S.rbac;
+ $('#modes').innerHTML=Object.entries(MODES).map(([m,[n,s]])=>`<div class="seg"><button data-m="${m}" class="${S.mode===m?'on':''}" style="width:100%">${n}<small>${s}</small></button></div>`).join('');
+ $('#sigs').innerHTML=ALL.map(s=>`<button data-s="${s}" class="${S.sig[s]?'on':''}" aria-pressed="${!!S.sig[s]}">${s}</button>`).join('');
+ $('#presets').innerHTML=PRE.map((p,i)=>`<button class="chip" data-p="${i}">${p[0]}</button>`).join('')}
+function up(){let r;try{r=build()}catch(e){$('#output').textContent='Could not build: '+e.message;return}
+ cur=r.out;if(!cur.some(t=>t[0]===S.tab))S.tab=cur[0][0];
+ $('#tabs').innerHTML=cur.map(t=>`<button class="tab${t[0]===S.tab?' active':''}" data-tab="${t[0]}">${esc(t[1])}</button>`).join('');
+ $('#output').textContent=cur.find(t=>t[0]===S.tab)[3];
+ $('#msgs').innerHTML=r.msgs.map(m=>`<div class="${m[0]}">${m[0]==='success'?'✓':m[0]==='error'?'✕':m[0]==='note'?'i':'!'} ${esc(m[1])}</div>`).join('');
+ document.querySelectorAll('[data-info]').forEach(e=>{const c=S.comps[e.dataset.info];e.textContent=C[c.k][c.t].i(c.v)})}
+function all(){top();cards();up()}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+ if(d.t&&d.t!==S.target){S.target=d.t;S.mode=k8()?'daemonset':'';fresh();all()}
+ else if(d.m){S.mode=d.m;all()}
+ else if(d.s){S.sig[d.s]=S.sig[d.s]?0:1;top();cards();up()}
+ else if(d.add){add(...d.add.split(':'));cards();up()}
+ else if(d.rm){S.comps.splice(+d.rm,1);cards();up()}
+ else if(d.p){const p=PRE[d.p];S.target=p[1];S.mode=p[2];ALL.forEach(s=>S.sig[s]=p[3].includes(s)?1:0);S.comps=[];p[4].split(' ').forEach(z=>add(...z.split(':')));all()}
+ else if(d.tab){S.tab=d.tab;up()}});
+document.addEventListener('input',e=>{const t=e.target,d=t.dataset;if(d.k!=null&&t.tagName!=='SELECT'&&t.type!=='checkbox'){S.comps[d.i].v[d.k]=t.value;up()}
+ else if(['ns','cr','rep','sec','svc','ver','lim','cpu'].includes(t.id)){S[t.id]=t.value.trim();up()}});
+document.addEventListener('change',e=>{const t=e.target,d=t.dataset;if(t.id==='hc'){S.hc=t.checked;up();return}if(t.id==='rbac'){S.rbac=t.checked;up();return}if(d.k!=null&&(t.tagName==='SELECT'||t.type==='checkbox')){S.comps[d.i].v[d.k]=t.type==='checkbox'?t.checked:t.value;cards();up()}});
+$('#copy').onclick=async()=>{const t=cur.find(t=>t[0]===S.tab)[3],b=$('#copy');try{await navigator.clipboard.writeText(t)}catch(_){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1400)};
+$('#download').onclick=()=>{const t=cur.find(t=>t[0]===S.tab),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t[3]],{type:'text/plain'}));a.download=t[2];a.click();URL.revokeObjectURL(a.href)};
+document.getElementById('year').textContent=new Date().getFullYear();
+fresh();add('r','otlp');all();
+}
+if(typeof module!=='undefined')module.exports={S,C,build,add,fresh,Y};
+</script>
+</body>
+</html>

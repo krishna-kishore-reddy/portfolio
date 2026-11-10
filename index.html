@@ -1,948 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Krishna Kishore Reddy - Senior DevOps Engineer</title>
-    <link rel="stylesheet" href="portfolio-style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#080d18" />
+  <meta name="description" content="Krishna Kishore Reddy — Platform Engineering, DevOps and SRE portfolio." />
+  <title>Krishna Kishore Reddy | Platform Engineer</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+    :root{--bg:#080d18;--panel:#101827;--panel2:#121e30;--text:#edf3ff;--muted:#9aa9bf;--line:rgba(180,200,230,.13);--cyan:#67e8f9;--blue:#7c9cff;--green:#8de5b2;--max:1120px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}
+    body{margin:0;background:radial-gradient(ellipse at 75% 0%,rgba(48,91,160,.19),transparent 38%),var(--bg);color:var(--text);font-family:Manrope,system-ui,sans-serif;line-height:1.65}
+    a{color:inherit;text-decoration:none}.wrap{width:min(var(--max),calc(100% - 44px));margin:auto}
+    .nav{position:sticky;top:0;z-index:10;background:rgba(8,13,24,.82);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+    .nav-inner{height:72px;display:flex;align-items:center;justify-content:space-between}
+    .brand{font-weight:800;letter-spacing:-.7px}.brand span{color:var(--cyan)}
+    .nav-links{display:flex;gap:28px;color:var(--muted);font-size:13px}.nav-links a:hover{color:var(--cyan)}
+    .menu-btn{display:none;background:none;border:1px solid var(--line);color:var(--text);padding:8px 11px;border-radius:9px}
+    .hero{padding:112px 0 88px;display:grid;grid-template-columns:1.4fr .8fr;gap:64px;align-items:center;min-height:610px}
+    .eyebrow,.mono{font-family:'DM Mono',monospace;letter-spacing:1.4px;text-transform:uppercase;font-size:11px;color:var(--cyan)}
+    .eyebrow{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(103,232,249,.22);background:rgba(103,232,249,.06);padding:8px 12px;border-radius:30px}
+    .dot{width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 12px var(--green)}
+    h1{font-size:clamp(42px,6vw,76px);line-height:1.06;letter-spacing:-4px;margin:25px 0 20px}
+    h1 span{background:linear-gradient(100deg,var(--cyan),#9caeff 75%);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{max-width:650px;color:var(--muted);font-size:17px;line-height:1.9}
+    .actions{display:flex;gap:13px;flex-wrap:wrap;margin-top:32px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 18px;border-radius:10px;font-weight:700;font-size:13px;border:1px solid var(--line);transition:.2s}
+    .btn.primary{background:var(--cyan);color:#07111d;border-color:var(--cyan)}.btn:hover{transform:translateY(-3px);border-color:var(--cyan)}
+    .hero-card{position:relative;padding:28px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,rgba(24,39,61,.94),rgba(13,21,35,.94));box-shadow:0 24px 80px rgba(0,0,0,.25);overflow:hidden}
+    .hero-card:before{content:"";position:absolute;width:190px;height:190px;right:-90px;top:-90px;border-radius:50%;background:rgba(103,232,249,.13);filter:blur(8px)}
+    .terminal-top{display:flex;gap:6px;margin-bottom:28px}.terminal-top i{width:8px;height:8px;border-radius:50%;background:#ff7185}.terminal-top i:nth-child(2){background:#f7c96b}.terminal-top i:nth-child(3){background:#75d9a2}
+    .code-line{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin:13px 0}.code-line b{color:var(--green);font-weight:400}.code-line em{color:var(--cyan);font-style:normal}
+    .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:27px}.stat{padding:14px;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:12px}.stat strong{display:block;font-size:21px}.stat small{color:var(--muted);font-size:11px}
+    section{padding:82px 0;border-top:1px solid var(--line)}.section-head{margin-bottom:34px}.section-head .mono{margin-bottom:9px;display:block}
+    h2{font-size:clamp(28px,4vw,42px);letter-spacing:-1.7px;margin:0 0 10px}.section-desc{color:var(--muted);max-width:660px;margin:0}
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:45px}.about-copy{color:var(--muted)}.about-copy p{margin-top:0}
+    .focus-list{display:grid;gap:12px}.focus{display:flex;gap:14px;align-items:flex-start;padding:16px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.025)}
+    .focus-icon{color:var(--cyan);font-size:18px}.focus strong{display:block;font-size:14px}.focus small{color:var(--muted)}
+    .skills{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.skill{padding:19px;border:1px solid var(--line);background:var(--panel);border-radius:14px;min-height:128px;transition:.2s}.skill:hover,.project:hover{transform:translateY(-4px);border-color:rgba(103,232,249,.45)}
+    .skill .symbol{font-size:21px;color:var(--cyan)}.skill h3{font-size:14px;margin:10px 0 5px}.skill p{font-size:12px;color:var(--muted);margin:0}
+    .projects{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.project{padding:24px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,var(--panel),#0c1422);transition:.2s}
+    .certifications{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.certification{padding:22px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,var(--panel),#0c1422);display:flex;flex-direction:column;align-items:flex-start;min-height:220px}.certification h3{font-size:16px;margin:12px 0 6px}.certification p{font-size:12px;color:var(--muted);margin:0}.certification img{width:128px;height:100px;object-fit:contain;object-position:left center;margin-bottom:4px}.certification .tag{margin-top:auto}
+    .project-top{display:flex;justify-content:space-between;align-items:center;color:var(--cyan);font-size:12px}.project h3{font-size:18px;margin:16px 0 8px}.project p{color:var(--muted);font-size:13px;margin:0 0 18px}
+    .tags{display:flex;flex-wrap:wrap;gap:7px}.tag{font-family:'DM Mono',monospace;font-size:10px;color:#b9c8dd;border:1px solid var(--line);border-radius:20px;padding:5px 8px}
+    .timeline{border-left:1px solid rgba(103,232,249,.35);margin-left:8px;padding-left:28px}.role{position:relative;padding:0 0 30px}.role:before{content:"";position:absolute;left:-34px;top:7px;width:10px;height:10px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 5px rgba(103,232,249,.1)}
+    .role h3{margin:0;font-size:18px}.role .meta{color:var(--cyan);font:11px 'DM Mono',monospace;margin:5px 0 10px}.role p{color:var(--muted);font-size:13px;margin:0;max-width:750px}
+    .contact-box{display:flex;align-items:center;justify-content:space-between;gap:30px;padding:35px;border:1px solid rgba(103,232,249,.2);border-radius:20px;background:linear-gradient(120deg,rgba(103,232,249,.08),rgba(124,156,255,.06))}
+    .contact-box p{color:var(--muted);margin:8px 0 0}.contact-links{display:flex;gap:10px;flex-wrap:wrap}
+    footer{padding:28px 0;color:var(--muted);font-size:11px}.footer-inner{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .65s ease,transform .65s ease}.reveal.visible{opacity:1;transform:none}
+    @media(max-width:850px){.hero{grid-template-columns:1fr;gap:35px;padding-top:75px}.hero-card{max-width:580px}.skills{grid-template-columns:repeat(2,1fr)}.certifications{grid-template-columns:repeat(2,1fr)}.about-grid{grid-template-columns:1fr}.contact-box{align-items:flex-start;flex-direction:column}}
+    @media(max-width:600px){.wrap{width:min(100% - 30px,var(--max))}.nav-inner{height:64px}.menu-btn{display:block}.nav-links{display:none;position:absolute;top:64px;left:0;right:0;padding:18px 22px;background:#0b1321;border-bottom:1px solid var(--line);flex-direction:column;gap:17px}.nav-links.open{display:flex}h1{letter-spacing:-2.5px}.hero{padding:65px 0}.projects,.certifications{grid-template-columns:1fr}.skills{gap:9px}.skill{padding:14px;min-height:120px}section{padding:62px 0}.contact-box{padding:24px}}
+    #cmdRain{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+    #cmdRain{z-index:0;opacity:.5}
+    main,footer{position:relative;z-index:1}
+    @media(prefers-reduced-motion:reduce){#cmdRain{display:none}html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}*{transition:none!important}}
+  </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
-        <div class="nav-container">
-            <div class="logo">KK<span>R</span></div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#experience">Experience</a></li>
-                <li><a href="#portfolio">Projects</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <a href="#contact" class="btn-primary">Contact Me</a>
-        </div>
-    </nav>
+  <canvas id="cmdRain" aria-hidden="true"></canvas>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#home">KKR<span>.</span></a>
+      <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      <nav class="nav-links" id="navLinks">
+        <a href="#about">About</a><a href="#expertise">Expertise</a><a href="#work">Projects</a><a href="#experience">Experience</a><a href="#certifications">Certifications</a><a href="#writing">Writing</a><a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-container">
-            <div class="hero-content">
-                <div class="hero-badge">HELLO, I AM</div>
-                <h1 class="hero-title">Krishna Kishore<br>Reddy</h1>
-                <p class="hero-subtitle">Senior DevOps Engineer | Cloud-Native Solutions Architect | Kubernetes & OpenShift Specialist | CI/CD Expert | Automating Infrastructure at Scale</p>
-                <div class="hero-buttons">
-                    <a href="./KRISHNA-KISHORE-REDDY.pdf" class="btn-primary" download>Download CV</a>
-                    <a href="#portfolio" class="btn-secondary">My Work</a>
-                </div>
-                <div style="display: flex; gap: 1.5rem; margin-top: 2rem; justify-content: flex-start;">
-                    <a href="https://www.linkedin.com/in/krishna-kishore--reddy" target="_blank" style="width: 40px; height: 40px; background: var(--card-bg); border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; color: var(--primary-orange);" onmouseover="this.style.background='var(--primary-orange)'; this.style.color='white';" onmouseout="this.style.background='var(--card-bg)'; this.style.color='var(--primary-orange)';">
-                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                    </a>
-                    <a href="https://github.com/krishna-kishore-reddy" target="_blank" style="width: 40px; height: 40px; background: var(--card-bg); border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; color: var(--primary-orange);" onmouseover="this.style.background='var(--primary-orange)'; this.style.color='white';" onmouseout="this.style.background='var(--card-bg)'; this.style.color='var(--primary-orange)';">
-                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                    </a>
-                    <a href="mailto:krishnakishore@inarm.in" style="width: 40px; height: 40px; background: var(--card-bg); border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; color: var(--primary-orange);" onmouseover="this.style.background='var(--primary-orange)'; this.style.color='white';" onmouseout="this.style.background='var(--card-bg)'; this.style.color='var(--primary-orange)';">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                    </a>
-                </div>
-            </div>
-            <div class="hero-image">
-                <div class="geometric-container">
-                    <svg class="geometric-shape shape-1" viewBox="0 0 200 200">
-                        <polygon points="100,10 40,180 190,60 10,60 160,180" />
-                    </svg>
-                    <svg class="geometric-shape shape-2" viewBox="0 0 200 200">
-                        <circle cx="100" cy="100" r="80" />
-                        <line x1="50" y1="50" x2="150" y2="150" />
-                        <line x1="150" y1="50" x2="50" y2="150" />
-                    </svg>
-                    <svg class="geometric-shape shape-3" viewBox="0 0 150 150">
-                        <rect x="25" y="25" width="100" height="100" transform="rotate(45 75 75)" />
-                    </svg>
-                    <img src="./image.png" alt="Krishna Kishore Reddy" class="hero-photo">
-                </div>
-            </div>
+  <main>
+    <div class="wrap hero" id="home">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> PLATFORM ENGINEERING · DEVOPS · SRE</div>
+        <h1>Krishna Kishore<br><span>Reddy.</span></h1>
+        <p class="lead">Building reliable platforms, automating delivery, and making production systems observable, secure, and resilient. Currently working at <strong>Société Générale</strong>.</p>
+        <div class="actions">
+          <a class="btn primary" href="#work">Explore my work <span>↗</span></a>
+          <a class="btn" href="#contact">Get in touch</a>
         </div>
-    </section>
-
-    <!-- Certifications - Compact Version -->
-    <section class="section" id="certifications" style="background: var(--card-bg); padding: 1.5rem 0; display: none;">
-        <div class="section-header" style="margin-bottom: 1rem;">
-            <div class="section-label">ACHIEVEMENTS</div>
-            <h2 class="section-title">Professional Certifications</h2>
+      </div>
+      <aside class="hero-card" aria-label="Engineering profile">
+        <div class="terminal-top"><i></i><i></i><i></i></div>
+        <div class="code-line"><em>const</em> engineer = {</div>
+        <div class="code-line">&nbsp;&nbsp;name: <b>"Krishna Kishore Reddy"</b>,</div>
+        <div class="code-line">&nbsp;&nbsp;role: <b>"Platform Engineer"</b>,</div>
+        <div class="code-line">&nbsp;&nbsp;focus: [</div>
+        <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;<b>"Automation"</b>, <b>"Reliability"</b>,</div>
+        <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;<b>"GitOps"</b>, <b>"Observability"</b></div>
+        <div class="code-line">&nbsp;&nbsp;],</div>
+        <div class="code-line">&nbsp;&nbsp;mindset: <b>"Automate everything"</b></div>
+        <div class="code-line">};</div>
+        <div class="stat-grid">
+          <div class="stat"><strong>6+ yrs</strong><small>Engineering experience</small></div>
+          <div class="stat"><strong>45 min</strong><small>Provisioning workflow target</small></div>
+          <div class="stat"><strong>K8s</strong><small>Container platforms</small></div>
+          <div class="stat"><strong>GitOps</strong><small>Declarative delivery</small></div>
         </div>
-        <div style="max-width: 800px; margin: 0 auto; padding: 0 1rem;">
-            <div style="background: var(--dark-bg); border-radius: 10px; overflow: hidden; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08); border: 1px solid rgba(255, 87, 34, 0.08);">
-                <div style="display: flex; flex-wrap: wrap;">
-                    <!-- Left side - Image -->
-                    <div style="flex: 0 0 120px; background: linear-gradient(135deg, #ee6e2e 0%, #cc2a36 100%); display: flex; align-items: center; justify-content: center; padding: 1rem;">
-                        <img src="./openshift-image.png" alt="Red Hat OpenShift Administrator" style="max-width: 100%; height: auto; max-height: 80px; object-fit: contain;">
-                    </div>
-                    
-                    <!-- Right side - Content -->
-                    <div style="flex: 1; min-width: 250px; padding: 1rem;">
-                        <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
-                            <div style="width: 30px; height: 30px; background: rgba(255, 87, 34, 0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-right: 0.5rem; flex-shrink: 0;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                </svg>
-                            </div>
-                            <h3 style="font-size: 1.2rem; font-weight: 700; margin: 0; background: linear-gradient(90deg, #FF5722, #FF8A65); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.2;">Red Hat Certified Specialist in OpenShift Administration</h3>
-                        </div>
-                        
-                        <p style="color: var(--text-secondary); margin: 0.5rem 0; font-size: 0.9rem; line-height: 1.4;">
-                            Expertise in OpenShift clusters, containerized applications, and enterprise Kubernetes solutions.
-                        </p>
-                        
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.5rem 0;">
-                            <span style="background: rgba(255, 87, 34, 0.1); color: var(--primary-orange); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.7rem; font-weight: 500;">OpenShift</span>
-                            <span style="background: rgba(255, 87, 34, 0.1); color: var(--primary-orange); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.7rem; font-weight: 500;">Kubernetes</span>
-                            <span style="background: rgba(255, 87, 34, 0.1); color: var(--primary-orange); padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.7rem; font-weight: 500;">Containers</span>
-                        </div>
-                        
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">
-                            <div style="display: flex; align-items: center; gap: 0.3rem;">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                                <span>Nov 2025</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 0.3rem;">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                </svg>
-                                <span>ID: 250-179-991</span>
-                            </div>
-                            <div style="margin-left: auto;">
-                                <a href="https://www.redhat.com/rhtapps/services/verify?certId=250-179-991" target="_blank" style="color: var(--primary-orange); text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.8rem;">
-                                    Verify
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Original Certifications Section (Hidden) -->
-    <template id="original-certification">
-        <section class="section" id="certifications-original" style="display: none;">
-            <div class="section-header">
-                <div class="section-label">ACHIEVEMENTS</div>
-                <h2 class="section-title">Professional Certifications</h2>
-            </div>
-            <div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
-                <div style="background: var(--dark-bg); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; border: 1px solid rgba(255, 87, 34, 0.1);">
-                    <div style="display: flex; flex-wrap: wrap; min-height: 300px;">
-                        <!-- Left side - Image -->
-                        <div style="flex: 1; min-width: 300px; background: linear-gradient(135deg, #ee6e2e 0%, #cc2a36 100%); display: flex; align-items: center; justify-content: center; padding: 2rem;">
-                            <img src="./openshift-image.png" alt="Red Hat OpenShift Administrator" style="max-width: 100%; max-height: 250px; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));">
-                        </div>
-                        
-                        <!-- Right side - Content -->
-                        <div style="flex: 1.5; padding: 3rem; display: flex; flex-direction: column; justify-content: center;">
-                            <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                                <div style="width: 50px; height: 50px; background: rgba(255, 87, 34, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                    </svg>
-                                </div>
-                                <h3 style="font-size: 1.8rem; font-weight: 800; margin: 0; background: linear-gradient(90deg, #FF5722, #FF8A65); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Red Hat Certified Specialist in OpenShift Administration</h3>
-                            </div>
-                            
-                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.7;">
-                                Validated expertise in managing OpenShift clusters, deploying containerized applications, and implementing enterprise-grade Kubernetes solutions. This certification demonstrates advanced skills in OpenShift administration, security, and automation at scale.
-                            </p>
-                            
-                            <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
-                                <a href="./ProfessionalCertificationDigitalCredentials20251128-31-y4l3zo.pdf" class="btn-primary" download style="display: inline-flex; align-items: center; gap: 0.5rem;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                        <polyline points="7 10 12 15 17 10"></polyline>
-                                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                                    </svg>
-                                    Download Certificate
-                                </a>
-                                <a href="https://www.redhat.com/en/services/training/do280-red-hat-openshift-administration-ii" target="_blank" class="btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                    </svg>
-                                    Learn More
-                                </a>
-                            </div>
-                            
-                            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05);">
-                                <h4 style="color: var(--primary-orange); margin-bottom: 1rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;">Skills Validated</h4>
-                                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                                    <span style="background: rgba(255, 87, 34, 0.1); color: var(--primary-orange); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">OpenShift Administration</span>
-                                    <span style="background: rgba(255, 87, 34, 0.1); color: var(--primary-orange); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">Kubernetes</span>
-                                    <span style="background: rgba(255, 87, 34, 0.1); color: var(--primary-orange); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">Container Orchestration</span>
-                                    <span style="background: rgba(255, 87, 34, 0.1); color: var(--primary-orange); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">Cluster Security</span>
-                                    <span style="background: rgba(255, 87, 34, 0.1); color: var(--primary-orange); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">CI/CD Pipelines</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="background: rgba(255, 255, 255, 0.02); padding: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary);">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                                <span>Issued: November 2025</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary);">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                </svg>
-                                <span>Credential ID: 250-179-991</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <a href="https://www.redhat.com/rhtapps/services/verify?certId=250-179-991" target="_blank" style="color: var(--primary-orange); text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                    Verify Certification
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </template>
-    
-    <script>
-    // Function to restore original certification section if needed
-    function restoreOriginalCertification() {
-        const original = document.getElementById('original-certification');
-        const clone = original.content.cloneNode(true);
-        const container = document.getElementById('certifications');
-        container.parentNode.replaceChild(clone.firstElementChild, container);
-        document.getElementById('certifications-original').style.display = 'block';
-    }
-    // Uncomment the line below and refresh the page to restore the original version
-    // restoreOriginalCertification();
-    </script>
-
-    <!-- Certifications - Enlarged Version -->
-    <section class="section" id="certifications-enlarged" style="background: var(--card-bg); padding: 3rem 0;">
-        <div class="section-header" style="margin-bottom: 2rem;">
-            <div class="section-label" style="font-size: 1.1rem; letter-spacing: 2px;">ACHIEVEMENTS</div>
-            <h2 class="section-title" style="font-size: 2.5rem; margin-top: 0.5rem;">Professional Certifications</h2>
-        </div>
-        <div style="max-width: 1000px; margin: 0 auto; padding: 0 2rem;">
-            <div style="background: var(--dark-bg); border-radius: 16px; overflow: hidden; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); border: 1px solid rgba(255, 87, 34, 0.15);">
-                <div style="display: flex; flex-wrap: nowrap; min-height: 350px;">
-                    <!-- Left side - Image -->
-                    <div style="flex: 0 0 200px; background: linear-gradient(135deg, #ee6e2e 0%, #cc2a36 100%); display: flex; align-items: center; justify-content: center; padding: 2rem;">
-                        <img src="./openshift-image.png" alt="Red Hat OpenShift Administrator" style="max-width: 100%; height: auto; max-height: 150px; object-fit: contain;">
-                    </div>
-                    
-                    <!-- Right side - Content -->
-                    <div style="flex: 1; min-width: 300px; padding: 2.5rem;">
-                        <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                            <div style="width: 45px; height: 45px; background: rgba(255, 87, 34, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; flex-shrink: 0;">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                </svg>
-                            </div>
-                            <h3 style="font-size: 1.8rem; font-weight: 700; margin: 0; background: linear-gradient(90deg, #FF5722, #FF8A65); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.3;">Red Hat Certified Specialist in OpenShift Administration</h3>
-                        </div>
-                        
-                        <p style="color: var(--text-secondary); margin: 1rem 0 1.5rem; font-size: 1.1rem; line-height: 1.6;">
-                            Expertise in OpenShift clusters, containerized applications, and enterprise Kubernetes solutions. Demonstrated ability to design, deploy, and manage OpenShift environments at scale.
-                        </p>
-                        
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0;">
-                            <span style="background: rgba(255, 87, 34, 0.1); color: var(--primary-orange); padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255, 87, 34, 0.2);">OpenShift</span>
-                            <span style="background: rgba(255, 87, 34, 0.1); color: var(--primary-orange); padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255, 87, 34, 0.2);">Kubernetes</span>
-                            <span style="background: rgba(255, 87, 34, 0.1); color: var(--primary-orange); padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255, 87, 34, 0.2);">Containers</span>
-                            <span style="background: rgba(255, 87, 34, 0.1); color: var(--primary-orange); padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255, 87, 34, 0.2);">DevOps</span>
-                            <span style="background: rgba(255, 87, 34, 0.1); color: var(--primary-orange); padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255, 87, 34, 0.2);">Cloud-Native</span>
-                        </div>
-                        
-                        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; font-size: 0.95rem; color: var(--text-secondary); margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05);">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                                <span>Issued: November 2025</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                </svg>
-                                <span>Credential ID: 250-179-991</span>
-                            </div>
-                            <div style="margin-left: auto;">
-                                <a href="https://www.redhat.com/rhtapps/services/verify?certId=250-179-991" target="_blank" style="color: var(--primary-orange); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; padding: 0.5rem 1rem; background: rgba(255, 87, 34, 0.1); border-radius: 6px; transition: all 0.3s ease;">
-                                    Verify Credential
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Toggle Button -->
-    <div style="text-align: center; margin: 1rem 0 3rem;">
-        <button id="toggle-certification" style="background: var(--primary-orange); color: white; border: none; padding: 0.6rem 1.5rem; border-radius: 30px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3);">
-            View Compact Certification
-        </button>
+      </aside>
     </div>
 
-    <script>
-        // Toggle between compact and enlarged certification views
-        document.getElementById('toggle-certification').addEventListener('click', function() {
-            const compact = document.getElementById('certifications');
-            const enlarged = document.getElementById('certifications-enlarged');
-            const button = document.getElementById('toggle-certification');
-            
-            if (compact.style.display === 'none') {
-                compact.style.display = 'block';
-                enlarged.style.display = 'none';
-                button.textContent = 'View Enlarged Certification';
-            } else {
-                compact.style.display = 'none';
-                enlarged.style.display = 'block';
-                button.textContent = 'View Compact Certification';
-            }
-            
-            // Smooth scroll to the certification section
-            document.querySelector('.section').scrollIntoView({ behavior: 'smooth' });
-        });
-    </script>
+    <section id="about"><div class="wrap reveal">
+      <div class="section-head"><span class="mono">01 / ABOUT</span><h2>Engineering with reliability in mind.</h2><p class="section-desc">I enjoy solving operational problems through automation, platform thinking, and practical engineering.</p></div>
+      <div class="about-grid">
+        <div class="about-copy">
+          <p>I'm a DevOps and Platform Engineering professional focused on improving how teams build, deploy, operate, and observe applications. My work spans Kubernetes platforms, CI/CD, infrastructure automation, GitOps, security tooling, and production troubleshooting.</p>
+          <p>I believe good platform engineering is about more than deploying infrastructure. It's about creating repeatable workflows, reducing toil, improving recovery, and giving development teams a dependable path to production.</p>
+        </div>
+        <div class="focus-list">
+          <div class="focus"><span class="focus-icon">⌘</span><div><strong>Automation first</strong><small>Replace repetitive manual work with reliable workflows.</small></div></div>
+          <div class="focus"><span class="focus-icon">◈</span><div><strong>Reliability engineering</strong><small>Improve availability, observability, and incident response.</small></div></div>
+          <div class="focus"><span class="focus-icon">⛨</span><div><strong>Secure by design</strong><small>Integrate security and governance into delivery pipelines.</small></div></div>
+        </div>
+      </div>
+    </div></section>
 
-    <!-- Stats -->
-    <div class="stats">
-        <div class="stat-card">
-            <div class="stat-number">6+</div>
-            <div class="stat-label">Years Experience</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">5</div>
-            <div class="stat-label">Companies</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">100+</div>
-            <div class="stat-label">Deployments</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">95%</div>
-            <div class="stat-label">Deployment Time Reduced</div>
-        </div>
-    </div>
+    <section id="expertise"><div class="wrap reveal">
+      <div class="section-head"><span class="mono">02 / EXPERTISE</span><h2>Tools I work with.</h2><p class="section-desc">A practical toolkit across modern platform and reliability engineering.</p></div>
+      <div class="skills">
+        <article class="skill"><div class="symbol">◫</div><h3>Kubernetes & OpenShift</h3><p>Cluster operations, workloads, RBAC, platform automation</p></article>
+        <article class="skill"><div class="symbol">⟳</div><h3>GitOps & CI/CD</h3><p>Argo CD, ApplicationSets, GitHub Actions, Azure DevOps</p></article>
+        <article class="skill"><div class="symbol">⌘</div><h3>Infrastructure Automation</h3><p>Ansible, Terraform, repeatable provisioning</p></article>
+        <article class="skill"><div class="symbol">⌁</div><h3>Observability</h3><p>OpenTelemetry, metrics, traces, Jaeger, Elasticsearch</p></article>
+        <article class="skill"><div class="symbol">⛨</div><h3>DevSecOps</h3><p>Trivy, CrowdStrike Falcon, policy and access controls</p></article>
+        <article class="skill"><div class="symbol">▤</div><h3>Linux & Networking</h3><p>System troubleshooting, DNS, certificates, HA fundamentals</p></article>
+        <article class="skill"><div class="symbol">☁</div><h3>Cloud Platforms</h3><p>AWS, Azure, cloud-native architecture fundamentals</p></article>
+        <article class="skill"><div class="symbol">⌗</div><h3>Scripting & Problem Solving</h3><p>Python, Bash, YAML, operational tooling</p></article>
+      </div>
+    </div></section>
 
-    <!-- Skills -->
-    <section class="section" id="skills">
-        <div class="section-header">
-            <div class="section-label">MY SKILLS</div>
-            <h2 class="section-title">Technical Expertise</h2>
-        </div>
-        <div class="skills-grid">
-            <div>
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span>Kubernetes & Docker</span>
-                        <span class="skill-percentage">95%</span>
-                    </div>
-                    <div class="skill-bar"><div class="skill-progress" style="width: 95%"></div></div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span>Azure DevOps</span>
-                        <span class="skill-percentage">90%</span>
-                    </div>
-                    <div class="skill-bar"><div class="skill-progress" style="width: 90%"></div></div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span>CI/CD Pipelines</span>
-                        <span class="skill-percentage">92%</span>
-                    </div>
-                    <div class="skill-bar"><div class="skill-progress" style="width: 92%"></div></div>
-                </div>
-            </div>
-            <div>
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span>Linux</span>
-                        <span class="skill-percentage">88%</span>
-                    </div>
-                    <div class="skill-bar"><div class="skill-progress" style="width: 88%"></div></div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span>Cloud Infrastructure</span>
-                        <span class="skill-percentage">85%</span>
-                    </div>
-                    <div class="skill-bar"><div class="skill-progress" style="width: 85%"></div></div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-header">
-                        <span>Terraform</span>
-                        <span class="skill-percentage">90%</span>
-                    </div>
-                    <div class="skill-bar"><div class="skill-progress" style="width: 90%"></div></div>
-                </div>
-            </div>
-        </div>
-        <!-- Additional Skills -->
-        <div style="margin-top: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
-            <div class="skill-logo-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/argocd/argocd-original.svg" alt="ArgoCD" style="width: 60px; height: 60px; margin-bottom: 0.5rem; filter: brightness(1.2);">
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">ArgoCD</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">GitOps Expert</div>
-            </div>
-            <div class="skill-logo-card">
-                <img src="https://www.vectorlogo.zone/logos/openshift/openshift-icon.svg" alt="OpenShift" style="width: 60px; height: 60px; margin-bottom: 0.5rem;">
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">OpenShift</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">Cluster Management</div>
-            </div>
-            <div class="skill-logo-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/grafana/grafana-original.svg" alt="Grafana" style="width: 60px; height: 60px; margin-bottom: 0.5rem;">
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Grafana</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">Visualization</div>
-            </div>
-            <div class="skill-logo-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/prometheus/prometheus-original.svg" alt="Prometheus" style="width: 60px; height: 60px; margin-bottom: 0.5rem;">
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Prometheus</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">Monitoring</div>
-            </div>
-            <div class="skill-logo-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vault/vault-original.svg" alt="Vault" style="width: 60px; height: 60px; margin-bottom: 0.5rem;">
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Vault</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">Secrets Management</div>
-            </div>
-            <div class="skill-logo-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" alt="AWS" style="width: 60px; height: 60px; margin-bottom: 0.5rem;">
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">AWS</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">Cloud Platform</div>
-            </div>
-            <div class="skill-logo-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" alt="Azure DevOps" style="width: 60px; height: 60px; margin-bottom: 0.5rem;">
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Azure DevOps</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">CI/CD Platform</div>
-            </div>
-            <div class="skill-logo-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bash/bash-original.svg" alt="Bash" style="width: 60px; height: 60px; margin-bottom: 0.5rem;">
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Bash Scripting</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">Shell Automation</div>
-            </div>
-            <div class="skill-logo-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" style="width: 60px; height: 60px; margin-bottom: 0.5rem;">
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Python</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">Scripting & Automation</div>
-            </div>
-            <div class="skill-logo-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ansible/ansible-original.svg" alt="Ansible" style="width: 60px; height: 60px; margin-bottom: 0.5rem;">
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Ansible</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">Configuration Management</div>
-            </div>
-            <div class="skill-logo-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git" style="width: 60px; height: 60px; margin-bottom: 0.5rem;">
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Git</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">Version Control</div>
-            </div>
-            <div class="skill-logo-card">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub Actions" style="width: 60px; height: 60px; margin-bottom: 0.5rem; filter: brightness(10);">
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">GitHub Actions</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">CI/CD Workflows</div>
-            </div>
-            <div class="skill-logo-card">
-                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" style="margin-bottom: 0.5rem; transition: transform 0.3s;">
-                    <circle cx="12" cy="12" r="10" stroke="#FF5722" stroke-width="2" fill="none"/>
-                    <path d="M12 6v6l4 2" stroke="#FF5722" stroke-width="2" stroke-linecap="round"/>
-                    <text x="12" y="13" text-anchor="middle" fill="#FF5722" font-size="6" font-weight="bold">SAML</text>
-                </svg>
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">SAML</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">Authentication</div>
-            </div>
-            <div class="skill-logo-card">
-                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" style="margin-bottom: 0.5rem; transition: transform 0.3s;">
-                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="#FF5722" stroke-width="2" fill="none"/>
-                    <path d="M12 7v10M7 12h10" stroke="#FF5722" stroke-width="2" stroke-linecap="round"/>
-                    <circle cx="12" cy="12" r="2" fill="#FF5722"/>
-                </svg>
-                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">OAuth 2.0</h4>
-                <div style="color: var(--primary-orange); font-weight: 600;">Authorization</div>
-            </div>
-        </div>
-    </section>
+    <section id="work"><div class="wrap reveal">
+      <div class="section-head"><span class="mono">03 / SELECTED WORK</span><h2>Problems solved through engineering.</h2><p class="section-desc">Examples of platform improvements and technical initiatives. Details can be expanded with project-specific metrics and links.</p></div>
+      <div class="projects">
+        <article class="project"><div class="project-top"><span>01 / PLATFORM AUTOMATION</span><span>↗</span></div><h3>Accelerated OpenShift provisioning</h3><p>Automated repeatable cluster provisioning workflows, reducing a process that took about a week to approximately 45 minutes.</p><div class="tags"><span class="tag">OpenShift</span><span class="tag">Ansible</span><span class="tag">Automation</span></div></article>
+        <article class="project"><div class="project-top"><span>02 / HIGH AVAILABILITY</span><span>↗</span></div><h3>Highly available NFS platform</h3><p>Implemented a three-node HA NFS design using cluster and replication technologies to improve storage resilience.</p><div class="tags"><span class="tag">Pacemaker</span><span class="tag">DRBD</span><span class="tag">Azure DevOps</span></div></article>
+        <article class="project"><div class="project-top"><span>03 / GITOPS</span><span>↗</span></div><h3>Argo CD application delivery</h3><p>Worked on GitOps-based application deployment and migration, using declarative configuration to standardize delivery.</p><div class="tags"><span class="tag">Argo CD</span><span class="tag">Kubernetes</span><span class="tag">GitOps</span></div></article>
+        <article class="project"><div class="project-top"><span>04 / OBSERVABILITY</span><span>↗</span></div><h3>Application telemetry & troubleshooting</h3><p>Improved service visibility with application metrics and OpenTelemetry traces, helping teams investigate performance issues and reduce MTTR.</p><div class="tags"><span class="tag">OpenTelemetry</span><span class="tag">Jaeger</span><span class="tag">Metrics</span></div></article>
+        <article class="project"><div class="project-top"><span>05 / DEVSECOPS</span><span>↗</span></div><h3>Security visibility across workloads</h3><p>Integrated vulnerability scanning and endpoint security coverage across Kubernetes clusters and virtual machines.</p><div class="tags"><span class="tag">Trivy</span><span class="tag">CrowdStrike</span><span class="tag">OpenShift</span></div></article>
+        <article class="project"><div class="project-top"><span>06 / PLATFORM GOVERNANCE</span><span>↗</span></div><h3>Access and certificate management</h3><p>Worked on internal certificate management and Kubernetes access-control practices to support secure platform operations.</p><div class="tags"><span class="tag">RBAC</span><span class="tag">PKI</span><span class="tag">Kubernetes</span></div></article>
+      </div>
+    </div></section>
 
+    <section id="experience"><div class="wrap reveal">
+      <div class="section-head"><span class="mono">04 / EXPERIENCE</span><h2>Where I contribute.</h2></div>
+      <div class="timeline">
+        <div class="role"><h3>Société Générale</h3><div class="meta">CURRENT · PLATFORM / DEVOPS ENGINEERING</div><p>Contributing to platform engineering and DevOps initiatives, with a focus on reliable delivery, automation, and operational excellence.</p></div>
+        <div class="role"><h3>Trintech</h3><div class="meta">PREVIOUS · DEVOPS / PLATFORM ENGINEERING</div><p>Worked across Kubernetes and OpenShift platforms, CI/CD automation, infrastructure operations, security integration, and observability improvements.</p></div>
+        <div class="role"><h3>Salesforce</h3><div class="meta">PREVIOUS EXPERIENCE</div><p>Earlier experience in enterprise technology environments, building a foundation in software delivery and operational practices.</p></div>
+      </div>
+    </div></section>
 
-    <!-- Projects -->
-    <section class="section" id="portfolio">
-        <div class="section-header">
-            <div class="section-label">FEATURED PROJECTS</div>
-            <h2 class="section-title">Latest Projects</h2>
+    <section id="certifications"><div class="wrap reveal">
+      <div class="section-head"><span class="mono">05 / CERTIFICATIONS</span><h2>Professional certifications.</h2><p class="section-desc">Industry credentials across Linux, networking, and OpenShift administration.</p></div>
+      <div class="certifications">
+        <article class="certification"><div class="symbol">⌘</div><h3>Red Hat Certified System Administrator (RHCSA)</h3><p>Red Hat · Linux system administration</p><span class="tag">RHCSA</span></article>
+        <article class="certification"><div class="symbol">⌁</div><h3>Cisco Certified Network Associate (CCNA)</h3><p>Cisco · Networking fundamentals</p><span class="tag">CCNA</span></article>
+        <article class="certification"><a href="https://www.credly.com/badges/645968ef-46d9-451d-bf36-2a3d5037271b" target="_blank" rel="noopener noreferrer" aria-label="View Red Hat Certified OpenShift Administrator badge on Credly"><img src="assets/openshift-administrator-badge.png" alt="Red Hat Certified OpenShift Administrator badge"></a><h3>Red Hat Certified OpenShift Administrator</h3><p>Red Hat · OpenShift platform administration</p><a class="tag" href="https://www.credly.com/badges/645968ef-46d9-451d-bf36-2a3d5037271b" target="_blank" rel="noopener noreferrer">View credential ↗</a></article>
+      </div>
+    </div></section>
+
+    <section id="writing"><div class="wrap reveal">
+      <div class="section-head"><span class="mono">06 / ENGINEERING NOTES</span><h2>Technical articles & tools.</h2><p class="section-desc">Practical engineering guides paired with small tools you can use in real environments.</p></div>
+      <div class="projects">
+        <article class="project">
+          <div class="project-top"><span>OBSERVABILITY · INTERACTIVE TOOL</span><span>↗</span></div>
+          <h3>OpenTelemetry Collector: from zero to production</h3>
+          <p>Understand telemetry pipelines, Elasticsearch and Kibana integration, Kubernetes Operator deployments, VM agents, and generate a starter Collector configuration.</p>
+          <div class="tags"><span class="tag">OpenTelemetry</span><span class="tag">Kubernetes</span><span class="tag">Elasticsearch</span><span class="tag">YAML Generator</span></div>
+          <div class="actions"><a class="btn primary" href="articles/otel-collector-generator.html">Read article & open generator ↗</a></div>
+        </article>
+      </div>
+    </div></section>
+
+    <section id="contact"><div class="wrap reveal">
+      <div class="contact-box">
+        <div><span class="mono">07 / CONTACT</span><h2>Let's build something reliable.</h2><p>Interested in platform engineering, SRE, automation, or solving complex production challenges?</p></div>
+        <div class="contact-links">
+          <!-- Replace the placeholder links with your real contact details. -->
+          <a class="btn primary" href="mailto:your.email@example.com">Email me ↗</a>
+          <a class="btn" href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a class="btn" href="https://github.com/" target="_blank" rel="noopener">GitHub ↗</a>
         </div>
-        <div class="portfolio-grid">
-            <div class="portfolio-item">
-                <div class="portfolio-image" style="background: linear-gradient(135deg, #EE0000 0%, #990000 100%); padding: 3rem;">
-                    <img src="https://www.vectorlogo.zone/logos/openshift/openshift-icon.svg" alt="OpenShift" style="width: 120px; height: 120px; filter: brightness(1.2);">
-                </div>
-                <div class="portfolio-content">
-                    <h3>OpenShift Cluster Automation</h3>
-                    <p>Designed and built OpenShift cluster from scratch with full automation using Ansible and Azure Pipelines</p>
-                    <div style="margin-top: 1rem; color: var(--primary-orange); font-weight: 600;">Reduced deployment time by 95%</div>
-                </div>
-            </div>
-            <div class="portfolio-item">
-                <div class="portfolio-image" style="background: linear-gradient(135deg, #FFD814 0%, #FF9900 100%); padding: 3rem;">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vault/vault-original.svg" alt="Vault" style="width: 120px; height: 120px;">
-                </div>
-                <div class="portfolio-content">
-                    <h3>Internal PKI Infrastructure</h3>
-                    <p>Developed internal Certificate Manager eliminating external certificate costs and automating rotation</p>
-                    <div style="margin-top: 1rem; color: var(--primary-orange); font-weight: 600;">30% cost reduction</div>
-                </div>
-            </div>
-            <div class="portfolio-item">
-                <div class="portfolio-image" style="background: linear-gradient(135deg, #F46800 0%, #E02F1B 100%); padding: 3rem; display: flex; align-items: center; justify-content: center; gap: 1rem;">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/prometheus/prometheus-original.svg" alt="Prometheus" style="width: 80px; height: 80px;">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/grafana/grafana-original.svg" alt="Grafana" style="width: 80px; height: 80px;">
-                </div>
-                <div class="portfolio-content">
-                    <h3>Monitoring & Observability</h3>
-                    <p>End-to-end blackbox monitoring with CI/CD integration using modern observability tools</p>
-                    <div style="margin-top: 1rem; color: var(--primary-orange); font-weight: 600;">Proactive issue detection</div>
-                </div>
-            </div>
-        </div>
-    </section>
+      </div>
+    </div></section>
+  </main>
+  <footer><div class="wrap footer-inner"><span>© <span id="year"></span> Krishna Kishore Reddy</span><span>Designed & built with HTML, CSS and JavaScript.</span></div></footer>
+  <script>
+    // Mobile navigation
+    const menuBtn = document.getElementById('menuBtn');
+    const navLinks = document.getElementById('navLinks');
+    menuBtn.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+    navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }));
 
-    <!-- About -->
-    <section class="section" id="about">
-        <div class="section-header">
-            <div class="section-label">ABOUT ME</div>
-            <h2 class="section-title">My Journey Story</h2>
-        </div>
-        <div class="about-content">
-            <div class="about-image" style="background: linear-gradient(135deg, rgba(255, 87, 34, 0.1), rgba(255, 87, 34, 0.05)), url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=3840&q=100&sat=-100') center/cover; display: flex; align-items: center; justify-content: center; position: relative;">
-                <div style="position: absolute; inset: 0; background: rgba(10, 10, 10, 0.2); backdrop-filter: blur(1px);"></div>
-            </div>
-            <div>
-                <p class="about-text">
-                    Highly skilled Senior DevOps Engineer with over 6 years of experience in designing, implementing, and managing scalable and reliable infrastructure. Proficient in leveraging Kubernetes (K8s), Docker, Azure DevOps, GitHub Actions and Linux to optimize the development and deployment pipelines.
-                </p>
-                <p class="about-text">
-                    Adept at automating workflows, enhancing system performance, and collaborating cross-functionally to drive efficiency and innovation. Currently based in Bengaluru, India, working with cutting-edge technologies to solve complex infrastructure challenges.
-                </p>
-                <div class="experience-box">
-                    <div class="experience-number">06</div>
-                    <div class="experience-label">Years of Experience</div>
-                </div>
-                <div class="bg-white dark:bg-dark-700 p-6 rounded-lg shadow-lg" style="background: var(--card-bg); padding: 1.5rem; border-radius: 10px; border-left: 4px solid var(--primary-orange); margin-top: 1.5rem;">
-                    <h3 style="font-weight: 700; margin-bottom: 0.5rem;">Education</h3>
-                    <p>Computer Science and Engineering</p>
-                    <p style="color: var(--text-secondary);">K.S.R.M College of Engineering, Kadapa</p>
-                    <p style="color: var(--primary-orange); font-weight: 600;">First Grade</p>
-                </div>
-                <div style="margin-top: 2rem;">
-                    <a href="./KRISHNA-KISHORE-REDDY.pdf" class="btn-primary" download>Download CV</a>
-                    <a href="#contact" class="btn-secondary" style="margin-left: 1rem;">Contact Me</a>
-                </div>
-            </div>
-        </div>
-    </section>
+    // Reveal sections as they enter the viewport
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
 
+    // Keep the footer year current
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-    <!-- Experience -->
-    <section class="section" id="experience" style="background: var(--card-bg);">
-        <div class="section-header">
-            <div class="section-label">PROFESSIONAL EXPERIENCE</div>
-            <h2 class="section-title">My Journey</h2>
-        </div>
-        <div style="position: relative;">
-            <div style="position: absolute; left: 2rem; top: 0; bottom: 0; width: 2px; background: var(--primary-orange);"></div>
-            
-            <!-- Trintech -->
-            <div style="position: relative; margin-left: 5rem; margin-bottom: 3rem;">
-                <div style="position: absolute; left: -3.5rem; top: 1rem; width: 15px; height: 15px; background: var(--primary-orange); border-radius: 50%; border: 3px solid var(--dark-bg);"></div>
-                <div style="background: var(--dark-bg); padding: 2rem; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05);">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; flex-wrap: wrap;">
-                        <div>
-                            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Senior DevOps Engineer</h3>
-                            <p style="color: var(--primary-orange); font-weight: 600; font-size: 1.1rem;">Trintech India Pvt Ltd</p>
-                        </div>
-                        <div style="color: var(--text-secondary);">January 2025 - Present</div>
-                    </div>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">OpenShift Automation:</strong> Streamlined OpenShift cluster provisioning by automating deployment of core components (SSO, Cert Manager, Prometheus, Grafana) using Ansible, Azure Pipelines, and Shell scripts, achieving 99% reduction in deployment time (from 1 week to 45 minutes)
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Certificate Management:</strong> Developed an internal Certificate Manager, eliminating the need for external certificates for internal use, resulting in significant cost savings
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">CI/CD Optimization:</strong> Eliminated Azure DevOps pipeline bottlenecks by implementing traffic-based auto-scaling for Windows and Linux build agents, drastically reducing queued jobs and improving deployment velocity
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Security Implementation:</strong> Rolled out multi-layered security scanning using CrowdStrike Falcon and Trivy across all OpenShift clusters and VMs, maintaining continuous compliance monitoring and vulnerability detection
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Container Registry Management:</strong> Established secure container image workflow using Skopeo to mirror images from public registries to internal registries, eliminating direct external registry access and reducing security vulnerabilities
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Infrastructure Automation:</strong> Built a Linux-based DNS with DDNS automation, reducing manual record updates and improving network management efficiency
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Monitoring Solutions:</strong> Deployed an end-to-end monitoring stack with Prometheus, Grafana, and ArgoCD, reducing MTTR through proactive alerting and comprehensive visibility
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Process Automation:</strong> Developed a Python API-based web application to automate task management, enabling streamlined tracking and improved efficiency through Azure DevOps integration
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Team Leadership:</strong> Mentored and trained junior team members, providing guidance on DevOps best practices and supporting their professional development
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Architecture Modernization:</strong> Collaborated with development teams to deploy applications and drive the transition to microservices architecture for improved scalability and maintainability
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Blackbox Monitoring:</strong> Designed and maintained an end-to-end blackbox monitoring application using ADO pipelines, SonarQube, Trivy, Docker, Kubernetes, and ArgoCD for seamless CI/CD and deployment
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Cluster Management:</strong> Created a one-stop automation solution for OpenShift cluster upgrades, enabling version updates through a single execution and eliminating manual intervention
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">High Availability Solutions:</strong> Developed a one-click Azure Pipeline solution for deploying production-ready 3-node NFS clusters with Pacemaker and DRBD high availability, fully automating server creation and configuration
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">System Maintenance:</strong> Eliminated server reboot requirements for critical patches by deploying TuxCare live patching, maintaining continuous uptime while ensuring security complianceR drills
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Cost Optimization:</strong> Implemented resource quota management and auto-scaling policies, achieving 35% cost reduction through rightsizing recommendations and efficient resource allocation
-                        </li>
-                        <li style="padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Documentation & Knowledge Transfer:</strong> Created comprehensive documentation for OpenShift operations, runbooks for incident response, and conducted training sessions for 15+ team members on GitOps practices
-                        </li>
-                    </ul>
-                </div>
-            </div>
+    // ===== Command rain (linux, docker, k8s, terraform, git) =====
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduceMotion) {
+      const COMMANDS = {
+        '#67e8f9': ['ls -la', 'grep -r "error" .', 'chmod +x deploy.sh', 'tail -f /var/log/syslog', 'ps aux | grep nginx', 'systemctl status sshd', 'df -h', 'top', 'curl -I localhost', 'ssh user@host', 'journalctl -u kubelet', 'netstat -tulpn'],
+        '#7c9cff': ['docker ps', 'docker build -t app .', 'docker run -d -p 80:80 nginx', 'docker logs -f app', 'docker compose up -d', 'docker exec -it app sh', 'docker images', 'docker system prune'],
+        '#8de5b2': ['kubectl get pods', 'kubectl apply -f deploy.yaml', 'kubectl describe pod', 'kubectl logs -f pod', 'kubectl rollout restart', 'kubectl get nodes', 'kubectl exec -it pod -- sh', 'kubectl top pods', 'helm install app ./chart'],
+        '#c4a5ff': ['terraform init', 'terraform plan', 'terraform apply', 'terraform destroy', 'terraform fmt', 'terraform validate', 'terraform state list', 'terraform output'],
+        '#f7c96b': ['git status', 'git commit -m "fix"', 'git push origin main', 'git pull --rebase', 'git checkout -b feature', 'git merge main', 'git log --oneline', 'git stash', 'git diff']
+      };
+      const palette = Object.keys(COMMANDS);
+      const rc = document.getElementById('cmdRain');
+      const rx = rc.getContext('2d');
+      let rw, rh, drops = [];
+      const FONT = 13;
 
-            <!-- Salesforce -->
-            <div style="position: relative; margin-left: 5rem;">
-                <div style="position: absolute; left: -3.5rem; top: 1rem; width: 15px; height: 15px; background: var(--primary-orange); border-radius: 50%; border: 3px solid var(--dark-bg);"></div>
-                <div style="background: var(--dark-bg); padding: 2rem; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05);">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; flex-wrap: wrap;">
-                        <div>
-                            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Infrastructure Engineer</h3>
-                            <p style="color: var(--primary-orange); font-weight: 600; font-size: 1.1rem;">Salesforce India Pvt Ltd</p>
-                        </div>
-                        <div style="color: var(--text-secondary);">April 2023 - December 2024</div>
-                    </div>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Container Security & Optimization:</strong> Implemented container-based infrastructure with Trivy security scanning and vulnerability management, achieving 30% cost reduction through intelligent resource allocation and container rightsizing
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">SAML/OAuth2.0 Integration:</strong> Configured and troubleshot enterprise SAML authentication with Okta and Azure AD across 50+ applications, implementing OAuth 2.0 flows for secure API access and SSO integration
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Kubernetes Production Deployment:</strong> Deployed and managed production Kubernetes clusters serving 10M+ daily requests with comprehensive monitoring using Prometheus, Grafana, and custom dashboards for performance optimization
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">CI/CD Automation:</strong> Automated Tableau and Salesforce application deployments with security gates and compliance checks, reducing deployment time from 3 hours to 30 minutes with zero-downtime releases
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">AWS Infrastructure Management:</strong> Managed multi-account AWS infrastructure with EC2, S3, VPC, Route 53, and CloudFormation, implementing cost optimization strategies and security best practices
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Logging & Observability:</strong> Implemented centralized logging using ELK Stack and Splunk for application and infrastructure logs, enabling faster troubleshooting and reducing MTTR by 60%
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Secrets Management with Vault:</strong> Deployed and managed HashiCorp Vault for secrets management across applications, implementing dynamic secrets rotation and secure credential access patterns
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">GitHub Actions Workflows:</strong> Created reusable GitHub Actions workflows for 30+ repositories, standardizing CI/CD practices and implementing automated testing, security scanning, and deployment patterns
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Load Balancing & High Availability:</strong> Configured and optimized HAProxy and Nginx load balancers for high-traffic applications, implementing health checks, SSL termination, and auto-scaling to handle peak loads
-                        </li>
-                        <li style="margin-bottom: 1rem; padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Incident Response & On-Call:</strong> Served as primary on-call engineer for production systems, implementing automated alerting, incident response procedures, and post-mortem analysis to prevent recurring issues
-                        </li>
-                        <li style="padding-left: 1.5rem; position: relative;">
-                            <span style="position: absolute; left: 0; color: var(--primary-orange);">•</span>
-                            <strong style="color: var(--primary-orange);">Cross-Team Collaboration:</strong> Collaborated with development teams across 5 different time zones to streamline deployment processes, providing infrastructure expertise and DevOps best practices training
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact -->
-    <section class="section" id="contact">
-        <div class="section-header">
-            <div class="section-label">GET IN TOUCH</div>
-            <h2 class="section-title">I'm Available For Freelancing</h2>
-        </div>
-        <div class="contact-container">
-            <div class="contact-info">
-                <div class="contact-item">
-                    <div class="contact-icon">📧</div>
-                    <div>
-                        <h3>Email</h3>
-                        <p>krishnakishore@inarm.in</p>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-icon">📱</div>
-                    <div>
-                        <h3>Phone</h3>
-                        <p>+91 94xxxxx30</p>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-icon">📍</div>
-                    <div>
-                        <h3>Location</h3>
-                        <p>Bengaluru, India</p>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-icon">🔗</div>
-                    <div>
-                        <h3>LinkedIn</h3>
-                        <p><a href="https://www.linkedin.com/in/krishna-kishore--reddy" target="_blank" style="color: var(--primary-orange);">View Profile</a></p>
-                    </div>
-                </div>
-            </div>
-            <form class="contact-form" id="contact-form" action="https://formspree.io/f/mrgnklak" method="POST">
-                <input type="text" name="name" placeholder="Your Name" required>
-                <input type="email" name="email" placeholder="Your Email" required>
-                <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
-                <button type="submit" class="btn-primary">Send Message</button>
-                <div id="contact-status" style="margin-top:15px; text-align:center;"></div>
-            </form>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.5rem;">
-            <a href="mailto:krishnakishore@inarm.in" style="text-decoration: none; color: var(--text-secondary); transition: color 0.3s;" onmouseover="this.style.color='var(--primary-orange)'" onmouseout="this.style.color='var(--text-secondary)'">Email</a>
-            <a href="https://www.linkedin.com/in/krishna-kishore--reddy" target="_blank" style="text-decoration: none; color: var(--text-secondary); transition: color 0.3s;" onmouseover="this.style.color='var(--primary-orange)'" onmouseout="this.style.color='var(--text-secondary)'">LinkedIn</a>
-            <a href="https://github.com/krishna-kishore-reddy" target="_blank" style="text-decoration: none; color: var(--text-secondary); transition: color 0.3s;" onmouseover="this.style.color='var(--primary-orange)'" onmouseout="this.style.color='var(--text-secondary)'">GitHub</a>
-            <a href="./KRISHNA-KISHORE-REDDY.pdf" target="_blank" style="text-decoration: none; color: var(--text-secondary); transition: color 0.3s;" onmouseover="this.style.color='var(--primary-orange)'" onmouseout="this.style.color='var(--text-secondary)'">Resume</a>
-        </div>
-        <p>&copy; 2025 Krishna Kishore Reddy. All rights reserved.</p>
-    </footer>
-
-    <script>
-        // Contact form submission handler
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
-            var status = document.getElementById('contact-status');
-            status.innerHTML = "Sending...";
-            status.style.color = "var(--primary-orange)";
-            // Let the form submit to Formspree, then show a message
-            setTimeout(function() {
-                status.innerHTML = "Thank you! Your message has been sent.";
-                status.style.color = "#4ecdc4";
-            }, 1000);
-        });
-
-        // Smooth scroll for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Scroll-triggered animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+      function newDrop(initial) {
+        const color = palette[Math.floor(Math.random() * palette.length)];
+        const list = COMMANDS[color];
+        return {
+          text: list[Math.floor(Math.random() * list.length)],
+          color,
+          x: Math.random() * rw,
+          y: initial ? Math.random() * rh : -20,
+          speed: 0.5 + Math.random() * 1.3,
+          alpha: 0.35 + Math.random() * 0.65
         };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animated');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        // Add animation class to sections
-        document.addEventListener('DOMContentLoaded', () => {
-            // Animate section headers
-            document.querySelectorAll('.section-header').forEach(el => {
-                el.classList.add('animate-on-scroll');
-                observer.observe(el);
-            });
-
-            // Animate about content
-            document.querySelectorAll('.about-content > div').forEach(el => {
-                el.classList.add('animate-on-scroll');
-                observer.observe(el);
-            });
-
-            // Animate experience items
-            document.querySelectorAll('#experience > div > div > div').forEach((el, index) => {
-                el.style.animationDelay = `${index * 0.2}s`;
-                el.classList.add('animate-on-scroll');
-                observer.observe(el);
-            });
-
-            // Counter animation for stats
-            const animateCounter = (element, target) => {
-                let current = 0;
-                const increment = target / 50;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        element.textContent = target + (target === 95 ? '%' : target === 6 ? '+' : target === 5 ? '' : '+');
-                        clearInterval(timer);
-                    } else {
-                        element.textContent = Math.floor(current) + (target === 95 ? '%' : target === 6 ? '+' : target === 5 ? '' : '+');
-                    }
-                }, 30);
-            };
-
-            // Observe stat cards for counter animation
-            const statObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const number = entry.target.querySelector('.stat-number');
-                        const text = number.textContent;
-                        const value = parseInt(text);
-                        animateCounter(number, value);
-                        statObserver.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.5 });
-
-            document.querySelectorAll('.stat-card').forEach(card => {
-                statObserver.observe(card);
-            });
-
-            // Add pulse animation to nav logo
-            const logo = document.querySelector('.logo');
-            if (logo) {
-                logo.style.animation = 'pulse 2s infinite';
-            }
-        });
-
-        // Parallax effect for geometric shapes
-        document.addEventListener('mousemove', (e) => {
-            const shapes = document.querySelectorAll('.geometric-shape');
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-
-            shapes.forEach((shape, index) => {
-                const speed = (index + 1) * 20;
-                const xMove = (x - 0.5) * speed;
-                const yMove = (y - 0.5) * speed;
-                shape.style.transform = `translate(${xMove}px, ${yMove}px) rotate(${index * 45}deg)`;
-            });
-        });
-
-        // Add ripple effect to buttons
-        document.querySelectorAll('.btn-primary, .btn-secondary').forEach(button => {
-            button.addEventListener('click', function(e) {
-                const ripple = document.createElement('span');
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-
-                ripple.style.width = ripple.style.height = size + 'px';
-                ripple.style.left = x + 'px';
-                ripple.style.top = y + 'px';
-                ripple.classList.add('ripple');
-
-                this.appendChild(ripple);
-
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
-            });
-        });
-    </script>
-
-    <style>
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            transform: scale(0);
-            animation: ripple-animation 0.6s ease-out;
-            pointer-events: none;
+      }
+      function sizeRain() {
+        const dpr = window.devicePixelRatio || 1;
+        rw = window.innerWidth; rh = window.innerHeight;
+        rc.width = rw * dpr; rc.height = rh * dpr;
+        rx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const count = Math.max(14, Math.min(48, Math.floor(rw / 32)));
+        drops = Array.from({ length: count }, () => newDrop(true));
+      }
+      function drawRain() {
+        if (!document.hidden) {
+          rx.clearRect(0, 0, rw, rh);
+          rx.font = FONT + 'px "DM Mono", monospace';
+          for (const d of drops) {
+            rx.fillStyle = d.color;
+            rx.globalAlpha = d.alpha;
+            rx.fillText(d.text, d.x, d.y);
+            d.y += d.speed;
+            if (d.y > rh + 20) Object.assign(d, newDrop(false));
+            if (d.x + rx.measureText(d.text).width > rw) d.x = rw - rx.measureText(d.text).width - 4;
+          }
+          rx.globalAlpha = 1;
         }
+        requestAnimationFrame(drawRain);
+      }
+      sizeRain();
+      window.addEventListener('resize', sizeRain);
+      requestAnimationFrame(drawRain);
 
-        @keyframes ripple-animation {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-    </style>
+    }
+  </script>
 </body>
 </html>
