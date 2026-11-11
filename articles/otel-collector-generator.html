@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="A practical guide to OpenTelemetry Collector architecture, Elasticsearch and Kibana, Kubernetes Operator deployments, VM agents and an interactive configuration generator.">
+<meta name="description" content="Compare ELK, EFK and the OpenTelemetry Collector with Elasticsearch and Kibana, see why the Collector suits new deployments, and generate Kubernetes and VM configurations.">
 <meta name="theme-color" content="#080d18">
-<title>OpenTelemetry Collector: Production Guide & Generator | Krishna Kishore Reddy</title>
+<title>ELK vs EFK vs OpenTelemetry Collector with EK: Guide & Generator | Krishna Kishore Reddy</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
 :root{--bg:#080d18;--panel:#101827;--panel2:#142238;--text:#edf3ff;--muted:#9aa9bf;--line:rgba(180,200,230,.15);--cyan:#67e8f9;--blue:#7c9cff;--green:#8de5b2;--red:#ff9caa;--max:1160px}
@@ -31,7 +31,7 @@ select:focus,input:focus{border-color:var(--cyan)}.hint{font-size:10px;color:var
 .checkgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.check{display:flex;gap:8px;align-items:flex-start;font-size:11px;color:#c1cee0;background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:8px;padding:8px}.check input{accent-color:#67e8f9;margin-top:3px}
 .group{border-top:1px solid var(--line);padding-top:12px;margin-top:14px}.group:first-of-type{border-top:0;padding-top:0}.group-title{font:10px 'DM Mono',monospace;color:var(--cyan);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.btn{border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--text);padding:10px 13px;font-weight:700;font-size:11px;cursor:pointer}.btn.primary{background:var(--cyan);color:#06111a;border-color:var(--cyan)}.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
-.tabs{display:flex;gap:6px;margin-bottom:10px}.tab{background:transparent;color:var(--muted);border:1px solid var(--line);padding:7px 10px;border-radius:7px;cursor:pointer;font-size:11px}.tab.active{color:var(--cyan);border-color:var(--cyan)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.tab{background:transparent;color:var(--muted);border:1px solid var(--line);padding:7px 10px;border-radius:7px;cursor:pointer;font-size:11px}.tab.active{color:var(--cyan);border-color:var(--cyan)}
 .output{min-height:420px;max-height:650px;margin:0;font-size:11px}.status{font-size:11px;color:var(--muted);margin-top:10px}.warning{color:#ffd58a}.error{color:var(--red)}.success{color:var(--green)}
 footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:11px}
 #cmdRain{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.5;pointer-events:none}
@@ -55,6 +55,7 @@ textarea{width:100%;min-height:70px;background:#091321;color:var(--text);border:
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
 .note{color:var(--muted)}
 .desc{color:var(--muted);font-size:11.5px;line-height:1.55;margin:6px 0 4px}
+.tblwrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:12px}table.cmp{border-collapse:collapse;width:100%;min-width:680px;font-size:12.5px;line-height:1.55}.cmp th,.cmp td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}.cmp th:last-child,.cmp td:last-child{border-right:0}.cmp tr:last-child td{border-bottom:0}.cmp th{background:var(--panel2);color:var(--text);font-weight:700}.cmp td{color:#bac7d9}.cmp td:first-child{color:var(--text);font-weight:700}
 </style>
 </head>
 <body>
@@ -62,69 +63,95 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <header><div class="wrap"><nav><a class="brand" href="../index.html">KKR<span>.</span> / ENGINEERING NOTES</a><div class="navlinks"><a href="../index.html">Portfolio</a><a href="#guide">Guide</a><a href="#generator">Generator</a></div></nav></div></header>
 <div class="wrap hero">
  <div class="eyebrow">OBSERVABILITY · HANDS-ON GUIDE · INTERACTIVE TOOL</div>
- <h1>OpenTelemetry Collector:<br><span style="color:var(--cyan)">from telemetry to insight.</span></h1>
- <p>A practical introduction to collecting, processing and exporting logs, metrics and traces across Kubernetes clusters and virtual machines — with an interactive configuration generator.</p>
- <div class="pills"><span class="pill">OTel Collector Contrib</span><span class="pill">Kubernetes Operator</span><span class="pill">Elasticsearch + Kibana</span><span class="pill">Linux VMs</span></div>
+ <h1>ELK, EFK or the Collector?<br><span style="color:var(--cyan)">Choosing the ingestion layer for EK.</span></h1>
+ <p>A side-by-side comparison of Logstash, Fluentd, Fluent Bit and the OpenTelemetry Collector feeding Elasticsearch and Kibana, why the Collector is the best default for new deployments, and an interactive configuration generator.</p>
+ <div class="pills"><span class="pill">ELK</span><span class="pill">EFK</span><span class="pill">OTel Collector + EK</span><span class="pill">Kubernetes Operator</span><span class="pill">Linux VMs</span></div>
 </div>
 <main class="wrap" id="guide">
 <div class="layout">
-<aside class="toc" aria-label="Article sections"><b>IN THIS ARTICLE</b><a href="#why">Why a Collector?</a><a href="#architecture">Architecture</a><a href="#signals">Logs, metrics & traces</a><a href="#elastic">Elasticsearch & Kibana</a><a href="#comparison">Collector vs ELK / EFK</a><a href="#kubernetes">Kubernetes deployment</a><a href="#vm">VM deployment</a><a href="#verify">Deploy and verify</a><a href="#production">Production checklist</a><a href="#generator">Configuration generator</a></aside>
+<aside class="toc" aria-label="Article sections"><b>IN THIS ARTICLE</b><a href="#why">ELK, EFK or Collector?</a><a href="#architecture">Architecture</a><a href="#signals">Signal coverage</a><a href="#elastic">Elasticsearch & Kibana</a><a href="#comparison">Full comparison</a><a href="#why-collector">Why the Collector</a><a href="#kubernetes">Kubernetes</a><a href="#vm">Virtual machines</a><a href="#verify">Deploy and verify</a><a href="#production">Production checklist</a><a href="#generator">Configuration generator</a></aside>
 <article>
-<section id="why"><div class="mono">01 / THE PROBLEM</div><h2>Why do we need the OpenTelemetry Collector?</h2>
-<p>Modern applications run across containers, Kubernetes, virtual machines, managed databases and cloud services. Each component can produce telemetry in a different format and often has a different integration method for each monitoring backend.</p>
-<p>Without a common collection layer, teams end up maintaining multiple agents, vendor-specific SDK integrations, custom forwarding scripts and duplicated configuration. A backend migration can then require changes across many applications.</p>
-<div class="callout"><strong>OpenTelemetry Collector is a vendor-neutral telemetry pipeline.</strong> It receives telemetry, optionally enriches or transforms it, and exports it to one or more observability backends. Applications can send OTLP to the Collector instead of being coupled directly to a particular vendor.</div>
-<ul><li>Centralize telemetry collection and routing.</li><li>Separate application instrumentation from backend destinations.</li><li>Apply batching, filtering, enrichment and sampling consistently.</li><li>Reduce direct application-to-vendor coupling.</li><li>Support multiple destinations and migration strategies.</li></ul></section>
-<section id="architecture"><div class="mono">02 / PIPELINE</div><h2>How the Collector works</h2>
-<p>A Collector pipeline is built from three main component types. Components must be enabled in the service pipelines to become active.</p>
-<div class="diagram"><div class="step"><b>RECEIVERS</b><small>Accept telemetry</small></div><div class="step"><b>PROCESSORS</b><small>Enrich / filter / batch</small></div><div class="step"><b>EXPORTERS</b><small>Send telemetry</small></div><div class="step"><b>BACKENDS</b><small>Store / query / alert</small></div></div>
-<p><strong>Receivers</strong> ingest data through protocols or sources such as OTLP, host metrics, files and Prometheus scrape endpoints. <strong>Processors</strong> modify or control data in flight. <strong>Exporters</strong> deliver the resulting telemetry to destinations.</p>
+<section id="why"><div class="mono">01 / THREE WAYS TO FEED ELASTICSEARCH</div><h2>ELK, EFK and the Collector with EK: the same problem, three answers</h2>
+<p>Every team that uses Elasticsearch and Kibana has to decide what sits in front of them: the layer that collects, parses, enriches and ships telemetry. Three designs dominate.</p>
+<div class="tblwrap"><table class="cmp"><thead><tr><th>Stack</th><th>Ingestion layer</th><th>Designed around</th></tr></thead><tbody>
+<tr><td>ELK</td><td>Logstash (often with Filebeat or Elastic Agent in front)</td><td>Log events and heavy parsing</td></tr>
+<tr><td>EFK</td><td>Fluentd or Fluent Bit</td><td>Log forwarding, especially on Kubernetes</td></tr>
+<tr><td>OTel Collector + EK</td><td>OpenTelemetry Collector, writing straight to Elasticsearch</td><td>Logs, metrics and traces over one vendor-neutral protocol (OTLP)</td></tr></tbody></table></div>
+<div class="callout must-read"><strong>Must read — naming:</strong> ELK = Elasticsearch, Logstash, Kibana. EFK = Elasticsearch, Fluentd (or Fluent Bit), Kibana. “EK” here means Elasticsearch and Kibana with no Logstash or Fluentd tier, because the Collector is the ingestion layer. ECK is something else: Elastic Cloud on Kubernetes, Elastic’s operator for running Elasticsearch and Kibana. It is not the OpenTelemetry Collector.</div>
+<p>This guide compares them honestly. The Collector is the strongest fit when you want one pipeline for all three signals and freedom to change backends. It is not the best tool for every job, and the sections below say where Logstash, Fluentd and Fluent Bit still win.</p></section>
+
+<section id="architecture"><div class="mono">02 / ARCHITECTURE</div><h2>Side-by-side data paths</h2>
+<pre>ELK
+Apps / hosts -> Filebeat or Elastic Agent -> Logstash (input > filter > output) -> Elasticsearch -> Kibana
+Metrics: Metricbeat.  Traces: APM agents and APM Server.  Separate tools per signal.
+
+EFK
+Pods / hosts -> Fluent Bit (node agent) -> Fluentd (optional aggregator) -> Elasticsearch -> Kibana
+Logs first. Metrics and traces need extra tooling or newer plugins.
+
+OTel Collector + EK
+Apps (OTLP) / files / host + Kubernetes metrics -> Collector agent (DaemonSet or VM service)
+        -> Collector gateway (optional) -> Elasticsearch exporter -> Elasticsearch -> Kibana
+One binary, three signals, same processors for each.</pre>
+<p>A Collector pipeline has receivers, processors and exporters, and a component only runs when a service pipeline lists it. The same three-part model covers every signal, which is the main structural difference from the other two stacks.</p>
 <h3>Agent and gateway patterns</h3>
-<ul><li><strong>Agent:</strong> a Collector runs close to the workload, commonly as a Kubernetes DaemonSet or a VM service. It reads local files, host metrics and application telemetry.</li><li><strong>Gateway:</strong> a horizontally scalable Collector service receives telemetry from agents or applications, centralizes processing, and exports to backends.</li><li><strong>Hybrid:</strong> agents handle node-local collection while gateways handle shared processing, routing and backend credentials.</li></ul>
-<pre>Application / Host / Kubernetes
-             |
-             v
-       OTel Agent(s)
-             |
-             v
-       OTel Gateway
-        /    |     \
-       v     v      v
-   Elastic  Tempo  Datadog</pre></section>
-<section id="signals"><div class="mono">03 / TELEMETRY</div><h2>Logs, metrics and distributed traces</h2>
-<h3>Logs</h3><p>Timestamped records describing events. A filelog receiver can tail application log files; Kubernetes node agents can collect container log files. Parse and enrich records carefully, and avoid collecting secrets or unnecessary personal data.</p>
-<h3>Metrics</h3><p>Numeric measurements over time, such as request rate, error count, latency histograms, CPU and memory. Host metrics and Prometheus receivers are common sources. Metrics are useful for dashboards, alerting and capacity analysis.</p>
-<h3>Traces</h3><p>A trace follows a request across services. Spans capture individual operations and their parent-child relationships. OTLP is the common transport; trace context propagation in application code is essential for end-to-end traces.</p>
-<div class="callout must-read"><strong>Must read — pipeline basics:</strong> A Collector can handle all three signals, but each signal needs its own pipeline and compatible receiver/exporter components. Selecting a receiver does not automatically create a pipeline.</div></section>
-<section id="elastic"><div class="mono">04 / ELASTIC INTEGRATION</div><h2>Using OpenTelemetry with Elasticsearch and Kibana</h2>
-<p>Elasticsearch stores and indexes data; Kibana provides search, visualization and operational workflows. The Collector can send supported telemetry to Elasticsearch using the Elasticsearch exporter, or send OTLP to an OpenTelemetry-compatible intake path where appropriate.</p>
-<p>A typical architecture is:</p>
+<ul><li><strong>Agent:</strong> a Collector next to the workload, as a DaemonSet or VM service. Reads local files, host metrics and OTLP from local apps.</li><li><strong>Gateway:</strong> a scalable Collector service that receives from agents, applies shared processing such as tail sampling, and holds backend credentials.</li><li><strong>Hybrid:</strong> agents for node-local work, gateways for shared work. Logstash and Fluentd have the same idea (forwarder plus aggregator), but only the Collector uses one binary and one config model for both roles.</li></ul></section>
+
+<section id="signals"><div class="mono">03 / TELEMETRY</div><h2>Signal coverage: logs, metrics and traces</h2>
+<div class="tblwrap"><table class="cmp"><thead><tr><th>Signal</th><th>ELK</th><th>EFK</th><th>OTel Collector + EK</th></tr></thead><tbody>
+<tr><td>Logs</td><td>Core strength. Filebeat or Logstash inputs, grok and mutate filters.</td><td>Core strength. Tail files, Kubernetes filter, many outputs.</td><td>Supported. filelog receiver with an operator chain, plus OTLP logs.</td></tr>
+<tr><td>Metrics</td><td>Via Metricbeat or Elastic Agent, not Logstash itself.</td><td>Fluent Bit can collect and forward metrics. Fluentd depends on plugins.</td><td>Native: hostmetrics, kubeletstats, k8s_cluster, Prometheus scraping, app databases, OTLP.</td></tr>
+<tr><td>Traces</td><td>Via APM agents and APM Server.</td><td>Fluent Bit can receive and forward OTLP traces, with limited processing.</td><td>Native: OTLP in, tail sampling, filtering and attribute processing, Elasticsearch out.</td></tr>
+<tr><td>Wire protocol</td><td>Beats / Lumberjack, HTTP, Kafka. OTLP support depends on your version.</td><td>Forward protocol, HTTP. Fluent Bit also has OTLP input and output.</td><td>OTLP is the native format, with 100+ other receivers and exporters.</td></tr></tbody></table></div>
+<div class="callout must-read"><strong>Must read — pipelines:</strong> In the Collector, each signal needs its own pipeline with compatible components. Choosing a receiver does not create a pipeline. The generator below checks that every enabled signal has a source and a destination.</div>
+<p>Practical privacy rule for all three stacks: do not collect secrets or unnecessary personal data. In the Collector, use the attributes processor to delete or hash fields before export.</p></section>
+
+<section id="elastic"><div class="mono">04 / ELASTIC INTEGRATION</div><h2>How each stack writes to Elasticsearch and Kibana</h2>
+<div class="tblwrap"><table class="cmp"><thead><tr><th></th><th>ELK</th><th>EFK</th><th>OTel Collector + EK</th></tr></thead><tbody>
+<tr><td>Writer</td><td>Logstash elasticsearch output</td><td>Fluentd or Fluent Bit Elasticsearch output</td><td>Elasticsearch exporter</td></tr>
+<tr><td>Document shape</td><td>Whatever your filters build, often ECS</td><td>Whatever your parsers build</td><td>Selectable mapping: otel, ecs, none</td></tr>
+<tr><td>Data streams</td><td>Supported</td><td>Supported, needs correct output settings</td><td>Default routing to logs-*, metrics-*, traces-* data streams</td></tr>
+<tr><td>Extra tier before Elasticsearch</td><td>Logstash is the tier</td><td>Fluentd aggregator is optional</td><td>None needed. A gateway Collector is optional.</td></tr>
+<tr><td>Auth</td><td>API key or user in the pipeline file</td><td>API key or user in the config</td><td>API key from a Secret or protected env file, never in YAML</td></tr></tbody></table></div>
+<p>Elastic itself is moving this way. Elastic ships its own OpenTelemetry Collector distribution (EDOT), and from Elastic Agent 9.3 the agent is built on the EDOT Collector. A plain upstream Contrib Collector, which this guide generates, can also send to Elasticsearch. EDOT adds Elastic support and tested defaults, and Fleet management is available through Elastic Agent rather than the standalone EDOT Collector.</p>
 <pre>Apps / Kubernetes / VMs
           |
-          v
    OpenTelemetry Collector
-          |
           |  Elasticsearch exporter
           v
-    Elasticsearch cluster
-          |
-          v
-        Kibana
-   Discover / Dashboards</pre>
-<p>For a production design, decide how logs, metrics and traces should be indexed, mapped, retained and secured. Verify the exporter and backend versions you deploy, and test the exact signal mapping before rolling it out widely. Kibana data views / data views or integrations may need to be configured before data appears in Discover.</p>
-<p>For the Collector-to-Elasticsearch connection, use TLS verification, a least-privilege credential, and a Kubernetes Secret or protected VM environment file. Do not commit API keys or passwords into Git.</p></section>
-<section id="comparison"><div class="mono">05 / CHOOSING AN INGESTION LAYER</div><h2>OpenTelemetry Collector vs ELK and EFK</h2>
-<div class="callout must-read"><strong>Must read — what the names mean:</strong> ELK is Elasticsearch, Logstash and Kibana. EFK is Elasticsearch, Fluentd (or Fluent Bit) and Kibana. The “C” in ECK means <strong>Cloud on Kubernetes</strong>; it is Elastic’s Kubernetes Operator, not the OpenTelemetry Collector. This section compares the Collector with the ELK/EFK ingestion agents.</div>
-<p><strong>OpenTelemetry Collector is backend-agnostic.</strong> It accepts telemetry through supported receivers, processes it in signal-specific pipelines, and exports it to compatible backends. You can send different signals to different destinations, or configure multiple exporters for a signal when fan-out is needed. The Collector is not limited to Elasticsearch.</p>
-<h3>Where the Collector can help</h3>
-<ul><li><strong>Decouple apps from vendors:</strong> instrument once with OpenTelemetry APIs/SDKs and OTLP, then change or add backends mainly in Collector configuration rather than rewriting application instrumentation.</li><li><strong>One pipeline for three signals:</strong> collect and process logs, metrics and traces with shared operational patterns, while keeping each signal’s pipeline and exporter compatibility explicit.</li><li><strong>Route and fan out:</strong> send supported telemetry to one or more compatible destinations, for example during a backend migration or parallel validation.</li><li><strong>Standardized processing:</strong> batch, enrich, filter, redact and sample telemetry before export, using common Collector components and configuration.</li><li><strong>Flexible deployment:</strong> run agents close to workloads as DaemonSets or VM services, gateways centrally, or combine both patterns.</li><li><strong>Broader ecosystem:</strong> use receivers, processors and exporters from the core or Contrib distributions; confirm each component and option is supported by the exact build and version you deploy.</li></ul>
-<p><strong>Important correction:</strong> Fluent Bit, Fluentd and Logstash are <em>not</em> inherently restricted to a single backend. They can be configured with multiple outputs/destinations (subject to plugins, pipeline design and supported data formats). Their ecosystems are commonly used for log collection and processing; OpenTelemetry Collector’s distinguishing advantage is its vendor-neutral, multi-signal telemetry model and standardized OTLP ecosystem—not an exclusive ability to send to multiple backends.</p>
-<p>These tools can also be combined. For example, an existing Fluent Bit or Logstash deployment can forward data to an OpenTelemetry Collector, or the Collector can send data to an Elasticsearch-based stack. Choose based on required sources, processing features, operational familiarity, resource limits and backend support; the Collector is not automatically a replacement for every ELK/EFK capability.</p></section>
-<section id="kubernetes"><div class="mono">06 / KUBERNETES</div><h2>Deploying with the OpenTelemetry Operator</h2>
-<p>Install the OpenTelemetry Operator and its required cert-manager dependency according to the Operator documentation for your Kubernetes distribution. The Operator introduces the <code>OpenTelemetryCollector</code> custom resource definition (CRD). You declare the Collector configuration and deployment strategy; the Operator reconciles the corresponding Kubernetes resources.</p>
-<div class="callout must-read"><strong>Must read — Kubernetes file logs:</strong> Run filelog as a node agent (usually a DaemonSet) and mount the host log directories the receiver reads. For Docker nodes, the generated manifest must mount both <code>/var/log/pods</code> and <code>/var/lib/docker/containers</code>, because pod log paths can resolve through symlinks into Docker’s container log directory.</div>
-<ul><li><strong>Deployment:</strong> suitable for a central gateway or a horizontally scalable stateless Collector service.</li><li><strong>DaemonSet:</strong> one Collector pod per eligible node; useful for node-local logs, host metrics and kubelet-related collection.</li><li><strong>StatefulSet:</strong> useful when stable pod identity or persistent storage is required by the chosen design. It is not automatically the best choice for every Collector.</li></ul>
-<p>Choose the strategy based on data locality, scaling, persistence and failure-domain requirements. Avoid collecting the same host or pod logs multiple times when combining agents and gateways.</p>
+   Elasticsearch  ->  Kibana (Discover, dashboards)</pre>
+<p>Whichever stack you pick, plan indexing, mapping, retention and security up front, and test the exact signal mapping on your versions. Use TLS verification, a least-privilege credential, and a Kubernetes Secret or protected VM env file. Kibana data views, or Elastic integrations, may be needed before data appears in Discover.</p></section>
+
+<section id="comparison"><div class="mono">05 / FULL COMPARISON</div><h2>Logstash vs Fluentd vs Fluent Bit vs OpenTelemetry Collector</h2>
+<div class="tblwrap"><table class="cmp"><thead><tr><th>Dimension</th><th>Logstash</th><th>Fluentd</th><th>Fluent Bit</th><th>OTel Collector</th></tr></thead><tbody>
+<tr><td>Runtime</td><td>JVM (JRuby)</td><td>Ruby with C parts</td><td>C</td><td>Go, single binary</td></tr>
+<tr><td>Resource use</td><td>Heaviest. Default JVM heap is 1 GB.</td><td>Moderate</td><td>Lightest</td><td>Moderate, tunable with memory_limiter</td></tr>
+<tr><td>Signals</td><td>Logs and events</td><td>Logs, others via plugins</td><td>Logs, metrics, traces</td><td>Logs, metrics, traces</td></tr>
+<tr><td>OTLP</td><td>Check your version</td><td>Via plugins</td><td>Input and output</td><td>Native, the reference implementation</td></tr>
+<tr><td>Parsing depth</td><td>Strongest: grok and a large filter set</td><td>Strong, rich plugins</td><td>Good, plus Lua or WASM</td><td>Regex, JSON and OTTL. No built-in grok.</td></tr>
+<tr><td>Buffering</td><td>Persistent queue and dead letter queue</td><td>File or memory buffers</td><td>Memory or filesystem buffers</td><td>sending_queue with retries, optional disk storage</td></tr>
+<tr><td>Kubernetes-native sources</td><td>None. Needs Beats or the Collector.</td><td>Kubernetes metadata filter</td><td>Kubernetes metadata filter</td><td>kubeletstats, k8s_cluster, k8sobjects, k8sattributes, Operator</td></tr>
+<tr><td>Trace sampling</td><td>No</td><td>No</td><td>No</td><td>Head and tail sampling</td></tr>
+<tr><td>Backend choice</td><td>Many outputs</td><td>Many outputs</td><td>Many outputs</td><td>Many exporters, one vendor-neutral model</td></tr>
+<tr><td>Governance</td><td>Elastic</td><td>CNCF</td><td>CNCF (Fluent project)</td><td>CNCF OpenTelemetry project</td></tr></tbody></table></div>
+<p>Treat this table as a guide, not a benchmark. Memory and throughput depend on your pipeline, so measure with your own data. Component availability differs between Collector versions.</p></section>
+
+<section id="why-collector"><div class="mono">06 / WHY THE COLLECTOR</div><h2>Why the Collector is the best default for new Elastic deployments</h2>
+<ul><li><strong>One agent, three signals.</strong> ELK usually needs Logstash plus Beats plus APM for the same coverage. The Collector handles logs, metrics and traces with one config model.</li><li><strong>Instrument once.</strong> Apps send OTLP. Changing or adding a backend is a Collector exporter change, not an application change.</li><li><strong>Kubernetes depth.</strong> kubeletstats, k8s_cluster, k8sobjects and k8sattributes give cluster metrics and pod metadata that Logstash and Fluentd do not provide on their own.</li><li><strong>Better processing for traces.</strong> Tail sampling, filtering, redaction and the OTTL expression language apply the same way across signals.</li><li><strong>Safer under load.</strong> memory_limiter, batching, retries and optional disk-backed queues are built in.</li><li><strong>Fan-out and migration.</strong> Send one signal to Elasticsearch and another to Tempo or Datadog, or run two backends in parallel during a move.</li><li><strong>Where Elastic is heading.</strong> EDOT and Elastic Agent are built on the Collector, so skills and config transfer.</li><li><strong>Operator and open governance.</strong> The OpenTelemetry Operator manages Collectors as Kubernetes resources, under a vendor-neutral CNCF project.</li></ul>
+<h3>Where the others still win</h3>
+<ul><li><strong>Logstash:</strong> complex ETL, heavy grok parsing, enrichment lookups and an existing, well-tuned Logstash estate.</li><li><strong>Fluentd:</strong> a large plugin ecosystem and existing Fluentd routing rules you do not want to rewrite.</li><li><strong>Fluent Bit:</strong> the smallest footprint for pure log forwarding on constrained nodes, and it can forward OTLP into a Collector gateway.</li><li><strong>Collector caveats:</strong> versions are 0.x and options change between releases, so pin and test. Not every component is stable. Parsing is less ergonomic than grok.</li></ul>
+<div class="callout"><strong>Mixing is normal.</strong> A common migration keeps Fluent Bit or Logstash where they work, sends their output to a Collector gateway, and moves new workloads to OTLP. Replace tools when the pipeline needs the Collector’s capabilities, not because it is newer.</div></section>
+
+<section id="kubernetes"><div class="mono">07 / KUBERNETES</div><h2>Running each stack on Kubernetes</h2>
+<div class="tblwrap"><table class="cmp"><thead><tr><th></th><th>ELK</th><th>EFK</th><th>OTel Collector + EK</th></tr></thead><tbody>
+<tr><td>Node agent</td><td>Filebeat or Elastic Agent DaemonSet</td><td>Fluent Bit DaemonSet</td><td>Collector DaemonSet</td></tr>
+<tr><td>Central tier</td><td>Logstash Deployment or StatefulSet</td><td>Fluentd Deployment, optional</td><td>Collector Deployment gateway, optional</td></tr>
+<tr><td>Managed by</td><td>Helm, or ECK for the Elastic parts</td><td>Helm or manifests</td><td>OpenTelemetry Operator, OpenTelemetryCollector CRD</td></tr>
+<tr><td>Pod metadata</td><td>Beats processors</td><td>Kubernetes filter</td><td>k8sattributes processor</td></tr></tbody></table></div>
+<p>For the Collector, install the OpenTelemetry Operator and its cert-manager dependency per the Operator documentation. You declare a Collector, and the Operator reconciles the Kubernetes resources.</p>
+<div class="callout must-read"><strong>Must read — Kubernetes file logs:</strong> run filelog as a node agent (DaemonSet) and mount the host log directories. On Docker nodes the generated manifest must mount both <code>/var/log/pods</code> and <code>/var/lib/docker/containers</code>, because pod log files are symlinks into Docker’s directory. The same applies to Fluent Bit and Filebeat.</div>
+<ul><li><strong>Deployment:</strong> gateway, OTLP intake, tail sampling, cluster-wide receivers.</li><li><strong>DaemonSet:</strong> one pod per node, for container logs, host metrics and kubelet data.</li><li><strong>StatefulSet:</strong> stable identity or persistent storage, for example disk queues. Not the default choice.</li></ul>
+<p>Avoid collecting the same pod logs twice when agents and gateways are combined.</p>
 <pre>apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
@@ -156,20 +183,33 @@ spec:
           receivers: [otlp]
           processors: [memory_limiter, batch]
           exporters: [debug]</pre>
-<p>This is an illustrative starter manifest, not a universal production configuration. CRD API versions, image tags and component availability depend on the Operator and Collector release you install.</p></section>
-<section id="vm"><div class="mono">07 / VIRTUAL MACHINES</div><h2>Deploying on Linux virtual machines</h2>
-<p>For VMs, install a compatible Collector Contrib distribution and run it as a systemd service. Keep the YAML configuration separate from the binary and service definition. Use a protected environment file for credentials, restrict file permissions, and grant the service account only the host access it needs.</p>
-<p>The generator below can produce a Collector config, a sample systemd unit and an installation helper. Review the package URL, architecture, checksum and service permissions for your OS before running an installation script in production.</p></section>
-<section id="verify"><div class="mono">DEPLOY AND VERIFY</div><h2>Apply it and check that data arrives</h2>
+<p>This is an illustrative starter, not a production config. API versions, image tags and component availability depend on the Operator and Collector release you install.</p></section>
+
+<section id="vm"><div class="mono">08 / VIRTUAL MACHINES</div><h2>Running each stack on Linux VMs</h2>
+<div class="tblwrap"><table class="cmp"><thead><tr><th></th><th>ELK</th><th>EFK</th><th>OTel Collector + EK</th></tr></thead><tbody>
+<tr><td>Install</td><td>Filebeat or Agent on each VM, Logstash on a server (needs a JVM)</td><td>Fluent Bit package per VM</td><td>One otelcol-contrib binary per VM</td></tr>
+<tr><td>Service</td><td>systemd per component</td><td>systemd</td><td>One systemd unit</td></tr>
+<tr><td>VM sources</td><td>Filebeat modules, Metricbeat</td><td>tail, systemd inputs</td><td>filelog, journald, hostmetrics, syslog, nginx, postgresql, redis</td></tr></tbody></table></div>
+<p>For the Collector, run Contrib under systemd with the YAML kept separate from the binary and unit. Keep credentials in a protected env file and give the service user only the access it needs. The generator below produces the config, a sample unit and an install helper. Check the package URL, architecture, checksum and permissions before running anything in production.</p></section>
+
+<section id="verify"><div class="mono">09 / DEPLOY AND VERIFY</div><h2>Apply it and check that data arrives</h2>
 <h3>Kubernetes</h3>
-<ul><li>Create the Secret with the command in the Secrets tab. Do not commit real values.</li><li>If ServiceAccount/RBAC generation is enabled, apply its YAML before the Collector CR: <code>kubectl apply -f service-account-rbac.yaml -f your-collector.yaml</code>. If disabled, the Operator creates its default ServiceAccount; Kubernetes API receivers and metadata enrichment need suitable permissions added separately.</li><li>Watch the pods and read their logs: <code>kubectl get pods -n observability</code> and <code>kubectl logs -n observability -l app.kubernetes.io/component=opentelemetry-collector --tail=50</code>.</li><li>While testing, add the debug exporter to one pipeline to see records in the log. Remove it afterwards.</li></ul>
+<ul><li>Create the Secret with the command in the Secrets tab. Never commit real values.</li><li>If ServiceAccount/RBAC generation is on, apply it before the Collector: <code>kubectl apply -f service-account-rbac.yaml -f your-collector.yaml</code>. If it is off, the Operator creates a default ServiceAccount, and Kubernetes API receivers and metadata enrichment need permissions added separately.</li><li>Check pods and logs: <code>kubectl get pods -n observability</code> and <code>kubectl logs -n observability -l app.kubernetes.io/component=opentelemetry-collector --tail=50</code>.</li><li>While testing, add the debug exporter to one pipeline, then remove it.</li></ul>
 <h3>Virtual machines</h3>
-<ul><li>Run <code>bash install.sh</code>. Set <code>SHA256</code> first if you want the download verified, using the value from the release page.</li><li>Fill in <code>/etc/otelcol/otelcol.env</code> before the first start. Check with <code>systemctl status</code> and <code>journalctl -u otelcol-contrib -f</code>.</li></ul>
+<ul><li>Run <code>bash install.sh</code>. Set <code>SHA256</code> first to verify the download against the release page.</li><li>Fill in <code>/etc/otelcol/otelcol.env</code> before the first start. Check with <code>systemctl status</code> and <code>journalctl -u otelcol-contrib -f</code>.</li></ul>
 <h3>Elasticsearch and Kibana</h3>
-<p>With the default routing, documents go to data streams named <code>logs-&lt;dataset&gt;-&lt;namespace&gt;</code>, and the same for metrics and traces. In Kibana, open Stack Management, then Index Management, then Data Streams, and confirm they exist and grow. Create a data view such as <code>logs-*</code> to search them in Discover. Retention and rollover belong to Elasticsearch (data stream lifecycle or ILM), so set them there.</p>
-<p>The API key needs permission to write to those data streams. Grant <code>create_doc</code> and <code>auto_configure</code> on <code>logs-*-*</code>, <code>metrics-*-*</code> and <code>traces-*-*</code>, and check Elastic's exporter documentation for the exact privileges your version needs.</p></section>
-<section id="production"><div class="mono">08 / PRODUCTION READINESS</div><h2>Production checklist</h2>
-<ul><li>Set memory limits and configure the memory_limiter processor early in each pipeline.</li><li>Use batch processing and size queues / retries for the expected traffic and backend availability.</li><li>Secure OTLP endpoints with TLS and authentication where traffic crosses trust boundaries.</li><li>Use Secrets or protected environment files; never hardcode credentials.</li><li>Apply Kubernetes resource requests / limits and appropriate RBAC.</li><li>Monitor Collector health, refused / dropped data, queue saturation and exporter failures.</li><li>Plan for cardinality, sampling, retention, cost and personally identifiable information.</li><li>Pin and test Collector versions; verify component availability in the selected distribution.</li><li>Roll out gradually and validate end-to-end delivery for each signal.</li></ul></section>
+<p>With default routing, documents go to data streams named <code>logs-&lt;dataset&gt;-&lt;namespace&gt;</code>, and the same for metrics and traces. In Kibana, open Stack Management, Index Management, Data Streams, and confirm they exist and grow. Create a data view such as <code>logs-*</code> for Discover. Retention and rollover are set in Elasticsearch (data stream lifecycle or ILM).</p>
+<p>The API key needs permission to write to those data streams. Grant <code>create_doc</code> and <code>auto_configure</code> on <code>logs-*-*</code>, <code>metrics-*-*</code> and <code>traces-*-*</code>, and check Elastic’s exporter documentation for the exact privileges your version needs.</p></section>
+
+<section id="production"><div class="mono">10 / PRODUCTION READINESS</div><h2>Production checklist by stack</h2>
+<div class="tblwrap"><table class="cmp"><thead><tr><th>Concern</th><th>ELK</th><th>EFK</th><th>OTel Collector + EK</th></tr></thead><tbody>
+<tr><td>Memory protection</td><td>Size the JVM heap, set pipeline workers</td><td>Limit buffers and chunks</td><td>memory_limiter first in every pipeline, plus a container memory limit</td></tr>
+<tr><td>Buffering and retries</td><td>Persistent queue, dead letter queue</td><td>File buffer, retry settings</td><td>sending_queue, retry_on_failure, optional file_storage</td></tr>
+<tr><td>Transport security</td><td>TLS and API key on outputs</td><td>TLS and API key on outputs</td><td>TLS and auth on OTLP across trust boundaries, API key from a Secret</td></tr>
+<tr><td>Monitoring</td><td>Logstash monitoring, Stack Monitoring</td><td>Built-in metrics endpoints</td><td>Collector internal telemetry and health_check. Watch refused data, queue use and exporter failures.</td></tr>
+<tr><td>Config and upgrades</td><td>Pipeline files, plugin compatibility</td><td>Config files, plugin versions</td><td>CRD in Git, pinned and tested 0.x image</td></tr>
+<tr><td>Cost control</td><td>Drop fields in filters</td><td>Drop in filters</td><td>filter, attributes and sampling processors. Plan cardinality and retention.</td></tr></tbody></table></div>
+<ul><li>Apply Kubernetes requests, limits and RBAC to every stack.</li><li>Roll out gradually and validate delivery for each signal end to end.</li><li>Verify component availability in the distribution and version you deploy.</li></ul></section>
 </article>
 </div>
 
@@ -190,7 +230,7 @@ spec:
     <div class="field"><label class="sw"><input type="checkbox" id="rbac">Generate a ServiceAccount and RBAC YAML</label><span class="hint">When enabled, the Collector uses the generated ServiceAccount. Required for Kubernetes API receivers and metadata enrichment.</span></div>
    </div>
    <div id="vm-settings"><div class="field"><label for="svc">systemd service name</label><input id="svc" type="text" value="otelcol-contrib"></div></div>
-   <div class="field"><label for="ver">Collector Contrib version</label><input id="ver" type="text" list="vers" value="0.165.0"><datalist id="vers"><option>0.165.0</option><option>0.164.0</option><option>0.163.2</option><option>0.160.0</option><option>0.152.0</option><option>0.146.0</option><option>0.142.0</option></datalist><span class="hint">v0.165.0 was the latest release on 7 Nov 2026. Pick one or type your own, and use a release you have tested. Component options change between releases.</span></div>
+   <div class="field"><label for="ver">Collector Contrib version</label><input id="ver" type="text" list="vers" value="0.165.0"><datalist id="vers"><option>0.165.0</option><option>0.164.0</option><option>0.163.2</option><option>0.160.0</option><option>0.152.0</option><option>0.146.0</option><option>0.142.0</option></datalist><span class="hint">Pick one or type your own, and use a release you have tested. Check the releases page for the newest version. Component options change between releases.</span></div>
    <div class="field"><label class="sw"><input type="checkbox" id="hc" checked>Health check endpoint on :13133</label><span class="hint">Use it for liveness and readiness probes, or a load balancer check.</span></div>
    <h3 style="margin-top:22px">2 · Which signals?</h3>
    <div class="seg" id="sigs"></div>
@@ -249,13 +289,13 @@ const C={r:{
   i:v=>{const o=fOps(v).map(x=>x.type);return'Operator chain: '+(o.length?o.join(' → '):'none, raw lines')},
   gen:(v,x)=>{const c={include:x.k&&v.src!=='custom paths'?(v.src==='selected namespaces'?L(v.nsl).map(n=>'/var/log/pods/'+n+'_*/*/*.log'):['/var/log/pods/*/*/*.log']):L(v.inc),start_at:v.start};const ex=L(v.exc);if(x.k&&v.self)ex.push('/var/log/pods/'+S.ns+'_'+S.cr+'-collector-*/*/*.log');if(ex.length)c.exclude=ex;if(v.paths)c.include_file_path=true;if(v.multi)c.multiline={line_start_pattern:v.ms};
    if(v.ckpt){x.ext['file_storage/filelog']={directory:'/var/lib/otelcol/file_storage',create_directory:true};c.storage='file_storage/filelog';x.hp('otel-state','/var/lib/otelcol',1)}
-   if(x.k){x.hp('varlogpods','/var/log/pods');x.root=1;if(v.crt==='Docker')x.vol('docker-container-logs',{hostPath:{path:'/var/lib/docker/containers',type:'DirectoryOrCreate'}},'/var/lib/docker/containers')}
+   if(x.k){x.hp('varlogpods','/var/log/pods');x.root=1;if(v.crt==='Docker')x.vol('docker-container-logs',{hostPath:{path:'/var/lib/docker/containers',type:'Directory'}},'/var/lib/docker/containers')}
    const o=fOps(v);if(o.length)c.operators=o;return c}},
- hostmetrics:{n:'hostmetrics',g:['metrics'],f:[T('iv','Scrape interval','30s'),Q('prof','Scrapers',['basic','standard','full'],'standard','basic: cpu, memory, load. standard adds disk, filesystem, network. full adds paging and processes.')],
-  gen:(v,x)=>{const s={cpu:{},memory:{},load:{}};if(v.prof!=='basic')Object.assign(s,{disk:{},filesystem:{},network:{}});if(v.prof==='full')Object.assign(s,{paging:{},processes:{},process:{}});
-   const c={collection_interval:v.iv,scrapers:s};if(x.k){c.root_path='/hostfs';x.hp('hostfs','/',0,'/hostfs')}return c}},
- prometheus:{n:'prometheus',g:['metrics'],f:[T('job','Job name','app'),T('iv','Scrape interval','30s'),Q('disc','Find targets by',()=>k8()?['static','kubernetes pods']:['static'],'static','kubernetes pods keeps pods with the prometheus.io/scrape annotation.'),T('tg','Targets (host:port, comma separated)','localhost:9100',null,v=>v.disc==='static')],
-  gen:(v,x)=>{const j={job_name:v.job,scrape_interval:v.iv};if(v.disc==='static')j.static_configs=[{targets:L(v.tg)}];else{x.rb('','pods,namespaces,nodes');j.kubernetes_sd_configs=[{role:'pod'}];j.relabel_configs=[{source_labels:['__meta_kubernetes_pod_annotation_prometheus_io_scrape'],action:'keep',regex:'true'}]}return{config:{scrape_configs:[j]}}}},
+ hostmetrics:{n:'hostmetrics',g:['metrics'],f:[T('iv','Scrape interval','30s'),Q('prof','Scrapers',['basic','standard','full'],'standard','basic: cpu, memory, load. standard adds disk, filesystem, network. full adds paging and processes, and needs root to read every process.')],
+  gen:(v,x)=>{const s={cpu:{},memory:{},load:{}};if(v.prof!=='basic')Object.assign(s,{disk:{},filesystem:{},network:{}});if(v.prof==='full')Object.assign(s,{paging:{},processes:{},process:{mute_process_name_error:true,mute_process_exe_error:true,mute_process_io_error:true}});
+   const c={collection_interval:v.iv,scrapers:s};if(x.k){c.root_path='/hostfs';x.hp('hostfs','/',0,'/hostfs');x.w.push('hostmetrics mounts the node root filesystem read-only at /hostfs. Pod Security Admission at baseline or restricted level rejects hostPath volumes, so use a namespace that allows it or remove hostmetrics.');if(v.prof==='full')x.root=1}else if(v.prof==='full')x.w.push('The process scraper cannot read every process as the otelcol user, so some process data will be missing. Run as root only if you need it.');return c}},
+ prometheus:{n:'prometheus',g:['metrics'],f:[T('job','Job name','app'),T('iv','Scrape interval','30s'),Q('disc','Find targets by',()=>k8()?['static','kubernetes pods']:['static'],'static','kubernetes pods keeps pods with the prometheus.io/scrape annotation and honours prometheus.io/port and prometheus.io/path when set.'),T('tg','Targets (host:port, comma separated)','localhost:9100',null,v=>v.disc==='static')],
+  gen:(v,x)=>{const j={job_name:v.job,scrape_interval:v.iv};if(v.disc==='static')j.static_configs=[{targets:L(v.tg)}];else{x.rb('','pods,namespaces,nodes');j.kubernetes_sd_configs=[{role:'pod'}];j.relabel_configs=[{source_labels:['__meta_kubernetes_pod_annotation_prometheus_io_scrape'],action:'keep',regex:'true'},{source_labels:['__meta_kubernetes_pod_annotation_prometheus_io_path'],action:'replace',target_label:'__metrics_path__',regex:'(.+)'},{source_labels:['__address__','__meta_kubernetes_pod_annotation_prometheus_io_port'],action:'replace',regex:'([^:]+)(?::\\d+)?;(\\d+)',replacement:'$$1:$$2',target_label:'__address__'}]}return{config:{scrape_configs:[j]}}}},
  k8s_cluster:{n:'k8s_cluster',g:['metrics'],t:'k',f:[T('iv','Collection interval','30s')],i:()=>'Cluster-wide data. Run it in exactly one pod (Deployment, 1 replica).',
   gen:(v,x)=>{x.rb('','events,namespaces,namespaces/status,nodes,nodes/spec,pods,pods/status,replicationcontrollers,replicationcontrollers/status,resourcequotas,services');x.rb('apps','daemonsets,deployments,replicasets,statefulsets');x.rb('batch','jobs,cronjobs');x.rb('autoscaling','horizontalpodautoscalers');return{auth_type:'serviceAccount',collection_interval:v.iv}}},
  kubeletstats:{n:'kubeletstats',g:['metrics'],t:'k',f:[T('iv','Collection interval','30s'),B('skip','Skip kubelet TLS verification',true,'Common default. Use the kubelet CA in strict environments.')],i:()=>'Pod and container CPU/memory per node. Best in a DaemonSet.',
@@ -274,12 +314,12 @@ p:{
  k8sattributes:{n:'k8sattributes',g:ALL,t:'k',f:[B('lab','Also copy the app.kubernetes.io/name label',false)],i:()=>'Adds namespace, pod, node and deployment names. Works best on node agents.',
   gen:(v,x)=>{x.rb('','pods,namespaces,nodes');x.rb('apps','replicasets');const c={auth_type:'serviceAccount',passthrough:false};if(S.mode==='daemonset'){x.node();c.filter={node_from_env_var:'K8S_NODE_NAME'}}
    c.extract={metadata:['k8s.namespace.name','k8s.pod.name','k8s.pod.uid','k8s.node.name','k8s.deployment.name']};if(v.lab)c.extract.labels=[{tag_name:'app',key:'app.kubernetes.io/name',from:'pod'}];
-   c.pod_association=[{sources:[{from:'resource_attribute',name:'k8s.pod.ip'}]},{sources:[{from:'connection'}]}];return c}},
+   c.pod_association=[{sources:[{from:'resource_attribute',name:'k8s.pod.uid'}]},{sources:[{from:'resource_attribute',name:'k8s.pod.ip'}]},{sources:[{from:'connection'}]}];return c}},
  resourcedetection:{n:'resourcedetection',g:ALL,f:[Q('cloud','Cloud detector',['none','ec2','eks','azure','aks','gcp','gke'],'none','Always runs env and system detectors.')],gen:v=>({detectors:['env','system',...(v.cloud==='none'?[]:[v.cloud])],timeout:'2s',override:false})},
  resource:{n:'resource',g:ALL,f:[T('kv','Attributes to add (key=value, comma separated)','deployment.environment=prod')],gen:v=>({attributes:L(v.kv).filter(p=>p.includes('=')).map(p=>{const i=p.indexOf('=');return{key:p.slice(0,i),value:p.slice(i+1),action:'upsert'}})})},
  attributes:{n:'attributes',g:ALL,f:[T('keys','Attribute keys (comma separated)','http.request.header.authorization, db.statement'),Q('act','Action',['delete','hash'],'delete','Use this to keep sensitive values out of the backend.')],gen:v=>({actions:L(v.keys).map(k=>({key:k,action:v.act}))})},
  filter:{n:'filter',g:ALL,f:[Q('sev','Drop logs below severity',['off','INFO','WARN','ERROR'],'off'),B('hc','Drop health-check spans',true),T('path','Health-check path','/healthz',null,v=>v.hc)],
-  gen:v=>{const c={error_mode:'ignore'};if(v.sev!=='off')c.logs={log_record:['severity_number < SEVERITY_NUMBER_'+v.sev]};if(v.hc)c.traces={span:['attributes["http.target"] == "'+v.path+'"']};return c}},
+  gen:v=>{const c={error_mode:'ignore'};if(v.sev!=='off')c.logs={log_record:['severity_number != SEVERITY_NUMBER_UNSPECIFIED and severity_number < SEVERITY_NUMBER_'+v.sev]};if(v.hc)c.traces={span:['attributes["http.target"] == "'+v.path+'" or attributes["url.path"] == "'+v.path+'"']};return c}},
  transform:{n:'transform',g:ALL,f:[Q('cx','Applies to',['log','span','datapoint'],'log'),A('st','OTTL statements, one per line','set(attributes["deployment.environment"], "prod")')],
   gen:v=>({error_mode:'ignore',[{log:'log_statements',span:'trace_statements',datapoint:'metric_statements'}[v.cx]]:[{context:v.cx,statements:v.st.split('\n').map(s=>s.trim()).filter(Boolean)}]})},
  tail_sampling:{n:'tail_sampling',g:['traces'],f:[T('wait','Wait for a trace to finish','10s'),B('err','Keep every trace with an error',true),T('lat','Keep traces slower than (ms, 0 = off)','500'),T('pct','Keep this % of the rest','10')],i:()=>'Needs all spans of a trace in one pod. Run it in a gateway, not on every node.',
@@ -297,7 +337,7 @@ e:{
   Q('rt','Where do documents go?',['data streams','one index per signal'],'data streams','data streams: names follow logs-<dataset>-<namespace>, and the same for metrics and traces. Retention and rollover are set in Elasticsearch (lifecycle or ILM), not in the Collector.'),
   T('ds','Dataset (optional)','','Empty means generic. In otel mode ".otel" is added. Set as a resource attribute for every exporter in the same pipelines.',v=>v.rt==='data streams'),T('dns','Namespace (optional)','','Empty means default. Use it to split environments, for example prod.',v=>v.rt==='data streams'),
   T('li','Logs index or data stream','logs-app-prod',null,v=>v.rt!=='data streams'),T('mi','Metrics index or data stream','metrics-app-prod',null,v=>v.rt!=='data streams'),T('ti','Traces index or data stream','traces-app-prod',null,v=>v.rt!=='data streams'),
-  B('qe','Queue batches while Elasticsearch is slow',true,'Retries with backoff and buffers up to the queue size before data is dropped.'),T('qs','Queue size (batches)','1000',null,v=>v.qe),B('pq','Keep the queue on disk',false,'Survives restarts. Needs storage that persists: the DaemonSet hostPath, or a PVC on a StatefulSet.',v=>v.qe),T('re','Give up retrying after','300s','Data still failing after this is dropped.')],
+  B('qe','Queue batches while Elasticsearch is slow',true,'Retries with backoff and buffers up to the queue size before data is dropped.'),T('qs','Queue size (batches)','1000',null,v=>v.qe),B('pq','Keep the queue on disk',false,'Survives restarts. Needs storage that persists: the DaemonSet hostPath, or a PVC on a StatefulSet.',v=>v.qe),Q('bt','Batching',['batch processor','exporter queue'],'batch processor','batch processor works on every version. exporter queue uses sending_queue.batch, which recent Elasticsearch exporter versions support (documented for v0.152 and later). Do not use both.',v=>v.qe),T('re','Give up retrying after','300s','Data still failing after this is dropped.')],
   i:v=>v.rt==='data streams'?'Writes to logs-'+(v.ds||'generic')+(v.map==='otel'?'.otel':'')+'-'+(v.dns||'default')+' (same pattern for metrics and traces).':'Writes to the fixed names below. Retention stays in Elasticsearch.',
   gen:(v,x)=>{const c={mapping:{mode:v.map}};
    if(v.eck){c.endpoints=['https://'+v.es+'-es-http.'+v.esns+'.svc:9200'];c.tls={ca_file:'/etc/es-ca/ca.crt'};x.vol('es-ca',{secret:{secretName:v.es+'-es-http-certs-public'}},'/etc/es-ca');
@@ -306,7 +346,7 @@ e:{
    else{c.endpoints=[v.ep];if(v.skip)c.tls={insecure_skip_verify:true};if(v.auth==='basic'){c.user=v.user;c.password=x.sec(v.pw)}}
    if(v.auth==='api_key')c.api_key=x.sec(v.key);if(v.rt==='data streams'){const a=[];if(v.ds)a.push({key:'data_stream.dataset',value:v.ds,action:'upsert'});if(v.dns)a.push({key:'data_stream.namespace',value:v.dns,action:'upsert'});if(a.length)x.pre.push({key:'resource/es_routing',cfg:{attributes:a}})}else{if(v.li)c.logs_index=v.li;if(v.mi)c.metrics_index=v.mi;if(v.ti)c.traces_index=v.ti}
    c.retry_on_failure={enabled:true,initial_interval:'1s',max_interval:'30s',max_elapsed_time:v.re};
-   if(v.qe){c.sending_queue={enabled:true,queue_size:+v.qs||1000};if(v.pq){x.ext['file_storage/queue']={directory:'/var/lib/otelcol/queue',create_directory:true};c.sending_queue.storage='file_storage/queue';x.hp('otel-state','/var/lib/otelcol',1);x.root=1;if(x.k&&S.mode!=='daemonset')x.w.push('A disk queue on a '+S.mode+' uses a hostPath. Prefer a PVC (volumeClaimTemplates on a StatefulSet).')}}else c.sending_queue={enabled:false};
+   if(v.qe){c.sending_queue={enabled:true,queue_size:+v.qs||1000};if(v.bt==='exporter queue')c.sending_queue.batch={flush_timeout:'10s',min_size:1000000,max_size:5000000,sizer:'bytes'};if(v.pq){x.ext['file_storage/queue']={directory:'/var/lib/otelcol/queue',create_directory:true};c.sending_queue.storage='file_storage/queue';x.hp('otel-state','/var/lib/otelcol',1);x.root=1;if(x.k&&S.mode!=='daemonset')x.w.push('A disk queue on a '+S.mode+' uses a hostPath. Prefer a PVC (volumeClaimTemplates on a StatefulSet).')}}else c.sending_queue={enabled:false};
    return[['elasticsearch',c,ALL]]}},
  opensearch:{n:'OpenSearch',g:['logs','traces'],f:[T('ep','OpenSearch URL','https://opensearch.example.com:9200'),T('ds','Dataset','default')],gen:v=>[['opensearch',{http:{endpoint:v.ep},dataset:v.ds},['logs','traces']]]},
  jaeger:OG('Jaeger (OTLP)','jaeger',['traces'],'jaeger-collector:4317',null,true),
@@ -326,7 +366,6 @@ e:{
  otlp:OG('OTLP gRPC (generic)','generic',ALL,'collector.example.com:4317'),
  otlphttp:OG('OTLP/HTTP (generic)','generic',ALL,'https://collector.example.com:4318',null,false,true),
  debug:{n:'debug (print to log)',g:ALL,core:1,f:[Q('vb','Verbosity',['basic','detailed'],'basic')],gen:v=>[['debug',{verbosity:v.vb},ALL]]}}};
-C.r.filelog.f.find(f=>f.k==='crt').d='Docker';
 const DESC={'r.otlp':'Receives telemetry that your apps push over OTLP. Point each app\'s OTLP exporter at this Collector.','r.filelog':'Tails log files and turns each line into a log record. The operator chain runs on every line, in order.','r.hostmetrics':'Reads CPU, memory, disk and network figures from the machine the Collector runs on.','r.prometheus':'Scrapes Prometheus-format /metrics endpoints, the way a Prometheus server would.','r.k8s_cluster':'Reports cluster state: pod phases, deployment replicas, node conditions.','r.kubeletstats':'Reads pod and container CPU and memory usage from each node\'s kubelet.','r.k8sobjects':'Pulls or watches Kubernetes objects, for example Events, and emits them as logs.','r.journald':'Reads the systemd journal.','r.syslog':'Listens for syslog messages from network devices and older apps.','r.nginx':'Reads connection and request counters from the nginx stub_status page.','r.postgresql':'Reads database statistics from PostgreSQL.','r.redis':'Reads server statistics from Redis.',
 'p.memory_limiter':'Refuses new data when memory gets high, so the Collector is not killed for running out of memory.','p.k8sattributes':'Looks up the pod that sent each record and adds namespace, pod, node and deployment names.','p.resourcedetection':'Adds facts about the host and cloud, such as host name and region.','p.resource':'Adds fixed attributes to every record, for example the environment.','p.attributes':'Deletes or hashes attributes. Use it to keep secrets and personal data out of the backend.','p.filter':'Drops records you do not need, which cuts storage cost.','p.transform':'Edits records with OTTL statements, the Collector\'s expression language.','p.tail_sampling':'Decides which traces to keep after they finish, so errors and slow traces are always kept.','p.batch':'Groups records into larger requests, which backends handle better.',
 'e.elasticsearch':'Writes logs, metrics and traces into Elasticsearch, where Kibana reads them.','e.opensearch':'Writes logs and traces into OpenSearch.','e.jaeger':'Sends traces to Jaeger over OTLP.','e.tempo':'Sends traces to Grafana Tempo over OTLP.','e.loki':'Sends logs to Grafana Loki through its OTLP endpoint.','e.mimir':'Sends metrics to Mimir or Prometheus using remote write.','e.datadog':'Sends all three signals to Datadog.','e.newrelic':'Sends all three signals to New Relic over OTLP.','e.splunk':'Sends data to Splunk through the HTTP Event Collector.','e.dynatrace':'Sends all three signals to Dynatrace over OTLP/HTTP.','e.honeycomb':'Sends all three signals to Honeycomb over OTLP.','e.azure':'Sends all three signals to Azure Monitor (Application Insights).','e.aws':'Sends logs to CloudWatch Logs, metrics to CloudWatch (EMF) and traces to X-Ray.','e.gcp':'Sends all three signals to Google Cloud.','e.kafka':'Publishes telemetry to Kafka topics for later processing.','e.otlp':'Forwards everything over OTLP/gRPC to another Collector or a backend.','e.otlphttp':'Forwards everything over OTLP/HTTP to another Collector or a backend.','e.debug':'Prints telemetry to the Collector log. Use it for testing, not in production.'};
@@ -374,6 +413,8 @@ x.pre.forEach(p=>{P[p.key]=p.cfg;ps.push({n:p.key,g:ALL,key:p.key})});
  if(has('tail_sampling')&&!S.sig.traces)msgs.push(['warning','tail_sampling only works with the traces signal.']);
  if(!/^\d+\.\d+\.\d+$/.test(S.ver))msgs.push(['warning','Version should look like 0.165.0.']);
  if(!sigs.length)msgs.push(['error','Switch on at least one signal.']);
+ const ml=S.comps.find(c=>c.t==='memory_limiter');if(ml){const l=+ml.v.lim,k=+ml.v.spk;if(!(l>0&&l<=100)||!(k>0&&k<=100))msgs.push(['error','memory_limiter: the limit and spike limit must be numbers between 1 and 100.']);else if(k>=l)msgs.push(['error','memory_limiter: the spike limit must be lower than the limit.'])}
+ const esc_=S.comps.find(c=>c.t==='elasticsearch');if(esc_&&esc_.v.bt==='exporter queue'){if(has('batch'))msgs.push(['warning','Batching is done by the Elasticsearch exporter queue, so remove the batch processor to avoid batching twice.']);if(!esc_.v.qe)msgs.push(['warning','Exporter batching needs the sending queue. Turn on "Queue batches while Elasticsearch is slow".'])}
  const dn=/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
  if(x.k){[['Namespace',S.ns],['Collector name',S.cr],['Secret name',S.sec]].forEach(([n,v])=>{if(!dn.test(v))msgs.push(['error',n+' must use lowercase letters, digits and dashes.'])});
   if(!/^[1-9]\d*(Mi|Gi)$/.test(S.lim))msgs.push(['error','Memory limit should look like 512Mi or 2Gi.']);
@@ -427,7 +468,7 @@ function cards(){['r','p','e'].forEach(k=>{const h=S.comps.map((c,i)=>({c,i})).f
  picks()}
 function picks(){['r','p','e'].forEach(k=>{$('#pk-'+k).innerHTML=Object.keys(C[k]).filter(t=>avail(k,t)&&C[k][t].g.some(s=>S.sig[s])&&!S.comps.some(c=>c.k===k&&c.t===t)).map(t=>`<button class="chip" data-add="${k}:${t}">${esc(C[k][t].n)}</button>`).join('')||'<span class="empty">Everything available is added.</span>'})}
 function top(){$('#tgt').innerHTML=[['k8s','Kubernetes','OpenTelemetryCollector CRD'],['vm','Linux VM','config, systemd, install script']].map(([t,n,s])=>`<button data-t="${t}" class="${S.target===t?'on':''}">${n}<small>${s}</small></button>`).join('');
- $('#k8s').hidden=!k8();$('#vm-settings').hidden=k8();$('#repf').hidden=S.mode==='daemonset';$('#rbac').checked=S.rbac;
+ $('#k8s').hidden=!k8();$('#vm-settings').hidden=k8();$('#repf').hidden=S.mode==='daemonset';$('#rbac').checked=S.rbac;$('#rep').value=S.rep;
  $('#modes').innerHTML=Object.entries(MODES).map(([m,[n,s]])=>`<div class="seg"><button data-m="${m}" class="${S.mode===m?'on':''}" style="width:100%">${n}<small>${s}</small></button></div>`).join('');
  $('#sigs').innerHTML=ALL.map(s=>`<button data-s="${s}" class="${S.sig[s]?'on':''}" aria-pressed="${!!S.sig[s]}">${s}</button>`).join('');
  $('#presets').innerHTML=PRE.map((p,i)=>`<button class="chip" data-p="${i}">${p[0]}</button>`).join('')}
@@ -444,7 +485,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
  else if(d.s){S.sig[d.s]=S.sig[d.s]?0:1;top();cards();up()}
  else if(d.add){add(...d.add.split(':'));cards();up()}
  else if(d.rm){S.comps.splice(+d.rm,1);cards();up()}
- else if(d.p){const p=PRE[d.p];S.target=p[1];S.mode=p[2];ALL.forEach(s=>S.sig[s]=p[3].includes(s)?1:0);S.comps=[];p[4].split(' ').forEach(z=>add(...z.split(':')));all()}
+ else if(d.p){const p=PRE[d.p];S.target=p[1];S.mode=p[2];if(p[1]==='k8s'){S.rbac=true;if(p[0].includes('gateway'))S.rep=1}ALL.forEach(s=>S.sig[s]=p[3].includes(s)?1:0);S.comps=[];p[4].split(' ').forEach(z=>add(...z.split(':')));all()}
  else if(d.tab){S.tab=d.tab;up()}});
 document.addEventListener('input',e=>{const t=e.target,d=t.dataset;if(d.k!=null&&t.tagName!=='SELECT'&&t.type!=='checkbox'){S.comps[d.i].v[d.k]=t.value;up()}
  else if(['ns','cr','rep','sec','svc','ver','lim','cpu'].includes(t.id)){S[t.id]=t.value.trim();up()}});
