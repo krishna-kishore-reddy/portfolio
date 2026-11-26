@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kubernetes Production Handbook & Manifest Builder</title>
+<style>
+:root{--bg:#0b1020;--panel:#121a2c;--panel2:#182338;--text:#e8eef9;--muted:#9eacc3;--line:#293650;--accent:#75a7ff;--green:#78d6b0;--yellow:#f2c879;--red:#ff8e8e}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.65 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}.layout{display:grid;grid-template-columns:260px minmax(0,1fr);max-width:1500px;margin:auto}
+aside{position:sticky;top:0;height:100vh;overflow:auto;padding:28px 20px;border-right:1px solid var(--line);background:#0d1424}
+.brand{font-size:18px;font-weight:800;letter-spacing:.2px;margin-bottom:4px}.sub{color:var(--muted);font-size:12px;margin-bottom:24px}
+nav a{display:block;padding:7px 10px;border-radius:8px;color:#b9c6dc;font-size:13px}nav a:hover{background:var(--panel2);text-decoration:none;color:white}
+main{padding:42px clamp(20px,5vw,72px) 90px;min-width:0}.hero{padding:34px;border:1px solid var(--line);border-radius:20px;background:radial-gradient(ellipse at top right,#20375c 0,transparent 52%),var(--panel);margin-bottom:32px}
+.eyebrow{color:var(--green);font-size:12px;text-transform:uppercase;letter-spacing:1.6px;font-weight:800}
+h1{font-size:clamp(32px,5vw,52px);line-height:1.12;margin:12px 0}h2{font-size:27px;margin:48px 0 12px;border-bottom:1px solid var(--line);padding-bottom:10px}h3{font-size:19px;margin:24px 0 8px}h4{margin:15px 0 6px}
+p{color:#c4cee0}.muted{color:var(--muted)}.lead{font-size:17px;max-width:850px}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.chip{border:1px solid #3a5278;background:#14243d;color:#cfe0ff;border-radius:99px;padding:4px 10px;font-size:12px}
+.callout{border-left:3px solid var(--accent);background:#142039;padding:13px 16px;border-radius:0 10px 10px 0;margin:16px 0;color:#cbd8ed}.warning{border-left-color:var(--yellow);background:#292316}.good{border-left-color:var(--green);background:#142a27}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px}.card h3{margin:0 0 6px}.card p{margin:0;font-size:13px}.tag{display:inline-block;color:var(--green);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}th{color:#cfe0ff;background:#142039}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#202c42;padding:2px 5px;border-radius:5px;color:#d5e4ff;font-size:.92em}
+pre{overflow:auto;background:#080d17;border:1px solid #26334a;border-radius:10px;padding:15px;color:#d8e5fa;font:12px/1.6 ui-monospace,monospace;white-space:pre}
+details{border:1px solid var(--line);border-radius:10px;margin:10px 0;background:#10192a}summary{cursor:pointer;padding:11px 14px;color:#dbe7fb;font-weight:650}details .inside{padding:0 15px 13px;color:#b9c7dc}
+label{display:block;font-size:12px;color:#b8c7dd;margin:9px 0 4px}input,select,textarea{width:100%;background:#080f1d;color:var(--text);border:1px solid #34435c;border-radius:8px;padding:9px;font:13px inherit}textarea{min-height:80px;font-family:ui-monospace,monospace}input[type=checkbox]{width:auto;margin-right:7px}
+button{border:1px solid #45689d;background:#1b3b68;color:#eff6ff;padding:9px 13px;border-radius:8px;cursor:pointer;font-weight:650;margin:5px 5px 5px 0}button.secondary{background:#172236;border-color:#34435c}button:hover{filter:brightness(1.15)}
+.builder{display:grid;grid-template-columns:minmax(260px,360px) minmax(0,1fr);gap:16px}.formpanel,.output{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px;min-width:0}.output pre{min-height:300px;max-height:650px}
+.small{font-size:12px;color:var(--muted)}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hidden{display:none!important}
+footer{border-top:1px solid var(--line);margin-top:55px;padding-top:20px;color:var(--muted);font-size:12px}
+@media(max-width:850px){.layout{display:block}aside{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:25px 16px 60px}.builder{grid-template-columns:1fr}}
+
+.builder{grid-template-columns:minmax(320px,440px) minmax(0,1fr);align-items:start}.formpanel{max-height:none}
+.f{margin:0}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.five{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.sec{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:12px 0;background:#0f1728}.sec.on{border-color:#3a5278;background:#111d33}.sec>.small{margin:0 0 0 24px}.sec .body{margin-top:8px;padding-top:6px;border-top:1px dashed var(--line)}
+label.ck{display:flex;align-items:center;margin:6px 0;color:#d5e1f5;font-size:13px}.verbs{display:grid;grid-template-columns:repeat(3,1fr)}
+.row{border:1px solid #26334a;border-radius:8px;padding:8px;margin:8px 0;background:#0b1322}button.x{background:#3a1e26;border-color:#7a3a46;font-size:12px;padding:5px 9px}
+.callout.err{border-left-color:var(--red);background:#2b1519}.callout ul{margin:6px 0 0;padding-left:20px}.callout li{margin:2px 0}
+#cmds{min-height:0;max-height:260px;margin-top:10px}.formpanel h4{margin:16px 0 4px;color:#cfe0ff}
+@media(max-width:850px){.three,.five{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body><div class="layout">
+<aside><div class="brand">Kubernetes Field Guide</div><div class="sub">Production patterns · YAML builder · CLI cookbook</div><nav>
+<a href="#start">Start here</a><a href="#objects">Kubernetes objects</a><a href="#workloads">Workloads & scheduling</a><a href="#network">Networking</a><a href="#storage">Storage</a><a href="#security">RBAC & security</a><a href="#autoscaling">Autoscaling</a><a href="#builder">Manifest builder</a><a href="#commands">Imperative commands</a><a href="#operate">Production checklist</a>
+</nav></aside>
+<main>
+<section class="hero" id="start"><div class="eyebrow">Practical production reference</div><h1>Kubernetes, from workload to production</h1><p class="lead">A concise field guide to the objects, scheduling controls, storage, networking, security and autoscaling you commonly configure on real clusters. Use the interactive builder to create editable manifests and copy or download them.</p><div class="chips"><span class="chip">Deployment API: apps/v1</span><span class="chip">Service API: v1</span><span class="chip">Ingress API: networking.k8s.io/v1</span><span class="chip">RBAC: rbac.authorization.k8s.io/v1</span><span class="chip">HPA: autoscaling/v2</span></div></section>
+
+<h2 id="objects">1. Kubernetes objects at a glance</h2>
+<div class="grid">
+<div class="card"><span class="tag">Workload</span><h3>Pod</h3><p>Smallest deployable unit. Holds one or more tightly coupled containers that share networking and volumes.</p></div>
+<div class="card"><span class="tag">Workload</span><h3>ReplicaSet</h3><p>Keeps a specified number of matching Pod replicas running. Usually managed by a Deployment.</p></div>
+<div class="card"><span class="tag">Workload</span><h3>Deployment</h3><p>Manages stateless replicas and rolling updates, rollbacks and rollout history.</p></div>
+<div class="card"><span class="tag">Workload</span><h3>StatefulSet</h3><p>For stateful applications needing stable Pod identity, ordered rollout and per-replica storage.</p></div>
+<div class="card"><span class="tag">Workload</span><h3>DaemonSet</h3><p>Runs a Pod on each eligible node; common for log agents, monitoring and network plugins.</p></div>
+<div class="card"><span class="tag">Network</span><h3>Service</h3><p>Stable virtual IP/DNS for a changing set of Pods. Common types: ClusterIP, NodePort and LoadBalancer.</p></div>
+<div class="card"><span class="tag">Network</span><h3>Ingress</h3><p>HTTP/HTTPS routing into cluster Services. Requires an Ingress controller; the object alone does not implement routing.</p></div>
+<div class="card"><span class="tag">Storage</span><h3>PV / PVC</h3><p>PersistentVolume is storage capacity; PersistentVolumeClaim is a workload's request for storage.</p></div>
+<div class="card"><span class="tag">Storage</span><h3>StorageClass</h3><p>Describes dynamic provisioning policy, provisioner, reclaim behavior and volume binding mode.</p></div>
+<div class="card"><span class="tag">Security</span><h3>Role / RoleBinding</h3><p>Grant namespaced permissions and bind them to users, groups or service accounts.</p></div>
+<div class="card"><span class="tag">Security</span><h3>ClusterRole / ClusterRoleBinding</h3><p>Define cluster-scoped permissions and bind them across the cluster.</p></div>
+<div class="card"><span class="tag">Scaling</span><h3>HPA / VPA</h3><p>HPA changes replica count; VPA recommends or adjusts container resource requests and limits.</p></div>
+</div>
+<details><summary>How Kubernetes controllers fit together</summary><div class="inside">You declare the desired state in an API object. A controller continuously compares desired and actual state and takes action. For example, a Deployment manages a ReplicaSet, and the ReplicaSet creates Pods. Do not normally hand-manage ReplicaSets created by a Deployment.</div></details>
+
+<h2 id="workloads">2. Workloads and production Pod settings</h2>
+<table><tr><th>Workload</th><th>Use it when</th><th>Production notes</th></tr>
+<tr><td>Pod</td><td>Debugging, one-off test, or a Pod template embedded in another object.</td><td>Standalone Pods are not self-healing after deletion. Prefer controllers for applications.</td></tr>
+<tr><td>Deployment</td><td>Stateless web/API services and workers.</td><td>Set replicas, resource requests/limits, probes, rollout strategy and disruption budget.</td></tr>
+<tr><td>StatefulSet</td><td>Databases or clustered apps requiring stable identity/storage.</td><td>Use a headless Service when stable network identity is needed; define volumeClaimTemplates.</td></tr>
+<tr><td>DaemonSet</td><td>One agent per node (or selected nodes).</td><td>Use node selectors/affinity and tolerations for infrastructure nodes; set resource requests.</td></tr>
+<tr><td>ReplicaSet</td><td>Rarely created directly.</td><td>Normally let a Deployment own it.</td></tr></table>
+
+<h3>Health probes</h3>
+<div class="grid">
+<div class="card"><h3>Startup probe</h3><p>Allows slow-starting containers time to initialize. Liveness and readiness checks wait until startup succeeds.</p></div>
+<div class="card"><h3>Liveness probe</h3><p>Detects a stuck or unhealthy process. Repeated failure causes container restart.</p></div>
+<div class="card"><h3>Readiness probe</h3><p>Controls whether the Pod receives Service traffic. Failure removes it from ready endpoints without restarting it.</p></div>
+</div>
+<details><summary>Probe tuning rule</summary><div class="inside">Choose a probe endpoint that checks the right thing. Avoid making liveness depend on a remote database: a database outage could restart every application Pod. Tune initialDelaySeconds, periodSeconds, timeoutSeconds, failureThreshold and successThreshold to the app's startup and recovery behavior.</div></details>
+
+<h3>Scheduling: taints, tolerations and affinity</h3>
+<table><tr><th>Feature</th><th>Direction</th><th>Typical use</th></tr>
+<tr><td>NodeSelector</td><td>Pod requires matching node labels.</td><td>Pin GPU workloads to nodes labelled <code>accelerator=nvidia</code>.</td></tr>
+<tr><td>Node affinity</td><td>Pod requires or prefers node labels.</td><td>Required or preferred placement by zone, hardware or node pool.</td></tr>
+<tr><td>Pod affinity</td><td>Place near other matching Pods.</td><td>Co-locate app and local cache in the same zone/node domain.</td></tr>
+<tr><td>Pod anti-affinity</td><td>Avoid matching Pods in a topology domain.</td><td>Spread replicas across nodes or zones to reduce correlated failure.</td></tr>
+<tr><td>Taint</td><td>Node repels Pods unless tolerated.</td><td>Reserve nodes for critical, GPU or infrastructure workloads.</td></tr>
+<tr><td>Toleration</td><td>Pod is allowed onto a tainted node.</td><td>Permit a workload on a dedicated node; it does not force placement there.</td></tr></table>
+<pre># Taint a dedicated node
+kubectl taint nodes worker-1 workload=gpu:NoSchedule
+# Remove the taint (note the trailing minus)
+kubectl taint nodes worker-1 workload=gpu:NoSchedule-
+# Inspect labels and taints
+kubectl get nodes --show-labels
+kubectl describe node worker-1</pre>
+
+<h3>Container security and reliability</h3>
+<ul><li>Run as non-root where possible; set <code>runAsNonRoot</code>, <code>runAsUser</code> and <code>fsGroup</code> deliberately.</li><li>Set <code>allowPrivilegeEscalation: false</code>, drop Linux capabilities, and use <code>readOnlyRootFilesystem: true</code> when compatible.</li><li>Prefer seccomp <code>RuntimeDefault</code>; avoid privileged containers unless a justified node-level agent requires them.</li><li>Use resource requests for scheduling and limits to constrain consumption. CPU limits can throttle; memory limit breaches can cause OOM kills.</li><li>Use Secrets for sensitive values, restrict access with RBAC, and consider external secret management and encryption at rest.</li><li>Use PodDisruptionBudget for voluntary disruptions; it does not protect against every involuntary failure.</li></ul>
+
+<h2 id="network">3. Networking</h2>
+<h3>Service types</h3>
+<table><tr><th>Type</th><th>What it does</th><th>Common use</th></tr>
+<tr><td>ClusterIP</td><td>Stable internal virtual IP.</td><td>Internal service-to-service communication.</td></tr><tr><td>NodePort</td><td>Exposes a port on each node.</td><td>Testing or environments without a cloud load balancer.</td></tr><tr><td>LoadBalancer</td><td>Requests an external load balancer from the platform/provider.</td><td>Public or private external entry point.</td></tr><tr><td>Headless</td><td><code>clusterIP: None</code>; DNS returns Pod endpoints.</td><td>StatefulSet peer discovery.</td></tr></table>
+<h3>Ingress</h3>
+<p>Ingress routes HTTP(S) host/path traffic to Services. Install and configure an Ingress controller (for example, NGINX or a cloud controller) and a suitable IngressClass. For new advanced gateway use cases, evaluate Gateway API support in your cluster.</p>
+<details><summary>NetworkPolicy reminder</summary><div class="inside">NetworkPolicy is a separate API resource used to allow/deny Pod traffic. It only has effect when the installed CNI plugin implements NetworkPolicy. Start with default-deny in sensitive namespaces, then explicitly allow required ingress and egress.</div></details>
+
+<h2 id="storage">4. Persistent storage</h2>
+<table><tr><th>Object</th><th>Purpose</th><th>Important fields</th></tr>
+<tr><td>PersistentVolume (PV)</td><td>Cluster storage resource, statically or dynamically provisioned.</td><td>capacity, accessModes, storageClassName, persistentVolumeReclaimPolicy, csi / nfs / hostPath</td></tr>
+<tr><td>PersistentVolumeClaim (PVC)</td><td>Namespaced request for storage by a Pod.</td><td>resources.requests.storage, accessModes, storageClassName</td></tr>
+<tr><td>StorageClass</td><td>Provisioning policy for dynamic volumes.</td><td>provisioner, parameters, reclaimPolicy, volumeBindingMode, allowVolumeExpansion</td></tr>
+<tr><td>StatefulSet claim template</td><td>Creates a separate PVC for each StatefulSet replica.</td><td>volumeClaimTemplates</td></tr></table>
+<div class="callout warning">StorageClass provisioner names and parameters are CSI/cloud-provider specific. A YAML manifest is not portable until you match it to the storage driver installed in your cluster. Verify the reclaim policy before production use.</div>
+<pre>kubectl get storageclass
+kubectl get pv,pvc -A
+kubectl describe pvc data-claim -n production
+kubectl get events -n production --sort-by=.lastTimestamp</pre>
+
+<h2 id="security">5. RBAC and service account security</h2>
+<table><tr><th>Object</th><th>Scope</th><th>Bind to</th></tr>
+<tr><td>Role</td><td>One namespace</td><td>RoleBinding</td></tr><tr><td>RoleBinding</td><td>One namespace</td><td>Role or ClusterRole permissions within that namespace</td></tr><tr><td>ClusterRole</td><td>Cluster-wide rules (or reusable rules)</td><td>ClusterRoleBinding or RoleBinding</td></tr><tr><td>ClusterRoleBinding</td><td>Cluster-wide grant</td><td>ClusterRole</td></tr></table>
+<details><summary>Least-privilege RBAC checklist</summary><div class="inside">Avoid wildcard verbs/resources. Grant only the verbs and API groups required. Prefer namespace-scoped RoleBindings when possible. Do not give application service accounts cluster-admin. Disable automatic service-account token mounting when the Pod does not need Kubernetes API access.</div></details>
+<pre># Check effective permissions
+kubectl auth can-i get pods -n production --as=system:serviceaccount:production:api-sa
+kubectl auth can-i '*' '*' --as=system:serviceaccount:production:api-sa
+# Inspect bindings
+kubectl get role,rolebinding -n production
+kubectl get clusterrole,clusterrolebinding</pre>
+
+<h2 id="autoscaling">6. Autoscaling</h2>
+<div class="grid">
+<div class="card"><h3>HPA — Horizontal Pod Autoscaler</h3><p>Changes the number of replicas based on CPU, memory or custom/external metrics. CPU utilization needs resource requests to calculate utilization correctly.</p></div>
+<div class="card"><h3>VPA — Vertical Pod Autoscaler</h3><p>Recommends or adjusts container CPU/memory requests. Requires VPA components installed separately; it is not built into every Kubernetes cluster.</p></div>
+</div>
+<details><summary>HPA vs VPA in production</summary><div class="inside">HPA scales out/in; VPA right-sizes per-Pod resources. Avoid having HPA and VPA both control CPU/memory in conflicting ways. A common pattern is HPA on a custom metric plus VPA recommendations, or HPA on CPU with VPA managing memory only, depending on the VPA mode and workload. Test evictions and disruption behavior before enabling automatic updates.</div></details>
+<pre>kubectl get hpa -A
+kubectl describe hpa api -n production
+kubectl top pods -n production
+kubectl top nodes</pre>
+
+<h2 id="builder">7. Interactive manifest builder</h2>
+<p>Pick an object and fill in the fields. Optional features (probes, security, affinity, tolerations…) stay off until you tick their checkbox. The builder validates names, labels, quantities, selectors, port references and field combinations as you type, and only emits YAML when there are no errors. It covers common production fields, not the entire Kubernetes schema, so always finish with a server-side dry-run.</p>
+<div class="builder">
+<div class="formpanel" id="formpanel"></div>
+<div class="output"><div class="two"><div><strong>Generated output</strong><div class="small" id="status">Ready</div></div><div style="text-align:right"><button class="secondary" onclick="copyOutput()">Copy</button><button class="secondary" onclick="downloadOutput()">Download YAML</button></div></div><div id="issues"></div><textarea id="output" spellcheck="false" style="height:520px"></textarea><div class="small" style="margin-top:10px"><b>Next steps</b></div><pre id="cmds"></pre></div>
+</div>
+
+
+<h2 id="commands">8. Imperative commands and dry-run workflow</h2>
+<p>Imperative commands are useful for quick creation and learning. For repeatable production deployments, keep reviewed YAML in version control and apply it declaratively.</p>
+<table><tr><th>Task</th><th>Command</th></tr>
+<tr><td>Create Deployment</td><td><code>kubectl create deployment api --image=nginx:1.27 --replicas=3 -n production</code></td></tr>
+<tr><td>Generate YAML without creating</td><td><code>kubectl create deployment api --image=nginx:1.27 --dry-run=client -o yaml</code></td></tr>
+<tr><td>Expose Deployment</td><td><code>kubectl expose deployment api --port=80 --target-port=8080 --type=ClusterIP -n production</code></td></tr>
+<tr><td>Generate Service YAML</td><td><code>kubectl expose deployment api --port=80 --target-port=8080 --dry-run=client -o yaml</code></td></tr>
+<tr><td>Create ConfigMap</td><td><code>kubectl create configmap app-config --from-literal=MODE=prod --dry-run=client -o yaml</code></td></tr>
+<tr><td>Create Secret</td><td><code>kubectl create secret generic app-secret --from-literal=token=REPLACE_ME --dry-run=client -o yaml</code></td></tr>
+<tr><td>Create namespace</td><td><code>kubectl create namespace production --dry-run=client -o yaml</code></td></tr>
+<tr><td>Create service account</td><td><code>kubectl create serviceaccount api-sa -n production --dry-run=client -o yaml</code></td></tr>
+<tr><td>Create role</td><td><code>kubectl create role pod-reader --verb=get,list,watch --resource=pods -n production --dry-run=client -o yaml</code></td></tr>
+<tr><td>Create role binding</td><td><code>kubectl create rolebinding api-read --role=pod-reader --serviceaccount=production:api-sa -n production --dry-run=client -o yaml</code></td></tr>
+<tr><td>Create ClusterRole</td><td><code>kubectl create clusterrole pod-reader --verb=get,list,watch --resource=pods --dry-run=client -o yaml</code></td></tr>
+<tr><td>Create ClusterRoleBinding</td><td><code>kubectl create clusterrolebinding api-read --clusterrole=pod-reader --serviceaccount=production:api-sa --dry-run=client -o yaml</code></td></tr>
+<tr><td>Scale</td><td><code>kubectl scale deployment/api --replicas=5 -n production</code></td></tr>
+<tr><td>Autoscale</td><td><code>kubectl autoscale deployment api --min=2 --max=10 --cpu-percent=70 -n production</code></td></tr>
+<tr><td>Update image</td><td><code>kubectl set image deployment/api api=nginx:1.28 -n production</code></td></tr>
+<tr><td>Rollout status / undo</td><td><code>kubectl rollout status deployment/api -n production</code><br><code>kubectl rollout undo deployment/api -n production</code></td></tr>
+</table>
+<div class="callout">Not every resource has a useful <code>kubectl create</code> generator. StatefulSet, DaemonSet, Ingress, PV/PVC, StorageClass, VPA and advanced HPA configurations are usually authored as YAML. For client-side validation use <code>kubectl apply --dry-run=client -f manifest.yaml</code>; for API-server validation use <code>kubectl apply --dry-run=server -f manifest.yaml</code>.</div>
+<pre># Safe review workflow
+kubectl diff -f ./manifests/
+kubectl apply --dry-run=server -f ./manifests/
+kubectl apply -f ./manifests/
+kubectl rollout status deployment/api -n production
+kubectl get pods,svc,ingress -n production -o wide</pre>
+
+<h2 id="operate">9. Production rollout and troubleshooting checklist</h2>
+<div class="grid">
+<div class="card"><h3>Before deploy</h3><p>Namespace, image tag pinned, resource requests/limits, probes, security context, secrets, RBAC, network policy, storage and replica strategy.</p></div>
+<div class="card"><h3>During deploy</h3><p>Server-side dry run, diff, rollout status, readiness, events, endpoint checks and application-level smoke tests.</p></div>
+<div class="card"><h3>After deploy</h3><p>Metrics, logs, alerts, HPA behavior, backup/restore test, PDB, capacity and rollback procedure.</p></div>
+</div>
+<table><tr><th>Symptom</th><th>First checks</th></tr><tr><td>Pending Pod</td><td><code>kubectl describe pod</code>; inspect events, requests, taints, affinity, PVC binding and node capacity.</td></tr><tr><td>CrashLoopBackOff</td><td><code>kubectl logs POD --previous</code>; inspect exit code, startup probe, config and dependencies.</td></tr><tr><td>ImagePullBackOff</td><td>Image name/tag, registry credentials, imagePullSecrets, DNS and network egress.</td></tr><tr><td>Service has no endpoints</td><td>Check Service selector vs Pod labels and Pod readiness: <code>kubectl get endpointslice</code>.</td></tr><tr><td>PVC Pending</td><td>StorageClass, provisioner, topology, access mode, capacity and CSI controller/node plugin.</td></tr><tr><td>HPA shows unknown</td><td>Metrics Server or custom metrics adapter, resource requests and metric API availability.</td></tr></table>
+<footer>Learning reference. Always validate generated manifests against your cluster version, installed CRDs/controllers, cloud provider and security standards. Never paste real passwords, tokens or private keys into this page.</footer>
+</main></div>
+<script>
+/* ===== Manifest builder: state-driven, validated, checkbox-gated sections ===== */
+const $=id=>document.getElementById(id);
+const isO=x=>x&&typeof x==='object'&&!Array.isArray(x);
+const get=(o,p)=>p.split('.').reduce((a,k)=>a==null?a:a[k],o);
+function set(o,p,v){const ks=p.split('.'),l=ks.pop();ks.reduce((a,k)=>a[k],o)[l]=v}
+/* ---- YAML emitter (K8s style, every string that could be mis-typed is quoted) ---- */
+const RESW=/^(true|false|yes|no|on|off|y|n|null|~)$/i;
+function sc(s){s=String(s);const plain=s!==''&&/^[A-Za-z0-9_.\/][A-Za-z0-9_.\/:@+=-]*$/.test(s)&&!RESW.test(s)&&!/^[-+]?(\d[\d_]*\.?\d*|\.\d+)([eE][-+]?\d+)?$/.test(s)&&!/^0[xob]/i.test(s)&&!/^\d+(:\d+)+$/.test(s)&&!/^\d{4}-\d\d-\d\d/.test(s)&&!/^\.(inf|nan)$/i.test(s)&&!/:$/.test(s);return plain?s:JSON.stringify(s)}
+function sv(x){return typeof x==='number'||typeof x==='boolean'?String(x):typeof x==='string'?sc(x):Array.isArray(x)?'[]':'{}'}
+function em(v,ind){const P=' '.repeat(ind),L=[];
+ if(Array.isArray(v)){v.forEach(x=>{if(x==null)return;if(isO(x)&&Object.keys(x).length){const s=em(x,ind+2);s[0]=P+'- '+s[0].slice(ind+2);L.push(...s)}else L.push(P+'- '+sv(x))});return L}
+ for(const [k,x] of Object.entries(v)){if(x==null)continue;
+  if((isO(x)&&Object.keys(x).length)||(Array.isArray(x)&&x.length)){L.push(P+sc(k)+':');L.push(...em(x,ind+2))}else L.push(P+sc(k)+': '+sv(x))}
+ return L}
+const toYaml=o=>em(o,0).join('\n')+'\n';
+/* ---- validators ---- */
+const DNS=/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/,SUB=/^[a-z0-9]([-a-z0-9.]*[a-z0-9])?$/,LN=/^[A-Za-z0-9]([-A-Za-z0-9_.]{0,61}[A-Za-z0-9])?$/,LV=/^([A-Za-z0-9]([-A-Za-z0-9_.]{0,61}[A-Za-z0-9])?)?$/,PORTN=/^(?=.*[a-z])[a-z0-9]+(-[a-z0-9]+)*$/,RBN=/^[a-z0-9]([-a-z0-9.:]*[a-z0-9])?$/;
+const lkOk=k=>{const p=k.split('/');if(p.length>2)return false;const n=p.pop();return LN.test(n)&&(!p.length||(p[0].length<=253&&SUB.test(p[0])))};
+const MEM=/^(\d+(\.\d+)?|\.\d+)(k|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$/,CPU=/^(\d+(\.\d+)?|\.\d+)m?$/;
+const UN={'':1,m:1e-3,k:1e3,M:1e6,G:1e9,T:1e12,P:1e15,E:1e18,Ki:1024,Mi:1024**2,Gi:1024**3,Ti:1024**4,Pi:1024**5,Ei:1024**6};
+const qv=s=>{const m=/^([\d.]+)([A-Za-z]*)$/.exec(s);return parseFloat(m[1])*UN[m[2]]};
+const lines=s=>String(s||'').split('\n').map(x=>x.trim()).filter(Boolean);
+const csv=s=>String(s||'').split(',').map(x=>x.trim()).filter(Boolean);
+const CLUSTER=['PersistentVolume','StorageClass','ClusterRole','ClusterRoleBinding'];
+const WORK=['Deployment','Pod','ReplicaSet','StatefulSet','DaemonSet'];
+const ACCESS=['ReadWriteOnce','ReadOnlyMany','ReadWriteMany','ReadWriteOncePod'];
+const VERBS=['get','list','watch','create','update','patch','delete','deletecollection','*'];
+const OPS_P=['In','NotIn','Exists','DoesNotExist'],OPS_N=[...OPS_P,'Gt','Lt'];
+const NK=[['kubernetes.io/hostname'],['topology.kubernetes.io/zone'],['topology.kubernetes.io/region'],['kubernetes.io/os'],['kubernetes.io/arch'],['node.kubernetes.io/instance-type'],['custom','Custom key…']];
+const TK=[['kubernetes.io/hostname'],['topology.kubernetes.io/zone'],['topology.kubernetes.io/region'],['custom','Custom topology key…']];
+const TAINTK=[['','(empty key — all taints, needs operator Exists)'],['node.kubernetes.io/not-ready'],['node.kubernetes.io/unreachable'],['node.kubernetes.io/memory-pressure'],['node.kubernetes.io/disk-pressure'],['node.kubernetes.io/pid-pressure'],['node.kubernetes.io/network-unavailable'],['node.kubernetes.io/unschedulable'],['node-role.kubernetes.io/control-plane'],['custom','Custom key (e.g. workload, dedicated, gpu)…']];
+const PROV={'ebs.csi.aws.com':[['type','gp3'],['encrypted','true']],'efs.csi.aws.com':[['provisioningMode','efs-ap'],['fileSystemId',''],['directoryPerms','700']],'pd.csi.storage.gke.io':[['type','pd-balanced']],'disk.csi.azure.com':[['skuName','StandardSSD_LRS']],'rancher.io/local-path':[],'kubernetes.io/no-provisioner':[]};
+/* ---- row templates ---- */
+const T={kv:()=>({k:'',v:''}),lab:()=>({k:'',v:'',sel:true}),port:()=>({n:'',p:'',proto:'TCP'}),
+ env:()=>({n:'',t:'value',v:'',a:'',b:''}),
+ probe:()=>({kind:'readiness',h:'httpGet',path:'/',port:'',scheme:'HTTP',hdr:'',cmd:'',svc:'',i:'',p:'10',t:'1',s:'1',f:'3'}),
+ vol:()=>({n:'',t:'pvc',src:'',mp:'',ro:false}),vct:()=>({n:'data',sz:'10Gi',am:'ReadWriteOnce',sc:'',mp:'/data'}),
+ aff:()=>({type:'podAntiAffinity',mode:'preferred',w:'100',kp:'kubernetes.io/hostname',key:'',sel:'workload',lk:'',op:'In',vals:''}),
+ tol:()=>({kp:'custom',key:'workload',op:'Equal',val:'dedicated',eff:'NoSchedule',sec:''}),
+ svcp:()=>({n:'http',p:'80',tp:'80',proto:'TCP',np:''}),ing:()=>({host:'',path:'/',pt:'Prefix',svc:'',port:'80'}),
+ rule:()=>({t:'res',ag:'',res:'pods',rn:'',urls:'',vb:{get:true,list:true,watch:true}}),sub:()=>({kind:'ServiceAccount',name:'',ns:'production'}),
+ par:()=>({k:'',v:''})};
+const SEC=()=>({on:false});
+function D(kind,keep){const o={kind,name:'api',ns:'production',ml:{on:false,rows:[T.kv()]},an:{on:false,rows:[T.kv()]}};if(keep){o.name=keep.name;o.ns=keep.ns}
+ if(WORK.includes(kind))Object.assign(o,{labels:[{k:'app',v:'api',sel:true}],image:'nginx:1.27',container:'app',pull:'',replicas:'3',ports:[{n:'http',p:'80',proto:'TCP'}],cmd:'',args:'',
+  res:{on:false,cr:'100m',mr:'128Mi',cl:'500m',mlim:'512Mi'},env:{on:false,rows:[T.env()]},probes:{on:false,rows:[T.probe()]},
+  sc:{on:false,nonroot:true,uid:'10001',gid:'',fsg:'',seccomp:'RuntimeDefault',esc:'false',ro:false,priv:false,drop:'ALL',add:''},
+  vol:{on:false,rows:[T.vol()]},nsel:{on:false,rows:[{k:'nodepool',v:'general'}]},aff:{on:false,rows:[T.aff()]},tol:{on:false,rows:[T.tol()]},
+  strat:{on:false,t:'RollingUpdate',surge:'25%',unav:'25%'},sts:{svc:'api-headless',pm:'OrderedReady',vct:[T.vct()]}});
+ else if(kind==='Service')Object.assign(o,{sel:[{k:'app',v:'api'}],type:'ClusterIP',headless:false,ports:[T.svcp()]});
+ else if(kind==='Ingress')Object.assign(o,{cls:'nginx',rules:[{...T.ing(),host:'api.example.com',svc:'api'}],tls:{on:false,secret:''}});
+ else if(kind==='PersistentVolumeClaim')Object.assign(o,{sz:'10Gi',am:{ReadWriteOnce:true},scm:'default',scn:'',vm:'Filesystem',vn:''});
+ else if(kind==='PersistentVolume')Object.assign(o,{sz:'10Gi',am:{ReadWriteOnce:true},scn:'manual',reclaim:'Retain',vm:'Filesystem',src:'hostPath',hp:'/mnt/data',nfsS:'',nfsP:'/exports',drv:'ebs.csi.aws.com',vh:'',fs:'ext4'});
+ else if(kind==='StorageClass')Object.assign(o,{prov:'ebs.csi.aws.com',provC:'',params:PROV['ebs.csi.aws.com'].map(([k,v])=>({k,v})),reclaim:'Delete',bind:'WaitForFirstConsumer',expand:true,def:false});
+ else if(kind==='Role'||kind==='ClusterRole')Object.assign(o,{rules:[T.rule()]});
+ else if(kind==='RoleBinding'||kind==='ClusterRoleBinding')Object.assign(o,{rrk:'Role',rrn:'',subs:[T.sub()]});
+ else if(kind==='HorizontalPodAutoscaler')Object.assign(o,{tk:'Deployment',tn:'api',min:'2',max:'10',cpu:'70',mem:''});
+ else if(kind==='VerticalPodAutoscaler')Object.assign(o,{tk:'Deployment',tn:'api',mode:'Off',cname:'*',rp:{on:false,minC:'100m',minM:'128Mi',maxC:'2',maxM:'2Gi'},cr:{cpu:true,memory:true}});
+ return o}
+/* ---- build + validate ---- */
+function build(S){
+ const e=[],w=[],cm=[],E=m=>e.push(m),W=m=>w.push(m),k=S.kind,on=p=>S[p]&&S[p].on;
+ const I=(v,l,min,max,req=true)=>{v=String(v==null?'':v).trim();if(v===''){if(req)E(l+' is required');return}if(!/^-?\d+$/.test(v)){E(l+' must be a whole number');return}const n=+v;if((min!=null&&n<min)||(max!=null&&n>max)){E(`${l} must be ${max!=null?`between ${min} and ${max}`:'at least '+min}`);return}return n};
+ const KV=(rows,what,lab)=>{const o={};rows.forEach(r=>{const key=(r.k||'').trim(),v=(r.v||'').trim();if(!key&&!v)return;if(!key){E(what+': a value has no key');return}
+  if(lab){if(!lkOk(key))E(`${what}: invalid key "${key}"`);if(!LV.test(v))E(`${what}: invalid value "${v}" for "${key}" (max 63 chars: letters, digits, - _ .)`)}
+  if(key in o)E(`${what}: duplicate key "${key}"`);o[key]=v});return o};
+ const clean=o=>{Object.keys(o).forEach(x=>{if(isO(o[x])&&!Object.keys(o[x]).length)delete o[x]});return o};
+ const nm=S.name.trim();
+ if(!nm)E('Name is required');else if(k==='Service'||k==='Namespace'){if(!DNS.test(nm)||nm.length>63)E('Service name must be a DNS label: lowercase letters, digits, "-", max 63')}
+ else if(k.includes('Role')){if(!RBN.test(nm))E('Name may contain lowercase letters, digits, "-", "." and ":"')}
+ else if(!SUB.test(nm)||nm.length>253)E('Name must be lowercase letters, digits, "-" or "." and start/end alphanumeric');
+ const meta={name:nm};
+ if(!CLUSTER.includes(k)){const n=S.ns.trim();if(n){if(!DNS.test(n)||n.length>63)E('Namespace must be a DNS label');meta.namespace=n}else W('Namespace blank: object goes to the namespace of your current kubectl context')}
+ if(on('ml'))meta.labels=KV(S.ml.rows,'Metadata labels',true);if(on('an'))meta.annotations=KV(S.an.rows,'Annotations',false);
+ const obj={apiVersion:'v1',kind:k,metadata:meta};
+ const portNames=[];
+ /* ---------- workloads ---------- */
+ if(WORK.includes(k)){
+  const lab=KV(S.labels,'Pod labels',true),selr=KV(S.labels.filter(r=>r.sel),'Selector',true);
+  if(!Object.keys(lab).length)E('Add at least one pod label');
+  if(k!=='Pod'&&!Object.keys(selr).length)E('Tick "in selector" on at least one label — a controller needs a selector');
+  const c={name:S.container.trim(),image:S.image.trim()};
+  if(!DNS.test(c.name)||c.name.length>63)E('Container name must be a DNS label');
+  if(!c.image||/\s/.test(c.image))E('Image is required and cannot contain spaces');else if(!/[:@]/.test(c.image.split('/').pop())||/:latest$/.test(c.image))W('Image has no pinned tag/digest (or uses :latest) — pin a version for production');
+  if(S.pull)c.imagePullPolicy=S.pull;
+  const ports=[];S.ports.forEach((r,i)=>{if(!r.p.trim()&&!r.n.trim())return;const L='Port #'+(i+1),p=I(r.p,L+' containerPort',1,65535);const n=r.n.trim();if(n){if(n.length>15||!PORTN.test(n))E(L+': port name must be ≤15 chars, lowercase letters/digits/"-", with a letter');if(portNames.includes(n))E(L+': duplicate port name');portNames.push(n)}ports.push({name:n||undefined,containerPort:p,protocol:r.proto})});
+  if(ports.length)c.ports=ports;
+  if(lines(S.cmd).length)c.command=lines(S.cmd);if(lines(S.args).length)c.args=lines(S.args);
+  if(on('res')){const R=S.res,q=(v,l,re)=>{v=v.trim();if(!v)return;if(!re.test(v)){E(`${l}: "${v}" is not a valid quantity (e.g. 100m, 0.5, 128Mi, 1Gi)`);return}return v};
+   const cr=q(R.cr,'CPU request',CPU),cl=q(R.cl,'CPU limit',CPU),mr=q(R.mr,'Memory request',MEM),ml=q(R.mlim,'Memory limit',MEM);
+   if(cr&&cl&&qv(cr)>qv(cl))E('CPU request is greater than CPU limit');if(mr&&ml&&qv(mr)>qv(ml))E('Memory request is greater than memory limit');
+   c.resources=clean({requests:{cpu:cr,memory:mr},limits:{cpu:cl,memory:ml}});if(!Object.keys(c.resources).length)delete c.resources}
+  if(on('env')){const seen={},env=[];S.env.rows.forEach(r=>{const n=r.n.trim();if(!n&&!r.v&&!r.a)return;if(!/^[-._a-zA-Z][-._a-zA-Z0-9]*$/.test(n)){E(`Env name "${n}" is invalid`);return}if(seen[n])E(`Env "${n}" is defined twice`);seen[n]=1;
+    if(r.t==='value')env.push({name:n,value:r.v});
+    else if(r.t==='fieldRef'){env.push({name:n,valueFrom:{fieldRef:{fieldPath:r.v}}})}
+    else{if(!r.v.trim()||!r.a.trim())E(`Env "${n}": ${r.t==='secretKeyRef'?'Secret':'ConfigMap'} name and key are required`);env.push({name:n,valueFrom:{[r.t]:{name:r.v.trim(),key:r.a.trim()}}})}});if(env.length)c.env=env}
+  if(on('probes')){const seen={};S.probes.rows.forEach(r=>{const L='Probe '+r.kind;if(seen[r.kind])E(L+' is defined twice');seen[r.kind]=1;const p={};
+    const PT=v=>{v=String(v).trim();if(/^\d+$/.test(v))return I(v,L+' port',1,65535);if(!v){E(L+': port is required');return}if(!portNames.includes(v))E(`${L}: port "${v}" is not a number or a named container port (defined: ${portNames.join(', ')||'none'})`);return v};
+    if(r.h==='httpGet'){const path=r.path.trim();if(!path.startsWith('/'))E(L+': HTTP path must start with "/"');const hd=lines(r.hdr).map(x=>{const i=x.indexOf(':');if(i<1){E(L+': header "'+x+'" must be "Name: value"');return}return{name:x.slice(0,i).trim(),value:x.slice(i+1).trim()}}).filter(Boolean);
+     p.httpGet={path,port:PT(r.port),scheme:r.scheme==='HTTPS'?'HTTPS':undefined,httpHeaders:hd.length?hd:undefined}}
+    else if(r.h==='tcpSocket')p.tcpSocket={port:PT(r.port)};
+    else if(r.h==='grpc')p.grpc={port:I(r.port,L+' gRPC port',1,65535),service:r.svc.trim()||undefined};
+    else{const cmd=lines(r.cmd);if(!cmd.length)E(L+': exec command is required (one argument per line)');p.exec={command:cmd}}
+    [['i','initialDelaySeconds',0],['p','periodSeconds',1],['t','timeoutSeconds',1],['s','successThreshold',1],['f','failureThreshold',1]].forEach(([f,n,mn])=>{const v=I(r[f],`${L} ${n}`,mn,null,false);if(v!==undefined)p[n]=v});
+    if(r.kind!=='readiness'&&p.successThreshold!==undefined&&p.successThreshold!==1)E(L+': successThreshold must be 1 for startup and liveness probes');
+    if(r.h==='grpc')W(L+': gRPC probes need Kubernetes 1.24+ (GA in 1.27)');
+    c[r.kind+'Probe']=p})}
+  if(on('sc')){const s=S.sc,uid=I(s.uid,'runAsUser',0,null,false),gid=I(s.gid,'runAsGroup',0,null,false),fsg=I(s.fsg,'fsGroup',0,null,false);
+   if(s.nonroot&&uid===0)E('runAsNonRoot is true but runAsUser is 0 (root)');if(s.priv&&s.esc==='false')E('privileged=true conflicts with allowPrivilegeEscalation=false (the API server rejects this)');
+   const add=csv(s.add),drop=csv(s.drop);[...add,...drop].forEach(x=>{if(!/^[A-Z_]+$/.test(x)||x.startsWith('CAP_'))E(`Capability "${x}": use upper-case names without the CAP_ prefix (e.g. NET_BIND_SERVICE)`)});
+   if(add.includes('SYS_ADMIN')&&s.esc==='false')E('Adding SYS_ADMIN requires allowPrivilegeEscalation to be true');if(s.priv)W('Privileged container — only for node-level agents');
+   if(s.ro)W('readOnlyRootFilesystem: the app must only write to mounted volumes (add an emptyDir for /tmp etc.)');if(s.nonroot&&ports.some(p=>p.containerPort<1024))W('Non-root processes usually cannot bind ports below 1024');
+   S._ps=clean({runAsNonRoot:s.nonroot||undefined,runAsUser:uid,runAsGroup:gid,fsGroup:fsg,seccompProfile:s.seccomp?{type:s.seccomp}:undefined});
+   c.securityContext=clean({allowPrivilegeEscalation:s.esc===''?undefined:s.esc==='true',readOnlyRootFilesystem:s.ro||undefined,privileged:s.priv||undefined,capabilities:{drop:drop.length?drop:undefined,add:add.length?add:undefined}})}
+  const spec={containers:[c]};const vols=[],vn=[];
+  if(on('vol'))S.vol.rows.forEach((r,i)=>{const L='Volume #'+(i+1),n=r.n.trim();if(!n&&!r.mp.trim()&&!r.src.trim())return;if(!DNS.test(n)||n.length>63)E(L+': name must be a DNS label');if(vn.includes(n))E(L+': duplicate volume name');vn.push(n);
+    if(!r.mp.startsWith('/'))E(L+': mountPath must be an absolute path');let v={name:n};
+    if(r.t==='emptyDir')v.emptyDir=r.src==='Memory'?{medium:'Memory'}:{};else{if(!r.src.trim())E(L+': '+(r.t==='pvc'?'PVC claimName':r.t==='configMap'?'ConfigMap name':'Secret name')+' is required');
+     v[r.t==='pvc'?'persistentVolumeClaim':r.t]=r.t==='pvc'?{claimName:r.src.trim(),readOnly:r.ro||undefined}:r.t==='configMap'?{name:r.src.trim()}:{secretName:r.src.trim()}}
+    vols.push(v);(c.volumeMounts=c.volumeMounts||[]).push({name:n,mountPath:r.mp.trim(),readOnly:r.ro||undefined})});
+  if(k==='StatefulSet'){if(!S.sts.vct.length)W('No volumeClaimTemplates: Pods will have no per-replica storage');S.sts.vct.forEach((r,i)=>{const L='Claim template #'+(i+1);if(!DNS.test(r.n))E(L+': name must be a DNS label');if(vn.includes(r.n))E(L+': name clashes with a volume');vn.push(r.n);if(!MEM.test(r.sz.trim()))E(L+': invalid size');if(!r.mp.startsWith('/'))E(L+': mountPath must be absolute');(c.volumeMounts=c.volumeMounts||[]).push({name:r.n,mountPath:r.mp.trim()})})}
+  if(vols.length)spec.volumes=vols;
+  if(on('nsel')){const ns=KV(S.nsel.rows,'nodeSelector',true);if(Object.keys(ns).length){spec.nodeSelector=ns;Object.entries(ns).forEach(([a,b])=>cm.push(`kubectl label nodes <node-name> ${a}=${b}   # needed so nodeSelector matches a node`))}}
+  if(on('aff')){const A={};
+   S.aff.rows.forEach((r,i)=>{const L=`Affinity #${i+1} (${r.type})`,KEYOF=r.kp==='custom'?r.key.trim():r.kp;
+    if(r.mode==='preferred'&&I(r.w,L+' weight',1,100)===undefined)return;const wt=+r.w;
+    const mkExpr=(key,op,vals,nodeSide)=>{if(!key||!lkOk(key)){E(L+': a valid label key is required');return}if(['In','NotIn'].includes(op)&&!vals.length)E(`${L}: operator ${op} needs at least one value`);if(['Exists','DoesNotExist'].includes(op)&&vals.length)E(`${L}: operator ${op} must not have values`);
+     if(['Gt','Lt'].includes(op)){if(!nodeSide)E(L+': Gt/Lt only work for node affinity');if(vals.length!==1||!/^-?\d+$/.test(vals[0]))E(L+': Gt/Lt need exactly one integer value')}vals.forEach(v=>{if(!LV.test(v))E(`${L}: invalid value "${v}"`)});return{key,operator:op,values:vals.length?vals:undefined}};
+    if(r.type==='nodeAffinity'){const ex=mkExpr(KEYOF,r.op,csv(r.vals),true);if(!ex)return;A.nodeAffinity=A.nodeAffinity||{};
+     if(r.mode==='required'){const x=A.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution=A.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution||{nodeSelectorTerms:[{matchExpressions:[]}]};x.nodeSelectorTerms[0].matchExpressions.push(ex)}
+     else(A.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution=A.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution||[]).push({weight:wt,preference:{matchExpressions:[ex]}})}
+    else{const tk=r.kp==='custom'?r.key.trim():r.kp;if(!tk||!lkOk(tk))E(L+': a valid topologyKey is required');let ls;
+     if(r.sel==='workload'){if(!Object.keys(selr).length){E(L+': workload has no selector labels to match');return}ls={matchLabels:{...selr}}}
+     else{const ex=mkExpr(r.lk.trim(),r.op,csv(r.vals),false);if(!ex)return;ls={matchExpressions:[ex]}}
+     const term={labelSelector:ls,topologyKey:tk};A[r.type]=A[r.type]||{};
+     if(r.mode==='required'){(A[r.type].requiredDuringSchedulingIgnoredDuringExecution=A[r.type].requiredDuringSchedulingIgnoredDuringExecution||[]).push(term);if(r.type==='podAntiAffinity')W(L+': required anti-affinity leaves replicas Pending when there are fewer nodes/zones than replicas')}
+     else(A[r.type].preferredDuringSchedulingIgnoredDuringExecution=A[r.type].preferredDuringSchedulingIgnoredDuringExecution||[]).push({weight:wt,podAffinityTerm:term})}});
+   if(Object.keys(A).length)spec.affinity=A}
+  if(on('tol')){const tl=[];S.tol.rows.forEach((r,i)=>{const L=`Toleration #${i+1}`,key=r.kp==='custom'?r.key.trim():r.kp,t={};
+    if(key&&!lkOk(key))E(`${L}: invalid key "${key}"`);if(!key&&r.op!=='Exists')E(L+': an empty key requires operator Exists');if(r.op==='Exists'&&r.val.trim())E(L+': operator Exists must not have a value');if(r.op==='Equal'&&r.val.trim()&&!LV.test(r.val.trim()))E(L+': invalid value');
+    if(r.sec.trim()){if(r.eff!=='NoExecute')E(L+': tolerationSeconds only applies to effect NoExecute');else I(r.sec,L+' tolerationSeconds',0,null)}
+    Object.assign(t,{key:key||undefined,operator:r.op,value:r.op==='Equal'&&r.val.trim()?r.val.trim():undefined,effect:r.eff||undefined,tolerationSeconds:r.sec.trim()&&r.eff==='NoExecute'?+r.sec:undefined});tl.push(t);
+    if(key&&r.eff)cm.push(`kubectl taint nodes <node-name> ${key}${r.op==='Equal'&&r.val.trim()?'='+r.val.trim():''}:${r.eff}   # tolerations only ALLOW scheduling; add nodeSelector/affinity to force placement`)});if(tl.length)spec.tolerations=tl}
+  if(S._ps&&on('sc')){if(Object.keys(S._ps).length)spec.securityContext=S._ps}
+  const podMeta={labels:lab};
+  if(k==='Pod'){meta.labels=Object.assign({},lab,meta.labels||{});obj.spec=spec}
+  else{obj.apiVersion='apps/v1';const sp={selector:{matchLabels:selr},template:{metadata:podMeta,spec}};
+   if(k!=='DaemonSet'){const rp=I(S.replicas,'Replicas',0);if(rp!==undefined)sp.replicas=rp}
+   if(k==='Deployment'&&on('strat')){const st=S.strat;if(st.t==='Recreate')sp.strategy={type:'Recreate'};else{const pc=v=>/^\d+%?$/.test(v.trim());if(!pc(st.surge)||!pc(st.unav))E('maxSurge/maxUnavailable must be a number or a percentage (e.g. 1 or 25%)');if(/^0%?$/.test(st.surge.trim())&&/^0%?$/.test(st.unav.trim()))E('maxSurge and maxUnavailable cannot both be 0');sp.strategy={type:'RollingUpdate',rollingUpdate:{maxSurge:/%$/.test(st.surge)?st.surge.trim():+st.surge,maxUnavailable:/%$/.test(st.unav)?st.unav.trim():+st.unav}}}}
+   if(k==='StatefulSet'){const sn=S.sts.svc.trim();if(!DNS.test(sn))E('serviceName must be a DNS label — it must name a headless Service you create separately (clusterIP: None)');sp.serviceName=sn;sp.podManagementPolicy=S.sts.pm;
+    sp.volumeClaimTemplates=S.sts.vct.map(r=>({metadata:{name:r.n},spec:{accessModes:[r.am],storageClassName:r.sc.trim()||undefined,resources:{requests:{storage:r.sz.trim()}}}}))}
+   obj.spec=sp}
+  delete S._ps;
+  if(k!=='Pod'&&!meta.labels)delete meta.labels}
+ /* ---------- Service ---------- */
+ else if(k==='Service'){const sel=KV(S.sel,'Selector',true),ps=[],names=[];
+  if(!Object.keys(sel).length)E('Selector needs at least one label (must match the Pod labels, otherwise the Service has no endpoints)');
+  S.ports.forEach((r,i)=>{const L='Service port #'+(i+1),p=I(r.p,L+' port',1,65535);let tp=r.tp.trim();if(/^\d+$/.test(tp))tp=I(tp,L+' targetPort',1,65535);else if(tp&&!PORTN.test(tp))E(L+': targetPort must be a number or a named container port');
+   const n=r.n.trim();if(n){if(!DNS.test(n)||n.length>63)E(L+': port name must be a DNS label');if(names.includes(n))E(L+': duplicate port name');names.push(n)}
+   const np=S.type==='ClusterIP'?undefined:I(r.np,L+' nodePort',30000,32767,false);ps.push({name:n||undefined,port:p,targetPort:tp===''?undefined:tp,protocol:r.proto,nodePort:np})});
+  if(!ps.length)E('Add at least one port');if(ps.length>1&&ps.some(p=>!p.name))E('When a Service has several ports, every port needs a name');
+  obj.spec={type:S.type==='ClusterIP'?undefined:S.type,clusterIP:S.headless&&S.type==='ClusterIP'?'None':undefined,selector:sel,ports:ps};if(S.headless&&S.type!=='ClusterIP')E('Headless (clusterIP: None) only works with type ClusterIP')}
+ /* ---------- Ingress ---------- */
+ else if(k==='Ingress'){obj.apiVersion='networking.k8s.io/v1';const by=new Map();
+  S.rules.forEach((r,i)=>{const L='Ingress rule #'+(i+1),h=r.host.trim();if(h&&!/^(\*\.)?[a-z0-9]([-a-z0-9.]*[a-z0-9])?$/.test(h))E(L+': invalid host "'+h+'"');if(r.pt!=='ImplementationSpecific'&&!r.path.startsWith('/'))E(L+': path must start with "/"');
+   if(!DNS.test(r.svc.trim()))E(L+': backend Service name must be a DNS label');const pr=r.port.trim(),port=/^\d+$/.test(pr)?{number:I(pr,L+' port',1,65535)}:{name:pr};if(!/^\d+$/.test(pr)&&!PORTN.test(pr))E(L+': backend port must be a number or a port name');
+   if(!by.has(h))by.set(h,[]);by.get(h).push({path:r.path.trim()||undefined,pathType:r.pt,backend:{service:{name:r.svc.trim(),port}}})});
+  if(!by.size)E('Add at least one rule');const sp={ingressClassName:S.cls.trim()||undefined,rules:[...by].map(([h,p])=>({host:h||undefined,http:{paths:p}}))};
+  if(!S.cls.trim())W('No ingressClassName: only works if the cluster has a default IngressClass');
+  if(on('tls')){const hs=[...by.keys()].filter(Boolean);if(!S.tls.secret.trim()||!DNS.test(S.tls.secret.trim()))E('TLS secret name is required (a kubernetes.io/tls Secret in the same namespace)');if(!hs.length)E('TLS needs at least one host in the rules');sp.tls=[{hosts:hs,secretName:S.tls.secret.trim()}]}obj.spec=sp}
+ /* ---------- PVC / PV / StorageClass ---------- */
+ else if(k==='PersistentVolumeClaim'||k==='PersistentVolume'){const am=ACCESS.filter(a=>S.am[a]);if(!am.length)E('Select at least one access mode');if(am.includes('ReadWriteOncePod')&&am.length>1)E('ReadWriteOncePod cannot be combined with other access modes');if(!MEM.test(S.sz.trim()))E('Size is invalid (e.g. 10Gi)');
+  if(k==='PersistentVolumeClaim'){const sp={accessModes:am,resources:{requests:{storage:S.sz.trim()}},volumeMode:S.vm==='Filesystem'?undefined:S.vm};
+   if(S.scm==='none')sp.storageClassName='';else if(S.scm==='custom'){if(!SUB.test(S.scn.trim()))E('StorageClass name is invalid');sp.storageClassName=S.scn.trim()}else W('StorageClass omitted: the cluster default StorageClass is used (if one exists)');
+   if(S.vn.trim()){if(!SUB.test(S.vn.trim()))E('volumeName is invalid');sp.volumeName=S.vn.trim()}obj.spec=sp}
+  else{const sp={capacity:{storage:S.sz.trim()},accessModes:am,persistentVolumeReclaimPolicy:S.reclaim,storageClassName:S.scn.trim()||undefined,volumeMode:S.vm==='Filesystem'?undefined:S.vm};
+   if(S.src==='hostPath'){if(!S.hp.startsWith('/'))E('hostPath must be absolute');sp.hostPath={path:S.hp,type:'DirectoryOrCreate'};W('hostPath volumes are for single-node labs only')}
+   else if(S.src==='nfs'){if(!S.nfsS.trim())E('NFS server is required');if(!S.nfsP.startsWith('/'))E('NFS path must be absolute');sp.nfs={server:S.nfsS.trim(),path:S.nfsP}}
+   else{if(!S.drv.trim())E('CSI driver is required');if(!S.vh.trim())E('CSI volumeHandle (the existing disk/volume ID) is required');sp.csi={driver:S.drv.trim(),volumeHandle:S.vh.trim(),fsType:S.fs.trim()||undefined}}
+   if(S.reclaim==='Recycle')W('Recycle is deprecated and only works for nfs/hostPath');obj.spec=sp}}
+ else if(k==='StorageClass'){obj.apiVersion='storage.k8s.io/v1';const pv=S.prov==='custom'?S.provC.trim():S.prov;if(!pv||!/^[a-z0-9]([-a-z0-9.\/]*[a-z0-9])?$/.test(pv))E('Provisioner is required (e.g. ebs.csi.aws.com)');
+  const pr=KV(S.params,'Parameters',false);if(pv==='kubernetes.io/no-provisioner'){if(Object.keys(pr).length)E('kubernetes.io/no-provisioner takes no parameters');if(S.expand)E('no-provisioner does not support volume expansion');if(S.bind!=='WaitForFirstConsumer')W('Local volumes should use WaitForFirstConsumer')}
+  if(pv==='efs.csi.aws.com'&&!pr.fileSystemId)E('EFS needs a fileSystemId parameter');
+  if(S.def)meta.annotations=Object.assign({},meta.annotations,{'storageclass.kubernetes.io/is-default-class':'true'});
+  obj.provisioner=pv;obj.parameters=Object.keys(pr).length?pr:undefined;obj.reclaimPolicy=S.reclaim;obj.volumeBindingMode=S.bind;obj.allowVolumeExpansion=S.expand;W('Parameters are driver-specific — confirm them in your CSI driver docs; they are immutable after creation')}
+ /* ---------- RBAC ---------- */
+ else if(k==='Role'||k==='ClusterRole'){obj.apiVersion='rbac.authorization.k8s.io/v1';const rules=[];
+  S.rules.forEach((r,i)=>{const L='Rule #'+(i+1),vb=VERBS.filter(v=>r.vb[v]);if(!vb.length)E(L+': select at least one verb');if(vb.includes('*'))W(L+': wildcard verb — grant only what is needed');
+   if(r.t==='url'&&k==='ClusterRole'){const u=csv(r.urls);if(!u.length)E(L+': add at least one non-resource URL (e.g. /healthz)');if(vb.some(v=>!['get','post','put','patch','delete','head','options','*'].includes(v)))E(L+': non-resource URLs only support HTTP verbs (get, post, put, patch, delete)');rules.push({nonResourceURLs:u,verbs:vb})}
+   else{const rs=csv(r.res);if(!rs.length)E(L+': resources are required');if(rs.includes('*'))W(L+': wildcard resource');const ag=r.ag.trim()===''?['']:csv(r.ag).map(a=>a==='core'?'':a);const rn=csv(r.rn);
+    if(rn.length&&(vb.includes('create')||vb.includes('deletecollection')))W(L+': resourceNames has no effect on create/deletecollection');rules.push({apiGroups:ag,resources:rs,resourceNames:rn.length?rn:undefined,verbs:vb})}});
+  if(!rules.length)E('Add at least one rule');obj.rules=rules}
+ else if(k==='RoleBinding'||k==='ClusterRoleBinding'){obj.apiVersion='rbac.authorization.k8s.io/v1';const rk=k==='ClusterRoleBinding'?'ClusterRole':S.rrk;if(!RBN.test(S.rrn.trim()))E('Role/ClusterRole name is required');if(S.rrn.trim()==='cluster-admin')W('Binding to cluster-admin grants full control');
+  const subs=S.subs.map((r,i)=>{const L='Subject #'+(i+1);if(!r.name.trim())E(L+': name is required');if(r.kind==='ServiceAccount'){if(!DNS.test(r.ns.trim()))E(L+': ServiceAccount namespace is required');return{kind:'ServiceAccount',name:r.name.trim(),namespace:r.ns.trim()}}return{kind:r.kind,apiGroup:'rbac.authorization.k8s.io',name:r.name.trim()}});if(!subs.length)E('Add at least one subject');
+  obj.roleRef={apiGroup:'rbac.authorization.k8s.io',kind:rk,name:S.rrn.trim()};obj.subjects=subs}
+ /* ---------- autoscaling ---------- */
+ else if(k==='HorizontalPodAutoscaler'){obj.apiVersion='autoscaling/v2';const mn=I(S.min,'minReplicas',1),mx=I(S.max,'maxReplicas',1),cpu=I(S.cpu,'CPU target %',1,null,false),mem=I(S.mem,'Memory target %',1,null,false);if(mn&&mx&&mn>mx)E('minReplicas is greater than maxReplicas');if(!DNS.test(S.tn.trim())&&!SUB.test(S.tn.trim()))E('Target name is required');
+  const ms=[];if(cpu)ms.push({type:'Resource',resource:{name:'cpu',target:{type:'Utilization',averageUtilization:cpu}}});if(mem)ms.push({type:'Resource',resource:{name:'memory',target:{type:'Utilization',averageUtilization:mem}}});if(!ms.length)E('Set at least one metric (CPU or memory target)');
+  W('Utilization targets need resource requests on the target Pods and a running metrics-server');obj.spec={scaleTargetRef:{apiVersion:'apps/v1',kind:S.tk,name:S.tn.trim()},minReplicas:mn,maxReplicas:mx,metrics:ms}}
+ else if(k==='VerticalPodAutoscaler'){obj.apiVersion='autoscaling.k8s.io/v1';const cr=['cpu','memory'].filter(x=>S.cr[x]);if(!cr.length)E('Select at least one controlled resource');
+  const pol={containerName:S.cname.trim()||'*',controlledResources:cr};if(on('rp')){const R=S.rp,q=(v,re,l)=>{v=v.trim();if(!v)return;if(!re.test(v)){E(l+' is invalid');return}return v};const a={cpu:q(R.minC,CPU,'min CPU'),memory:q(R.minM,MEM,'min memory')},b={cpu:q(R.maxC,CPU,'max CPU'),memory:q(R.maxM,MEM,'max memory')};
+   ['cpu','memory'].forEach(x=>{if(a[x]&&b[x]&&qv(a[x])>qv(b[x]))E(`VPA min ${x} is greater than max ${x}`)});pol.minAllowed=clean({cpu:a.cpu,memory:a.memory});pol.maxAllowed=clean({cpu:b.cpu,memory:b.memory})}
+  if(!S.tn.trim())E('Target name is required');W('Requires the VPA CRD/components installed in the cluster; do not let HPA and VPA both drive CPU/memory');
+  obj.spec={targetRef:{apiVersion:'apps/v1',kind:S.tk,name:S.tn.trim()},updatePolicy:{updateMode:S.mode},resourcePolicy:{containerPolicies:[clean(pol)]}}}
+ if(meta.labels&&!Object.keys(meta.labels).length)delete meta.labels;if(meta.annotations&&!Object.keys(meta.annotations).length)delete meta.annotations;
+ return{obj,e,w,cm}}
+/* ---- UI ---- */
+let S;const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+const g=p=>get(S,p);
+const inp=(p,l,ph='',list='')=>`<div class="f"><label>${l}</label><input data-p="${p}" value="${esc(g(p))}" placeholder="${esc(ph)}" ${list?`list="${list}"`:''}></div>`;
+const area=(p,l,ph)=>`<div class="f"><label>${l}</label><textarea data-p="${p}" placeholder="${esc(ph)}">${esc(g(p))}</textarea></div>`;
+const sel=(p,l,opts)=>`<div class="f"><label>${l}</label><select data-p="${p}">${opts.map(x=>{const [v,t]=Array.isArray(x)?[x[0],x[1]||x[0]]:[x,x||'(default)'];return `<option value="${esc(v)}" ${g(p)===v?'selected':''}>${esc(t)}</option>`}).join('')}</select></div>`;
+const chk=(p,l)=>`<label class="ck"><input type="checkbox" data-p="${p}" ${g(p)?'checked':''}>${l}</label>`;
+const sect=(p,title,hint,body)=>`<div class="sec ${g(p+'.on')?'on':''}">${chk(p+'.on','<b>'+title+'</b>')}<div class="small">${hint}</div>${g(p+'.on')?`<div class="body">${body()}</div>`:''}</div>`;
+const rows=(p,t,fn,add,min=0)=>`${g(p).map((r,i)=>`<div class="row">${fn(p+'.'+i,r,i)}${g(p).length>min?`<button class="x" data-del="${p}" data-i="${i}">Remove</button>`:''}</div>`).join('')}<button class="secondary" data-add="${p}" data-t="${t}">+ ${add}</button>`;
+const kvrows=(p,a,b,pk,pv)=>rows(p,'kv',pp=>`<div class="two">${inp(pp+'.k',a,pk)}${inp(pp+'.v',b,pv)}</div>`,'Add');
+const keyPick=(pp,r,presets,l)=>sel(pp+'.kp',l,presets)+(r.kp==='custom'?inp(pp+'.key','Custom key'):'');
+function workForm(){const k=S.kind,w=k!=='Pod';let h='';
+ h+=`<h4>Labels</h4><div class="small">Any keys you like. ${w?'Tick “in selector” for the labels the controller (and your Service) should match on.':''}</div>`+rows('labels','lab',(pp,r)=>`<div class="two">${inp(pp+'.k','Key','app')}${inp(pp+'.v','Value','api')}</div>${w?chk(pp+'.sel','in selector'):''}`,'Add label',1);
+ h+=`<h4>Container</h4>`+inp('image','Image','nginx:1.27')+`<div class="two">${inp('container','Container name')}${sel('pull','imagePullPolicy',['','Always','IfNotPresent','Never'])}</div>`+(k==='DaemonSet'||k==='Pod'?'':inp('replicas','Replicas'))+(k==='DaemonSet'?'<div class="small">DaemonSet runs one Pod per eligible node.</div>':'');
+ h+=`<h4>Ports</h4>`+rows('ports','port',(pp)=>`<div class="three">${inp(pp+'.n','Name','http')}${inp(pp+'.p','containerPort','80')}${sel(pp+'.proto','Protocol',['TCP','UDP','SCTP'])}</div>`,'Add port')+area('cmd','Command (one argument per line, optional)','')+area('args','Args (one per line, optional)','');
+ if(k==='StatefulSet')h+=`<h4>StatefulSet</h4>`+inp('sts.svc','serviceName (headless Service)')+sel('sts.pm','podManagementPolicy',['OrderedReady','Parallel'])+`<div class="small">Volume claim templates (one PVC per replica)</div>`+rows('sts.vct','vct',(pp)=>`<div class="two">${inp(pp+'.n','Name')}${inp(pp+'.mp','Mount path')}</div><div class="three">${inp(pp+'.sz','Size')}${sel(pp+'.am','Access mode',ACCESS)}${inp(pp+'.sc','StorageClass (blank = default)')}</div>`,'Add claim template');
+ if(k==='Deployment')h+=sect('strat','Rollout strategy','Otherwise Kubernetes defaults (RollingUpdate 25% / 25%) apply.',()=>sel('strat.t','Type',['RollingUpdate','Recreate'])+(S.strat.t==='RollingUpdate'?`<div class="two">${inp('strat.surge','maxSurge','25% or 1')}${inp('strat.unav','maxUnavailable','25% or 0')}</div>`:''));
+ h+=sect('res','Resources (requests / limits)','Quantities are validated and request ≤ limit is enforced.',()=>`<div class="two">${inp('res.cr','CPU request','100m')}${inp('res.cl','CPU limit','500m')}</div><div class="two">${inp('res.mr','Memory request','128Mi')}${inp('res.mlim','Memory limit','512Mi')}</div>`);
+ h+=sect('env','Environment variables','Plain value, or taken from a Secret / ConfigMap / Pod field.',()=>rows('env.rows','env',(pp,r)=>`<div class="two">${inp(pp+'.n','Name')}${sel(pp+'.t','Source',[['value','Plain value'],['secretKeyRef','Secret key'],['configMapKeyRef','ConfigMap key'],['fieldRef','Pod field']])}</div>`+(r.t==='value'?inp(pp+'.v','Value'):r.t==='fieldRef'?sel(pp+'.v','Field',['metadata.name','metadata.namespace','spec.nodeName','status.podIP','spec.serviceAccountName']):`<div class="two">${inp(pp+'.v',(r.t==='secretKeyRef'?'Secret':'ConfigMap')+' name')}${inp(pp+'.a','Key')}</div>`),'Add variable'));
+ h+=sect('probes','Health probes','Pick which probe, how it checks (HTTP / TCP / exec / gRPC) and the timings.',()=>rows('probes.rows','probe',(pp,r)=>`<div class="two">${sel(pp+'.kind','Probe',['startup','readiness','liveness'])}${sel(pp+'.h','Check type',[['httpGet','HTTP GET'],['tcpSocket','TCP socket'],['exec','Exec command'],['grpc','gRPC']])}</div>`
+  +(r.h==='httpGet'?`<div class="three">${inp(pp+'.path','Path','/healthz')}${inp(pp+'.port','Port (number or name)','http')}${sel(pp+'.scheme','Scheme',['HTTP','HTTPS'])}</div>`+area(pp+'.hdr','HTTP headers (Name: value per line, optional)',''):r.h==='tcpSocket'?inp(pp+'.port','Port (number or name)','http'):r.h==='grpc'?`<div class="two">${inp(pp+'.port','Port (number)')}${inp(pp+'.svc','Service name (optional)')}</div>`:area(pp+'.cmd','Command (one argument per line)','cat\n/tmp/healthy'))
+  +`<div class="five">${inp(pp+'.i','initialDelay','0')}${inp(pp+'.p','period')}${inp(pp+'.t','timeout')}${inp(pp+'.s','successThr.')}${inp(pp+'.f','failureThr.')}</div>`,'Add probe'));
+ h+=sect('sc','Security context','Pod-level: runAsNonRoot/user/group/fsGroup/seccomp. Container-level: the rest.',()=>chk('sc.nonroot','runAsNonRoot')+`<div class="three">${inp('sc.uid','runAsUser')}${inp('sc.gid','runAsGroup')}${inp('sc.fsg','fsGroup')}</div>`+sel('sc.seccomp','seccompProfile',['RuntimeDefault','Unconfined','']) +sel('sc.esc','allowPrivilegeEscalation',[['false','false'],['true','true'],['','(omit)']])+chk('sc.ro','readOnlyRootFilesystem')+chk('sc.priv','privileged')+`<div class="two">${inp('sc.drop','Drop capabilities (comma)','ALL')}${inp('sc.add','Add capabilities (comma)','NET_BIND_SERVICE')}</div>`);
+ h+=sect('vol','Volumes & mounts','PVC, emptyDir, ConfigMap or Secret mounted into the container.',()=>rows('vol.rows','vol',(pp,r)=>`<div class="two">${inp(pp+'.n','Volume name')}${sel(pp+'.t','Type',[['pvc','PersistentVolumeClaim'],['emptyDir','emptyDir'],['configMap','ConfigMap'],['secret','Secret']])}</div>`+(r.t==='emptyDir'?sel(pp+'.src','Medium',[['','Disk (default)'],['Memory','Memory (tmpfs)']]):inp(pp+'.src',r.t==='pvc'?'PVC claimName':r.t==='configMap'?'ConfigMap name':'Secret name'))+`<div class="two">${inp(pp+'.mp','Mount path','/data')}${chk(pp+'.ro','read-only')}</div>`,'Add volume'));
+ h+=sect('nsel','nodeSelector','Pod only schedules onto nodes carrying ALL of these labels.',()=>kvrows('nsel.rows','Node label key','Value','nodepool','general'));
+ h+=sect('aff','Affinity / anti-affinity','Choose node affinity, pod affinity or pod anti-affinity, required or preferred. Add as many rules as needed.',()=>rows('aff.rows','aff',(pp,r)=>{const node=r.type==='nodeAffinity';
+  let x=`<div class="two">${sel(pp+'.type','Type',[['nodeAffinity','Node affinity'],['podAffinity','Pod affinity'],['podAntiAffinity','Pod anti-affinity']])}${sel(pp+'.mode','Rule',[['required','Required (hard)'],['preferred','Preferred (soft)']])}</div>`+(r.mode==='preferred'?inp(pp+'.w','Weight (1–100)'):'');
+  if(node)x+=keyPick(pp,r,NK,'Node label key')+sel(pp+'.op','Operator',OPS_N)+(['Exists','DoesNotExist'].includes(r.op)?'':inp(pp+'.vals','Values (comma separated)','a,b'));
+  else{x+=keyPick(pp,r,TK,'Topology key')+sel(pp+'.sel','Match Pods by',[['workload','This workload’s selector labels'],['custom','Custom label expression']]);if(r.sel==='custom')x+=`<div class="three">${inp(pp+'.lk','Label key')}${sel(pp+'.op','Operator',OPS_P)}${['Exists','DoesNotExist'].includes(r.op)?'':inp(pp+'.vals','Values (comma)')}</div>`}
+  return x},'Add affinity rule'));
+ h+=sect('tol','Tolerations','Choose the taint key, operator, value and effect. A toleration only permits scheduling on a tainted node.',()=>rows('tol.rows','tol',(pp,r)=>keyPick(pp,r,TAINTK,'Taint key')+`<div class="three">${sel(pp+'.op','Operator',['Equal','Exists'])}${r.op==='Equal'?inp(pp+'.val','Value'):'<div></div>'}${sel(pp+'.eff','Effect',[['','(all effects)'],'NoSchedule','PreferNoSchedule','NoExecute'])}</div>`+(r.eff==='NoExecute'?inp(pp+'.sec','tolerationSeconds (optional)'):''),'Add toleration'));
+ return h}
+function form(){const k=S.kind;let h=sel('kind','Resource kind',['Deployment','Pod','ReplicaSet','StatefulSet','DaemonSet','Service','Ingress','PersistentVolumeClaim','PersistentVolume','StorageClass','Role','RoleBinding','ClusterRole','ClusterRoleBinding','HorizontalPodAutoscaler','VerticalPodAutoscaler']);
+ h+=`<div class="two">${inp('name','Name')}${CLUSTER.includes(k)?'<div class="small" style="padding-top:26px">Cluster-scoped: no namespace</div>':inp('ns','Namespace')}</div>`;
+ if(WORK.includes(k))h+=workForm();
+ else if(k==='Service')h+=`<h4>Selector (must match Pod labels)</h4>`+kvrows('sel','Label key','Value','app','api')+sel('type','Type',['ClusterIP','NodePort','LoadBalancer'])+(S.type==='ClusterIP'?chk('headless','Headless (clusterIP: None)'):'')+`<h4>Ports</h4>`+rows('ports','svcp',pp=>`<div class="two">${inp(pp+'.n','Name','http')}${sel(pp+'.proto','Protocol',['TCP','UDP','SCTP'])}</div><div class="three">${inp(pp+'.p','Service port')}${inp(pp+'.tp','targetPort (number or name)')}${S.type==='ClusterIP'?'':inp(pp+'.np','nodePort 30000-32767 (optional)')}</div>`,'Add port',1);
+ else if(k==='Ingress')h+=inp('cls','IngressClass','nginx')+`<h4>Rules</h4>`+rows('rules','ing',pp=>`<div class="two">${inp(pp+'.host','Host (blank = any)','api.example.com')}${inp(pp+'.path','Path','/')}</div>`+sel(pp+'.pt','Path type',['Prefix','Exact','ImplementationSpecific'])+`<div class="two">${inp(pp+'.svc','Backend Service')}${inp(pp+'.port','Backend port (number or name)')}</div>`,'Add rule',1)+sect('tls','TLS','Uses every host from the rules.',()=>inp('tls.secret','TLS Secret name (type kubernetes.io/tls)'));
+ else if(k==='PersistentVolumeClaim'||k==='PersistentVolume'){h+=inp('sz','Size','10Gi')+`<label>Access modes</label>`+ACCESS.map(a=>chk('am.'+a,a)).join('')+sel('vm','volumeMode',['Filesystem','Block']);
+  if(k==='PersistentVolumeClaim')h+=sel('scm','StorageClass',[['default','Cluster default (omit field)'],['none','None — static binding ("")'],['custom','Named class…']])+(S.scm==='custom'?inp('scn','StorageClass name'):'')+inp('vn','volumeName (optional, bind to a specific PV)');
+  else h+=inp('scn','StorageClass name (optional)')+sel('reclaim','Reclaim policy',['Retain','Delete','Recycle'])+sel('src','Volume source',[['hostPath','hostPath (lab only)'],['nfs','NFS'],['csi','CSI (existing volume)']])+(S.src==='hostPath'?inp('hp','Host path'):S.src==='nfs'?`<div class="two">${inp('nfsS','NFS server')}${inp('nfsP','NFS path')}</div>`:`<div class="two">${inp('drv','CSI driver')}${inp('fs','fsType')}</div>`+inp('vh','volumeHandle (volume ID)'))}
+ else if(k==='StorageClass')h+=sel('prov','Provisioner',[...Object.keys(PROV),['custom','Custom…']])+(S.prov==='custom'?inp('provC','Provisioner name'):'')+`<h4>Parameters (driver specific)</h4>`+kvrows('params','Parameter','Value','type','gp3')+sel('reclaim','reclaimPolicy',['Delete','Retain'])+sel('bind','volumeBindingMode',['WaitForFirstConsumer','Immediate'])+chk('expand','allowVolumeExpansion')+chk('def','Mark as default StorageClass');
+ else if(k==='Role'||k==='ClusterRole')h+=`<datalist id="dl-ag">${['core','apps','batch','networking.k8s.io','rbac.authorization.k8s.io','autoscaling','storage.k8s.io','policy'].map(x=>`<option>${x}</option>`).join('')}</datalist>`+`<h4>Rules</h4>`+rows('rules','rule',(pp,r)=>(k==='ClusterRole'?sel(pp+'.t','Rule type',[['res','Resources'],['url','Non-resource URLs']]):'')+(r.t==='url'&&k==='ClusterRole'?inp(pp+'.urls','nonResourceURLs (comma)','/healthz,/metrics'):inp(pp+'.ag','API groups (comma; blank or “core” = core group)','apps','dl-ag')+inp(pp+'.res','Resources (comma)','pods,pods/log,deployments')+inp(pp+'.rn','resourceNames (optional, comma)'))+`<label>Verbs</label><div class="verbs">${VERBS.map(v=>chk(pp+'.vb.'+v,v)).join('')}</div>`,'Add rule',1);
+ else if(k==='RoleBinding'||k==='ClusterRoleBinding')h+=(k==='RoleBinding'?sel('rrk','roleRef kind',['Role','ClusterRole']):'<div class="small">ClusterRoleBinding can only reference a ClusterRole.</div>')+inp('rrn','roleRef name','pod-reader')+`<h4>Subjects</h4>`+rows('subs','sub',(pp,r)=>`<div class="two">${sel(pp+'.kind','Kind',['ServiceAccount','User','Group'])}${inp(pp+'.name','Name')}</div>`+(r.kind==='ServiceAccount'?inp(pp+'.ns','ServiceAccount namespace'):''),'Add subject',1);
+ else if(k==='HorizontalPodAutoscaler'||k==='VerticalPodAutoscaler'){h+=`<div class="two">${sel('tk','Target kind',k==='VerticalPodAutoscaler'?['Deployment','StatefulSet','DaemonSet','ReplicaSet']:['Deployment','StatefulSet','ReplicaSet'])}${inp('tn','Target name')}</div>`;
+  if(k==='HorizontalPodAutoscaler')h+=`<div class="two">${inp('min','minReplicas')}${inp('max','maxReplicas')}</div><div class="two">${inp('cpu','CPU target % (blank = none)')}${inp('mem','Memory target % (blank = none)')}</div>`;
+  else h+=sel('mode','updateMode',[['Off','Off (recommend only)'],'Initial','Recreate','Auto'])+inp('cname','containerName ("*" = all)')+`<label>Controlled resources</label>`+chk('cr.cpu','cpu')+chk('cr.memory','memory')+sect('rp','Min / max allowed','Bounds for recommendations.',()=>`<div class="two">${inp('rp.minC','min CPU')}${inp('rp.minM','min memory')}</div><div class="two">${inp('rp.maxC','max CPU')}${inp('rp.maxM','max memory')}</div>`)}
+ h+=sect('ml','Extra metadata labels','Labels on the object itself (separate from Pod labels).',()=>kvrows('ml.rows','Key','Value'));
+ h+=sect('an','Annotations','e.g. nginx.ingress.kubernetes.io/rewrite-target',()=>kvrows('an.rows','Key','Value'));
+ return h}
+function render(){$('formpanel').innerHTML=form()}
+let lastOk=false;
+function update(){const r=build(JSON.parse(JSON.stringify(S))),k=S.kind;lastOk=!r.e.length;
+ $('issues').innerHTML=(r.e.length?`<div class="callout err"><b>${r.e.length} error(s) — YAML not generated</b><ul>${r.e.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'<div class="callout good"><b>All checks passed.</b> Still run the server-side dry-run below before applying.</div>')+(r.w.length?`<div class="callout warning"><b>Review</b><ul>${r.w.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'');
+ $('output').value=lastOk?toYaml(r.obj):'# Fix the errors listed above to generate YAML.\n';$('status').textContent=lastOk?'Valid · '+k:'Invalid · '+r.e.length+' error(s)';
+ const f=(S.name||'manifest').trim()+'.yaml';$('cmds').textContent=lastOk?['# 1. validate against your real cluster (checks the actual API schema)',`kubectl apply --dry-run=server -f ${f}`,'# 2. see what would change',`kubectl diff -f ${f}`,'# 3. apply',`kubectl apply -f ${f}`,...(['Deployment','StatefulSet','DaemonSet'].includes(k)?[`kubectl rollout status ${k.toLowerCase()}/${S.name.trim()}${S.ns.trim()?' -n '+S.ns.trim():''}`]:[]),...(r.cm.length?['','# companion node commands',...r.cm]:[])].join('\n'):''}
+function onEvt(ev){const t=ev.target,p=t.dataset&&t.dataset.p;if(!p)return;const v=t.type==='checkbox'?t.checked:t.value;
+ if(p==='kind'){S=D(v,S);render();update();return}set(S,p,v);
+ if(p==='prov'&&PROV[v])S.params=PROV[v].map(([k,x])=>({k,v:x}));
+ if(t.tagName==='SELECT'||t.type==='checkbox')render();update()}
+function onClick(ev){const b=ev.target.closest('button');if(!b)return;if(b.dataset.add){g(b.dataset.add).push(T[b.dataset.t]());render();update()}else if(b.dataset.del){g(b.dataset.del).splice(+b.dataset.i,1);render();update()}}
+function copyOutput(){if(!lastOk){$('status').textContent='Fix errors first';return}navigator.clipboard?.writeText($('output').value).then(()=>$('status').textContent='Copied').catch(()=>$('status').textContent='Select and copy manually')}
+function downloadOutput(){if(!lastOk){$('status').textContent='Fix errors first';return}const b=new Blob([$('output').value],{type:'text/yaml'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=S.name.trim()+'.yaml';a.click();URL.revokeObjectURL(a.href)}
+if(typeof document!=='undefined'&&document.getElementById('formpanel')){S=D('Deployment');const fp=$('formpanel');fp.addEventListener('input',onEvt);fp.addEventListener('click',onClick);render();update()}
+if(typeof module!=='undefined')module.exports={D,build,toYaml,T,ACCESS};
+</script></body></html>
